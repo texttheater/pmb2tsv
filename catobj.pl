@@ -171,17 +171,10 @@ der_deps(Der, Deps) :-
   coder_bind(CODer),
   findall(t(Sem, CO, Token, Atts),
       ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
-      ), Tokens),
-  findall(F-A,
-      ( member(F, Tokens),
-        member(A, Tokens),
-        F = t(_, FCO, _, _),
-        A = t(_, ACO, _, _),
-        co_references(FCO, ACO)
-      ), Edges),
-  raise(not_implemented).
-  % TODO:
-  % For each ArgCO that occurs, find out which token is its head. (At the same
-  % time, compute dependencies involving its own ArgCOs - implying that somehow
-  % we should process ArgCOs in topological order, starting with the basic
-  % ones.)
+      ), Tokens0),
+  select(Top, Tokens0, Tokens),
+  Top = t(_, TopCat, _, _),
+  \+ ( member(t(_, RefCat, _, _), Tokens),
+       references(RefCat, TopCat)
+     ),
+  cat_head_deps(TopCat, Top, Head, Deps, [dep(Head, a, _)]).
