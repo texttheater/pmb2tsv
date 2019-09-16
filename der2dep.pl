@@ -74,9 +74,15 @@ der_deps(Const, Head, [Dep|Deps0], Deps) :-
   !,
   must(der_deps(Fun, FunHead, Deps0, Deps1)),
   must(der_deps(Arg, ArgHead, Deps1, Deps)),
-  (  (  is_modifier(Fun)
-     ;  Arg = ftr(_, _, _)
-     ;  Arg = btr(_, _, _)
+  (  ( Arg = ftr(_, _, _)
+     ; Arg = btr(_, _, _)
+     ; const_cat(Fun, FunCat),
+       ( is_modifier_cat(FunCat)
+       ; is_determiner_cat(FunCat)
+       ; is_subordinating_cat(FunCat)
+       ; is_adposition_cat(FunCat)
+       ; is_auxiliary_cat(FunCat)
+       )
      )
   -> Head = ArgHead,
      Dep = FunHead-ArgHead
@@ -95,10 +101,6 @@ comp(gbc(_, _, Arg, Fun), Fun, Arg).
 comp(gfxc(_, _, Fun, Arg), Fun, Arg).
 comp(gbxc(_, _, Arg, Fun), Fun, Arg).
 
-is_modifier(Const) :-
-  const_cat(Const, Cat),
-  is_modifier_cat(Cat).
-
 const_cat(t(_, Cat, _, _), Cat) :-
   !.
 const_cat(Const, Cat) :-
@@ -106,6 +108,39 @@ const_cat(Const, Cat) :-
 
 is_modifier_cat(X/X).
 is_modifier_cat(X\X).
+
+is_determiner_cat(np/n).
+is_determiner_cat(np/(n/pp)).
+
+is_subordinating_cat(Cat) :-
+  is_subordinating_conjunction_cat(Cat).
+is_subordinating_cat(Cat) :-
+  is_complementizer_cat(Cat).
+is_subordinating_cat(Cat) :-
+  is_relative_pronoun_cat(Cat).
+
+is_subordinating_conjunction_cat(Cat) :-
+  member(Cat, [X/Y, X\Y]),
+  member(X, [s\s, s/s, (s\np)\(s\np), (s\np)/(s\np), (s/np)\(s/np), (s/np)/(s/np)]),
+  member(Y, [s:dcl, s:to, s:ng\np, s:ng/np]).
+
+is_complementizer_cat(Cat) :-
+  member(Cat, [s:em/s:dcl, s:em\s:dcl, (s:to\np)/(s:b\np), (s:to\np)\(s:b\np), (s:to/np)/(s:b/np), (s:to/np)\(s:b/np)]).
+
+is_relative_pronoun_cat(Cat) :-
+  member(Cat, [X/Y, X\Y]),
+  member(X, [n\n, n/n, np\np, np/np]),
+  member(Y, [s:dcl/np, s:dcl\np]).
+
+is_adposition_cat(Cat) :-
+  member(Cat, [PP/np, PP\np]),
+  member(PP, [pp, n\n, n/n, np\np, np/np, s\s, s/s, (s\np)\(s\np), (s\np)/(s\np), (s/np)\(s/np), (s/np)/(s/np)]).
+
+is_auxiliary_cat(Cat) :-
+  member(Cat, [X/Y, X\Y]),
+  member(X, [s:F\np, s:F/np]),
+  member(Y, [s:G\np, s:G/np]),
+  member(F-G, [dcl-b, b-ng, dcl-ng, ng-ng, pt-ng, b-pt, dcl-pt, ng-pt, pt-pt]). % HACK dcl-X could also be modal...
 
 depnum(t(_, _, _, Atts)-_, From) :-
   member(from:From, Atts).
