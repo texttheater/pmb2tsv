@@ -8,6 +8,8 @@
     must/1,
     term_in_file/2]).
 
+%%% MAIN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 main :-
   argv([Path]),
   findall(Der,
@@ -39,24 +41,7 @@ der2dep(M, [der(N, Der)|Ders]) :-
   O is M + 1,
   der2dep(O, [der(N, Der)|Ders]).
 
-add_toknums(Der0, Der) :-
-  add_toknums(Der0, Der, 1, _).
-
-add_toknums(t(Sem, Cat, 'ø', Atts), t(Sem, Cat, 'ø', Atts), M, M) :-
-  !.
-add_toknums(t(Sem, Cat, Token, Atts), t(Sem, Cat, Token, [toknum:M|Atts]), M, N) :-
-  !,
-  N is M + 1.
-add_toknums(Const0, Const, M, N) :-
-  Const0 =.. [Rule, Cat, Sem, D0],
-  !,
-  Const =.. [Rule, Cat, Sem, D],
-  add_toknums(D0, D, M, N).
-add_toknums(Const0, Const, M, N) :-
-  Const0 =.. [Rule, Cat, Sem, L0, R0],
-  Const =.. [Rule, Cat, Sem, L, R],
-  add_toknums(L0, L, M, O),
-  add_toknums(R0, R, O, N).
+%%% CONVERSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 der_deps(t(Sem, Cat, Token, Atts), t(Sem, Cat, Token, Atts), Roles, Deps, Deps) :-
   !,
@@ -99,6 +84,27 @@ der_deps(Const, Head, Roles, [Dep|Deps0], Deps) :-
      Dep = dep(ArgHead, FunHead)
   ).
 
+%%% .der FORMAT HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+add_toknums(Der0, Der) :-
+  add_toknums(Der0, Der, 1, _).
+
+add_toknums(t(Sem, Cat, 'ø', Atts), t(Sem, Cat, 'ø', Atts), M, M) :-
+  !.
+add_toknums(t(Sem, Cat, Token, Atts), t(Sem, Cat, Token, [toknum:M|Atts]), M, N) :-
+  !,
+  N is M + 1.
+add_toknums(Const0, Const, M, N) :-
+  Const0 =.. [Rule, Cat, Sem, D0],
+  !,
+  Const =.. [Rule, Cat, Sem, D],
+  add_toknums(D0, D, M, N).
+add_toknums(Const0, Const, M, N) :-
+  Const0 =.. [Rule, Cat, Sem, L0, R0],
+  Const =.. [Rule, Cat, Sem, L, R],
+  add_toknums(L0, L, M, O),
+  add_toknums(R0, R, O, N).
+
 atts_roles(Atts, Roles) :-
   member(verbnet:Roles, Atts),
   !.
@@ -119,6 +125,8 @@ const_cat(t(_, Cat, _, _), Cat) :-
   !.
 const_cat(Const, Cat) :-
   arg(1, Const, Cat).
+
+%%% CCG HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 is_modifier_cat(X/X).
 is_modifier_cat(X\X).
@@ -158,6 +166,8 @@ is_auxiliary_cat(Cat) :-
 
 depnum(dep(t(_, _, _, Atts), _), From) :-
   member(from:From, Atts).
+
+%%% OUTPUT HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 print_dep(dep(_, t(_, _, _, HAtts))) :-
   member(toknum:HToknum, HAtts),
