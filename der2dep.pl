@@ -27,7 +27,7 @@ der2dep(_, []).
 der2dep(M, [der(M, Der0)|Ders]) :-
   !,
   add_toknums(Der0, Der),
-  der_deps(Der, Root, _, Deps, [Root-_]),
+  der_deps(Der, Root, _, Deps, [dep(Root, _)]),
   funsort(depnum, Deps, SortedDeps),
   maplist(print_dep, SortedDeps),
   nl,
@@ -67,7 +67,7 @@ der_deps(ftr(_, _, D), Head, [], Deps0, Deps) :-
 der_deps(btr(_, _, D), Head, [], Deps0, Deps) :-
   !,
   must(der_deps(D, Head, _, Deps0, Deps)).
-der_deps(conj(_, _, C, D), ConjunctHead, [], [ConjunctionHead-ConjunctHead|Deps0], Deps) :-
+der_deps(conj(_, _, C, D), ConjunctHead, [], [dep(ConjunctionHead, ConjunctHead)|Deps0], Deps) :-
   !,
   must(der_deps(C, ConjunctionHead, _, Deps0, Deps1)),
   must(der_deps(D, ConjunctHead, _, Deps1, Deps)).
@@ -90,13 +90,13 @@ der_deps(Const, Head, Roles, [Dep|Deps0], Deps) :-
      )
   -> Head = ArgHead,
      Roles = ArgRoles,
-     Dep = FunHead-ArgHead
+     Dep = dep(FunHead, ArgHead)
   ;  Head = FunHead,
      (  FunRoles = [_|Roles]
      -> true
      ;  Roles = []
      ),
-     Dep = ArgHead-FunHead
+     Dep = dep(ArgHead, FunHead)
   ).
 
 atts_roles(Atts, Roles) :-
@@ -156,10 +156,10 @@ is_auxiliary_cat(Cat) :-
   member(Y, [s:G\np, s:G/np]),
   member(F-G, [dcl-b, b-ng, dcl-ng, ng-ng, pt-ng, b-pt, dcl-pt, ng-pt, pt-pt]). % HACK dcl-X could also be modal...
 
-depnum(t(_, _, _, Atts)-_, From) :-
+depnum(dep(t(_, _, _, Atts), _), From) :-
   member(from:From, Atts).
 
-print_dep(_-t(_, _, _, HAtts)) :-
+print_dep(dep(_, t(_, _, _, HAtts))) :-
   member(toknum:HToknum, HAtts),
   (  var(HToknum)
   -> write(0)
