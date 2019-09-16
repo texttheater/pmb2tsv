@@ -27,7 +27,7 @@ der2dep(_, []).
 der2dep(M, [der(M, Der0)|Ders]) :-
   !,
   add_toknums(Der0, Der),
-  der_deps(Der, Root, Deps, [Root-_]),
+  der_deps(Der, Root, _, Deps, [Root-_]),
   funsort(depnum, Deps, SortedDeps),
   maplist(print_dep, SortedDeps),
   nl,
@@ -58,22 +58,26 @@ add_toknums(Const0, Const, M, N) :-
   add_toknums(L0, L, M, O),
   add_toknums(R0, R, O, N).
 
-der_deps(t(Sem, Cat, Token, Atts), t(Sem, Cat, Token, Atts), Deps, Deps).
-der_deps(ftr(_, _, D), Head, Deps0, Deps) :-
-  must(der_deps(D, Head, Deps0, Deps)).
-der_deps(btr(_, _, D), Head, Deps0, Deps) :-
-  must(der_deps(D, Head, Deps0, Deps)).
-der_deps(conj(_, _, C, D), ConjunctHead, [ConjunctionHead-ConjunctHead|Deps0], Deps) :-
-  must(der_deps(C, ConjunctionHead, Deps0, Deps1)),
-  must(der_deps(D, ConjunctHead, Deps1, Deps)).
-der_deps(fa(_, _, t(_, _, 'ø', _), D), Head, Deps0, Deps) :-
+der_deps(t(Sem, Cat, Token, Atts), t(Sem, Cat, Token, Atts), Roles, Deps, Deps) :-
   !,
-  der_deps(D, Head, Deps0, Deps).
-der_deps(Const, Head, [Dep|Deps0], Deps) :-
+  atts_roles(Atts, Roles).
+der_deps(ftr(_, _, D), Head, [], Deps0, Deps) :-
+  !,
+  must(der_deps(D, Head, _, Deps0, Deps)).
+der_deps(btr(_, _, D), Head, [], Deps0, Deps) :-
+  !,
+  must(der_deps(D, Head, _, Deps0, Deps)).
+der_deps(conj(_, _, C, D), ConjunctHead, [], [ConjunctionHead-ConjunctHead|Deps0], Deps) :-
+  !,
+  must(der_deps(C, ConjunctionHead, _, Deps0, Deps1)),
+  must(der_deps(D, ConjunctHead, _, Deps1, Deps)).
+der_deps(fa(_, _, t(_, _, 'ø', _), D), Head, Roles, Deps0, Deps) :-
+  !,
+  der_deps(D, Head, Roles, Deps0, Deps).
+der_deps(Const, Head, Roles, [Dep|Deps0], Deps) :-
   comp(Const, Fun, Arg),
-  !,
-  must(der_deps(Fun, FunHead, Deps0, Deps1)),
-  must(der_deps(Arg, ArgHead, Deps1, Deps)),
+  must(der_deps(Fun, FunHead, FunRoles, Deps0, Deps1)),
+  must(der_deps(Arg, ArgHead, ArgRoles, Deps1, Deps)),
   (  ( Arg = ftr(_, _, _)
      ; Arg = btr(_, _, _)
      ; const_cat(Fun, FunCat),
@@ -85,10 +89,20 @@ der_deps(Const, Head, [Dep|Deps0], Deps) :-
        )
      )
   -> Head = ArgHead,
+     Roles = ArgRoles,
      Dep = FunHead-ArgHead
   ;  Head = FunHead,
+     (  FunRoles = [_|Roles]
+     -> true
+     ;  Roles = []
+     ),
      Dep = ArgHead-FunHead
   ).
+
+atts_roles(Atts, Roles) :-
+  member(verbnet:Roles, Atts),
+  !.
+atts_roles(_, []).
 
 comp(fa(_, _, Fun, Arg), Fun, Arg).
 comp(ba(_, _, Arg, Fun), Fun, Arg).
