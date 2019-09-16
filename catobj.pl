@@ -145,14 +145,23 @@ const_cat(t(_, Cat, _, _), Cat) :-
 const_cat(Const, Cat) :-
   arg(1, Const, Cat).
 
-co_references(_/B, C) :-
-  cos_bound(B, C).
-co_references(_\B, C) :-
-  cos_bound(B, C).
-co_references(A, B/_) :-
-  co_references(A, B).
-co_references(A, B\_) :-
-  co_references(A, B).
+fun_in(F, F).
+fun_in(F, X/_) :-
+  fun_in(F, X).
+fun_in(F, X\_) :-
+  fun_in(F, X).
+
+arg_in(A, _/A).
+arg_in(A, F/_) :-
+  arg_in(A, F).
+arg_in(A, F\_) :-
+  arg_in(A, F).
+arg_in(A, conj(A)).
+
+references(X, Y) :-
+  fun_in(F, Y),
+  arg_in(A, X),
+  cos_bound(F, A).
 
 der_deps(Der, Deps) :-
   der_coder(Der, CODer),
