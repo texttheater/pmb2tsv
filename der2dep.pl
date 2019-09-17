@@ -1,11 +1,17 @@
 :- module(der2dep, [
     main/0]).
 
+:- use_module(catobj, [
+    der_coder/2,
+    coder_bind/1,
+    cos_bound/2]).
+:- use_module(der, [
+    const_cat/2]).
 :- use_module(slashes).
 :- use_module(util, [
     argv/1,
     funsort/3,
-    must/1,
+    subsumed_sub_term/2,
     term_in_file/2]).
 
 %%% MAIN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,7 +35,7 @@ der2dep(_, []).
 der2dep(M, [der(M, Der0)|Ders]) :-
   !,
   add_toknums(Der0, Der),
-  der_deps(Der, Root, _, Deps, [dep(Root, _)]),
+  der_deps(Der, Deps),
   funsort(depnum, Deps, SortedDeps),
   maplist(print_dep, SortedDeps),
   nl,
@@ -40,49 +46,6 @@ der2dep(M, [der(N, Der)|Ders]) :-
   nl,
   O is M + 1,
   der2dep(O, [der(N, Der)|Ders]).
-
-%%% CONVERSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-der_deps(t(Sem, Cat, Token, Atts), t(Sem, Cat, Token, Atts), Roles, Deps, Deps) :-
-  !,
-  atts_roles(Atts, Roles).
-der_deps(ftr(_, _, D), Head, [], Deps0, Deps) :-
-  !,
-  must(der_deps(D, Head, _, Deps0, Deps)).
-der_deps(btr(_, _, D), Head, [], Deps0, Deps) :-
-  !,
-  must(der_deps(D, Head, _, Deps0, Deps)).
-der_deps(conj(_, _, C, D), ConjunctHead, [], [dep(ConjunctionHead, ConjunctHead)|Deps0], Deps) :-
-  !,
-  must(der_deps(C, ConjunctionHead, _, Deps0, Deps1)),
-  must(der_deps(D, ConjunctHead, _, Deps1, Deps)).
-der_deps(fa(_, _, t(_, _, 'ø', _), D), Head, Roles, Deps0, Deps) :-
-  !,
-  der_deps(D, Head, Roles, Deps0, Deps).
-der_deps(Const, Head, Roles, [Dep|Deps0], Deps) :-
-  comp(Const, Fun, Arg),
-  must(der_deps(Fun, FunHead, FunRoles, Deps0, Deps1)),
-  must(der_deps(Arg, ArgHead, ArgRoles, Deps1, Deps)),
-  (  ( Arg = ftr(_, _, _)
-     ; Arg = btr(_, _, _)
-     ; const_cat(Fun, FunCat),
-       ( is_modifier_cat(FunCat)
-       ; is_determiner_cat(FunCat)
-       ; is_subordinating_cat(FunCat)
-       ; is_adposition_cat(FunCat)
-       ; is_auxiliary_cat(FunCat)
-       )
-     )
-  -> Head = ArgHead,
-     Roles = ArgRoles,
-     Dep = dep(FunHead, ArgHead)
-  ;  Head = FunHead,
-     (  FunRoles = [_|Roles]
-     -> true
-     ;  Roles = []
-     ),
-     Dep = dep(ArgHead, FunHead)
-  ).
 
 %%% .der FORMAT HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -110,21 +73,50 @@ atts_roles(Atts, Roles) :-
   !.
 atts_roles(_, []).
 
-comp(fa(_, _, Fun, Arg), Fun, Arg).
-comp(ba(_, _, Arg, Fun), Fun, Arg).
-comp(fc(_, _, Fun, Arg), Fun, Arg).
-comp(bc(_, _, Arg, Fun), Fun, Arg).
-comp(fxc(_, _, Fun, Arg), Fun, Arg).
-comp(bxc(_, _, Arg, Fun), Fun, Arg).
-comp(gfc(_, _, Fun, Arg), Fun, Arg).
-comp(gbc(_, _, Arg, Fun), Fun, Arg).
-comp(gfxc(_, _, Fun, Arg), Fun, Arg).
-comp(gbxc(_, _, Arg, Fun), Fun, Arg).
+%%% CONVERSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const_cat(t(_, Cat, _, _), Cat) :-
+der_deps(Der, Deps) :-
+  der_coder(Der, CODer),
+  coder_bind(CODer),
+  findall(t(Sem, CO, Token, Atts),
+      ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
+      ), Tokens0),
+  select(Top, Tokens0, Tokens),
+  const_cat(Top, TopCO),
+  co_tokens_head_deps(TopCO, _, Tokens, [], Top, Head, Deps, [dep(Head, a, _)]).
+
+co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
+  ( CO0 = X/Y
+  ; CO0 = X\Y
+  ),
+  select(ArgHead0, Tokens0, Tokens1),
+  const_cat(ArgHead0, ArgCO0),
+  co_tokens_head_deps(ArgCO0, ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
+  cos_bound(ArgCO, Y),
+  !,
+  (  cat_co(Cat, CO0),
+     ( is_modifier_cat(Cat)
+     ; is_determiner_cat(Cat)
+     ; is_subordinating_cat(Cat)
+     ; is_complementizer_cat(Cat)
+     ; is_relative_pronoun_cat(Cat)
+     ; is_adposition_cat(Cat)
+     ; is_auxiliary_cat(Cat)
+     )
+  -> Head1 = ArgHead,
+     Dep = dep(Head0, ArgHead)
+  ;  Head1 = Head0,
+     Dep = dep(ArgHead, Head0)
+  ),
+  co_tokens_head_deps(X, CO, Tokens2, Tokens, Head1, Head, Deps1, Deps).
+co_tokens_head_deps(conj(Y), conj(Y), Tokens0, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
+  select(ArgHead0, Tokens0, Tokens1),
+  const_cat(ArgHead0, ArgCO0),
+  co_tokens_head_deps(ArgCO0, ArgCO, Tokens1, Tokens, ArgHead0, ArgHead, Deps0, Deps),
+  cos_bound(ArgCO, Y),
   !.
-const_cat(Const, Cat) :-
-  arg(1, Const, Cat).
+co_tokens_head_deps(CO, CO, Tokens, Tokens, Head, Head, Deps, Deps).
+
 
 %%% CCG HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -133,6 +125,8 @@ is_modifier_cat(X\X).
 
 is_determiner_cat(np/n).
 is_determiner_cat(np/(n/pp)).
+
+is_coordinating_conjunction_cat(conj).
 
 is_subordinating_cat(Cat) :-
   is_subordinating_conjunction_cat(Cat).

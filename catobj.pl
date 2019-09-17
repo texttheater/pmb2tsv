@@ -1,6 +1,11 @@
 :- module(catobj, [
-    cat_co/2]).
+    cat_co/2,
+    coder_bind/1,
+    cos_bound/2,
+    der_coder/2]).
 
+:- use_module(der, [
+    const_cat/2]).
 :- use_module(slashes).
 :- use_module(util, [
     subsumed_sub_term/2]).
@@ -13,15 +18,18 @@ cat_co(X0\Y0, X\Y) :-
   !,
   cat_co(X0, X),
   cat_co(Y0, Y).
+cat_co(conj, conj(_)) :-
+  !.
 cat_co(B, co(B, _)).
 
 der_coder(t(Sem, Cat, Token, Atts), t(Sem, CO, Token, Atts)) :-
   !,
   cat_co(Cat, CO).
 der_coder(Der, CODer) :-
-  Der =.. [Fun, Cat|Args],
+  Der =.. [Fun, Cat, Sem|Dtrs0],
   cat_co(Cat, CO),
-  CODer =.. [Fun, CO|Args].
+  CODer =.. [Fun, CO, Sem|Dtrs],
+  maplist(der_coder, Dtrs0, Dtrs).
 
 coder_bind(fa(X, _, D1, D2)) :-
   const_cat(D1, X1/Y1),
@@ -115,9 +123,10 @@ coder_bind(btr(A\(B/C), _, D1)) :-
   cos_bind(A, C),
   cos_bind(B, B1),
   coder_bind(D1).
-coder_bind(conj(conj(Y), _, D1, D2)) :-
-  const_cat(D1, Y1),
-  cos_bind(Y, Y1),
+coder_bind(conj(_, _, D1, D2)) :-
+  const_cat(D1, conj(Y1)),
+  const_cat(D2, Y2),
+  cos_bind(Y1, Y2),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(t(_, _, _, _)).
@@ -142,39 +151,3 @@ cos_bound(conj(Y1), conj(Y2)) :-
   cos_bound(Y1, Y2).
 cos_bound(co(_, I), co(_, J)) :-
   I == J.
-
-const_cat(t(_, Cat, _, _), Cat) :-
-  !.
-const_cat(Const, Cat) :-
-  arg(1, Const, Cat).
-
-fun_in(F, F).
-fun_in(F, X/_) :-
-  fun_in(F, X).
-fun_in(F, X\_) :-
-  fun_in(F, X).
-
-arg_in(A, _/A).
-arg_in(A, F/_) :-
-  arg_in(A, F).
-arg_in(A, F\_) :-
-  arg_in(A, F).
-arg_in(A, conj(A)).
-
-references(X, Y) :-
-  fun_in(F, Y),
-  arg_in(A, X),
-  cos_bound(F, A).
-
-der_deps(Der, Deps) :-
-  der_coder(Der, CODer),
-  coder_bind(CODer),
-  findall(t(Sem, CO, Token, Atts),
-      ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
-      ), Tokens0),
-  select(Top, Tokens0, Tokens),
-  Top = t(_, TopCat, _, _),
-  \+ ( member(t(_, RefCat, _, _), Tokens),
-       references(RefCat, TopCat)
-     ),
-  cat_head_deps(TopCat, Top, Head, Deps, [dep(Head, a, _)]).
