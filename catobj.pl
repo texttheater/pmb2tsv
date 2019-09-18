@@ -1,7 +1,8 @@
 :- module(catobj, [
     cat_co/2,
     coder_bind/1,
-    cos_bound/2,
+    coder_number/1,
+    cos_bind/2,
     der_coder/2]).
 
 :- use_module(der, [
@@ -10,6 +11,11 @@
 :- use_module(util, [
     subsumed_sub_term/2]).
 
+%%	cat_co(?Cat, ?CO)
+%
+%	True if Cat is a CCG category and CO is a corresponding "category
+%	object", where basic categories are augmented with indices. In
+%	generated category objects, the indices are variable.
 cat_co(X0/Y0, X/Y) :-
   !,
   cat_co(X0, X),
@@ -22,6 +28,9 @@ cat_co(conj, conj(_)) :-
   !.
 cat_co(B, co(B, _)).
 
+%%	der_coder(+Der, -CODer)
+%
+%	Replaces categories in Boxer derivations with category objects.
 der_coder(t(Sem, Cat, Token, Atts), t(Sem, CO, Token, Atts)) :-
   !,
   cat_co(Cat, CO).
@@ -31,6 +40,23 @@ der_coder(Der, CODer) :-
   maplist(der_coder, Dtrs0, Dtrs),
   CODer =.. [Fun, CO, Sem|Dtrs].
 
+%%	cos_bind(+CO1, +CO2)
+%
+%	Identifies the indices in the category objects CO1 and CO2.
+cos_bind(X1/Y1, X2/Y2) :-
+  cos_bind(X1, X2),
+  cos_bind(Y1, Y2).
+cos_bind(X1\Y1, X2\Y2) :-
+  cos_bind(X1, X2),
+  cos_bind(Y1, Y2).
+cos_bind(conj(Y1), conj(Y2)) :-
+  cos_bind(Y1, Y2).
+cos_bind(co(_, I), co(_, I)).
+
+%%	coder_bind(+CODer)
+%
+%	In a derivation with category objects with variable indices, binds the
+%	variables to enforce equalities mandated by CCG's combinators.
 coder_bind(fa(X, _, D1, D2)) :-
   const_cat(D1, X1/Y1),
   const_cat(D2, Y2),
@@ -131,23 +157,42 @@ coder_bind(conj(_, _, D1, D2)) :-
   coder_bind(D2).
 coder_bind(t(_, _, _, _)).
 
-cos_bind(X1/Y1, X2/Y2) :-
-  cos_bind(X1, X2),
-  cos_bind(Y1, Y2).
-cos_bind(X1\Y1, X2\Y2) :-
-  cos_bind(X1, X2),
-  cos_bind(Y1, Y2).
-cos_bind(conj(Y1), conj(Y2)) :-
-  cos_bind(Y1, Y2).
-cos_bind(co(_, I), co(_, I)).
+%%	co_number(+CO, +M, -N)
+%
+%	Replaces variable indices in category objects with integers, starting
+%	from M.
+co_number(X/Y, M, N) :-
+  co_number(X, M, O),
+  co_number(Y, O, N).
+co_number(X\Y, M, N) :-
+  co_number(X, M, O),
+  co_number(Y, O, N).
+co_number(conj(Y), M, N) :-
+  co_number(Y, M, N).
+co_number(co(_, I), M, N) :-
+  (  var(I)
+  -> I = M,
+     N is M + 1
+  ;  N = M
+  ).
 
-cos_bound(X1/Y1, X2/Y2) :-
-  cos_bound(X1, X2),
-  cos_bound(Y1, Y2).
-cos_bound(X1\Y1, X2\Y2) :-
-  cos_bound(X1, X2),
-  cos_bound(Y1, Y2).
-cos_bound(conj(Y1), conj(Y2)) :-
-  cos_bound(Y1, Y2).
-cos_bound(co(_, I), co(_, J)) :-
-  I == J.
+%%	coder_number(+CODer)
+%
+%	In a derivation with category objects, replaces variable indices with
+%	integers.
+coder_number(CODer) :-
+  coder_number(CODer, 1, _).
+
+coder_number(t(_, CO, _, _), M, N) :-
+  !,
+  co_number(CO, M, N).
+coder_number(Der, M, N) :-
+  Der =.. [_, CO, _, D],
+  !,
+  co_number(CO, M, O),
+  coder_number(D, O, N).
+coder_number(Der, M, N) :-
+  Der =.. [_, CO, _, D1, D2],
+  co_number(CO, M, O),
+  coder_number(D1, O, P),
+  coder_number(D2, P, N).

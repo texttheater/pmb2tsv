@@ -2,9 +2,11 @@
     main/0]).
 
 :- use_module(catobj, [
-    der_coder/2,
+    cat_co/2,
     coder_bind/1,
-    cos_bound/2]).
+    coder_number/1,
+    cos_bind/2,
+    der_coder/2]).
 :- use_module(der, [
     const_cat/2]).
 :- use_module(slashes).
@@ -78,6 +80,7 @@ atts_roles(_, []).
 der_deps(Der, Deps) :-
   der_coder(Der, CODer),
   coder_bind(CODer),
+  coder_number(CODer),
   findall(t(Sem, CO, Token, Atts),
       ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
       ), Tokens0),
@@ -92,7 +95,7 @@ co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   select(ArgHead0, Tokens0, Tokens1),
   const_cat(ArgHead0, ArgCO0),
   co_tokens_head_deps(ArgCO0, ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
-  cos_bound(ArgCO, Y),
+  cos_bind(ArgCO, Y),
   !,
   (  cat_co(Cat, CO0),
      ( is_modifier_cat(Cat)
