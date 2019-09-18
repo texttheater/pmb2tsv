@@ -99,7 +99,8 @@ find_top(TopToken, TopCO, Tokens0, Tokens) :-
   const_cat(TopToken, TopCO),
   \+ ( member(FunToken, Tokens),
        const_cat(FunToken, FunCO),
-       arg_in(Y1, FunCO),
+       arg_in(Y10, FunCO),
+       res_in(Y1, Y10),
        res_in(Y2, TopCO),
        cos_bind(Y1, Y2)
      ).
@@ -133,7 +134,8 @@ co_tokens_head_deps(conj(Y), Tokens0, Tokens, Head0, ArgHead, [dep(Head0, ArgHea
   !.
 co_tokens_head_deps(_, Tokens, Tokens, Head, Head, Deps, Deps).
 
-find_arg(Y1, ArgToken, ArgCO, Tokens0, Tokens) :-
+find_arg(Y10, ArgToken, ArgCO, Tokens0, Tokens) :-
+  res_in(Y1, Y10),
   select(ArgToken, Tokens0, Tokens),
   const_cat(ArgToken, ArgCO),
   res_in(Y2, ArgCO),
