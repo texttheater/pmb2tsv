@@ -79,7 +79,7 @@ coder_bind(fc(X/Z, _, D1, D2)) :-
   cos_bind(Z2, Z),
   coder_bind(D1),
   coder_bind(D2).
-coder_bind(bc(X\Z, _, D1, D2)) :-
+coder_bind(bc(X\Z, _, D2, D1)) :-
   const_cat(D1, X1\Y1),
   const_cat(D2, Y2\Z2),
   cos_bind(X, X1),
@@ -87,7 +87,7 @@ coder_bind(bc(X\Z, _, D1, D2)) :-
   cos_bind(Z2, Z),
   coder_bind(D1),
   coder_bind(D2).
-coder_bind(fxc(X/Z, _, D1, D2)) :-
+coder_bind(fxc(X\Z, _, D1, D2)) :-
   const_cat(D1, X1/Y1),
   const_cat(D2, Y2\Z2),
   cos_bind(X, X1),
@@ -95,7 +95,7 @@ coder_bind(fxc(X/Z, _, D1, D2)) :-
   cos_bind(Z2, Z),
   coder_bind(D1),
   coder_bind(D2).
-coder_bind(bxc(X\Z, _, D1, D2)) :-
+coder_bind(bxc(X/Z, _, D2, D1)) :-
   const_cat(D1, X1\Y1),
   const_cat(D2, Y2/Z2),
   cos_bind(X, X1),
@@ -112,7 +112,7 @@ coder_bind(gfc((X/Z)/A, _, D1, D2)) :-
   cos_bind(A2, A),
   coder_bind(D1),
   coder_bind(D2).
-coder_bind(gbc((X\Z)\A, _, D1, D2)) :-
+coder_bind(gbc((X\Z)\A, _, D2, D1)) :-
   const_cat(D1, X1\Y1),
   const_cat(D2, (Y2\Z2)\A2),
   cos_bind(X, X1),
@@ -130,7 +130,7 @@ coder_bind(gfxc((X\Z)\A, _, D1, D2)) :-
   cos_bind(A2, A),
   coder_bind(D1),
   coder_bind(D2).
-coder_bind(gbxc((X/Z)/A, _, D1, D2)) :-
+coder_bind(gbxc((X/Z)/A, _, D2, D1)) :-
   const_cat(D1, X1\Y1),
   const_cat(D2, (Y2/Z2)/A2),
   cos_bind(X, X1),
