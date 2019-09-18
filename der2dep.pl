@@ -124,7 +124,6 @@ co_tokens_head_deps(conj(Y), conj(Y), Tokens0, Tokens, Head0, ArgHead, [dep(Head
   !.
 co_tokens_head_deps(CO, CO, Tokens, Tokens, Head, Head, Deps, Deps).
 
-
 %%% CCG HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 is_modifier_cat(X/X).
