@@ -108,10 +108,8 @@ co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ( CO0 = X/Y
   ; CO0 = X\Y
   ),
-  select(ArgHead0, Tokens0, Tokens1),
-  const_cat(ArgHead0, ArgCO0),
-  co_tokens_head_deps(ArgCO0, ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
-  cos_bind(ArgCO, Y),
+  find_arg(Y, ArgHead0, ArgCO0, Tokens0, Tokens1),
+  co_tokens_head_deps(ArgCO0, _, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
   !,
   (  cat_co(Cat, CO0),
      ( is_modifier_cat(Cat)
@@ -130,12 +128,16 @@ co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ),
   co_tokens_head_deps(X, CO, Tokens2, Tokens, Head1, Head, Deps1, Deps).
 co_tokens_head_deps(conj(Y), conj(Y), Tokens0, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
-  select(ArgHead0, Tokens0, Tokens1),
-  const_cat(ArgHead0, ArgCO0),
-  co_tokens_head_deps(ArgCO0, ArgCO, Tokens1, Tokens, ArgHead0, ArgHead, Deps0, Deps),
-  cos_bound(ArgCO, Y),
+  find_arg(Y, ArgHead0, ArgCO0, Tokens0, Tokens1),
+  co_tokens_head_deps(ArgCO0, _, Tokens1, Tokens, ArgHead0, ArgHead, Deps0, Deps),
   !.
 co_tokens_head_deps(CO, CO, Tokens, Tokens, Head, Head, Deps, Deps).
+
+find_arg(Y1, ArgToken, ArgCO, Tokens0, Tokens) :-
+  select(ArgToken, Tokens0, Tokens),
+  const_cat(ArgToken, ArgCO),
+  res_in(Y2, ArgCO),
+  cos_bind(Y1, Y2).
 
 %%% CCG HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
