@@ -104,6 +104,7 @@ co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   !,
   (  cat_co(Cat, CO0),
      ( is_modifier_cat(Cat)
+     ; is_adjective_cat(Cat)
      ; is_determiner_cat(Cat)
      ; is_subordinating_cat(Cat)
      ; is_complementizer_cat(Cat)
@@ -129,6 +130,9 @@ co_tokens_head_deps(CO, CO, Tokens, Tokens, Head, Head, Deps, Deps).
 
 is_modifier_cat(X/X).
 is_modifier_cat(X\X).
+
+is_adjective_cat(n/(n/pp)).
+is_adjective_cat(n\(n/pp)).
 
 is_determiner_cat(np/n).
 is_determiner_cat(np/(n/pp)).
