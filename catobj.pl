@@ -28,8 +28,8 @@ der_coder(t(Sem, Cat, Token, Atts), t(Sem, CO, Token, Atts)) :-
 der_coder(Der, CODer) :-
   Der =.. [Fun, Cat, Sem|Dtrs0],
   cat_co(Cat, CO),
-  CODer =.. [Fun, CO, Sem|Dtrs],
-  maplist(der_coder, Dtrs0, Dtrs).
+  maplist(der_coder, Dtrs0, Dtrs),
+  CODer =.. [Fun, CO, Sem|Dtrs].
 
 coder_bind(fa(X, _, D1, D2)) :-
   const_cat(D1, X1/Y1),
