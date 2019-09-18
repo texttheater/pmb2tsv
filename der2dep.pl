@@ -90,7 +90,7 @@ der_deps(Der, Deps) :-
       ), Tokens0),
   select(Top, Tokens0, Tokens),
   const_cat(Top, TopCO),
-  co_tokens_head_deps(TopCO, _, Tokens, [], Top, Head, Deps, [dep(Head, a, _)]).
+  co_tokens_head_deps(TopCO, _, Tokens, [], Top, Head, Deps, [dep(Head, _)]).
 
 co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ( CO0 = X/Y
