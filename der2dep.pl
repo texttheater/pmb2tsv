@@ -170,7 +170,7 @@ depnum(dep(t(_, _, _, Atts), _), From) :-
 %%% OUTPUT HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 print_dep(dep(_, t(_, _, _, HAtts))) :-
-  member(toknum:HToknum, HAtts),
+  once(member(toknum:HToknum, HAtts)),
   (  var(HToknum)
   -> write(0)
   ;  write(HToknum)
