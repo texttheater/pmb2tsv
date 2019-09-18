@@ -36,6 +36,7 @@ main :-
 der2dep(_, []).
 der2dep(M, [der(M, Der0)|Ders]) :-
   !,
+  format(user_error, '~w~n', [M]),
   add_toknums(Der0, Der),
   der_deps(Der, Deps),
   include(real_dep, Deps, RealDeps),
