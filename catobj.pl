@@ -1,9 +1,11 @@
 :- module(catobj, [
+    arg_in/2,
     cat_co/2,
     coder_bind/1,
     coder_number/1,
     cos_bind/2,
-    der_coder/2]).
+    der_coder/2,
+    res_in/2]).
 
 :- use_module(der, [
     const_cat/2]).
@@ -196,3 +198,29 @@ coder_number(Der, M, N) :-
   co_number(CO, M, O),
   coder_number(D1, O, P),
   coder_number(D2, P, N).
+
+%%	res_in(+X1, +X2)
+%
+%	For X1, X2 category objects with integer indices, true if X1 appears as
+%	a result category in X2.
+res_in(X1, X2) :-
+  cos_bind(X1, X2).
+res_in(X1, X2/_) :-
+  res_in(X1, X2).
+res_in(X1, X2\_) :-
+  res_in(X1, X2).
+
+%%	arg_in(+Y1, +X2)
+%
+%	For Y1, X2 category objects with integer indices, true if Y1 appears as
+%	an argument category in X2.
+arg_in(Y1, _/Y2) :-
+  cos_bind(Y1, Y2).
+arg_in(Y1, _\Y2) :-
+  cos_bind(Y1, Y2).
+arg_in(Y1, conj(Y2)) :-
+  cos_bind(Y1, Y2).
+arg_in(Y1, X2/_) :-
+  arg_in(Y1, X2).
+arg_in(Y1, X2\_) :-
+  arg_in(Y1, X2).
