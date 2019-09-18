@@ -2,11 +2,13 @@
     main/0]).
 
 :- use_module(catobj, [
+    arg_in/2,
     cat_co/2,
     coder_bind/1,
     coder_number/1,
     cos_bind/2,
-    der_coder/2]).
+    der_coder/2,
+    res_in/2]).
 :- use_module(der, [
     const_cat/2]).
 :- use_module(slashes).
@@ -89,9 +91,18 @@ der_deps(Der, Deps) :-
   findall(t(Sem, CO, Token, Atts),
       ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
       ), Tokens0),
-  select(Top, Tokens0, Tokens),
-  const_cat(Top, TopCO),
-  co_tokens_head_deps(TopCO, _, Tokens, [], Top, Head, Deps, [dep(Head, _)]).
+  find_top(TopToken, TopCO, Tokens0, Tokens),
+  co_tokens_head_deps(TopCO, _, Tokens, [], TopToken, Head, Deps, [dep(Head, _)]).
+
+find_top(TopToken, TopCO, Tokens0, Tokens) :-
+  select(TopToken, Tokens0, Tokens),
+  const_cat(TopToken, TopCO),
+  \+ ( member(FunToken, Tokens),
+       const_cat(FunToken, FunCO),
+       arg_in(Y1, FunCO),
+       res_in(Y2, TopCO),
+       cos_bind(Y1, Y2)
+     ).
 
 co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ( CO0 = X/Y
