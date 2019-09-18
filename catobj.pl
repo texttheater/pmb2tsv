@@ -26,8 +26,11 @@ cat_co(X0\Y0, X\Y) :-
   !,
   cat_co(X0, X),
   cat_co(Y0, Y).
-cat_co(conj, conj(_)) :-
-  !.
+cat_co(conj:Y0, conj((A\B)/C)) :-
+  !,
+  cat_co(Y0, C),
+  cat_co(Y0, B),
+  cat_co(Y0, A).
 cat_co(B, co(B, _)).
 
 %%	der_coder(+Der, -CODer)
@@ -151,9 +154,10 @@ coder_bind(btr(A\(B/C), _, D1)) :-
   cos_bind(A, B),
   cos_bind(C, C1),
   coder_bind(D1).
-coder_bind(conj(_, _, D1, D2)) :-
-  const_cat(D1, conj(Y1)),
+coder_bind(conj(X, _, D1, D2)) :-
+  const_cat(D1, conj(X1/Y1)),
   const_cat(D2, Y2),
+  cos_bind(X, X1),
   cos_bind(Y1, Y2),
   coder_bind(D1),
   coder_bind(D2).
@@ -209,6 +213,8 @@ res_in(X1, X2/_) :-
   res_in(X1, X2).
 res_in(X1, X2\_) :-
   res_in(X1, X2).
+res_in(X1, conj(X2)) :-
+  res_in(X1, X2).
 
 %%	arg_in(+Y1, +X2)
 %
@@ -218,8 +224,8 @@ arg_in(Y1, _/Y2) :-
   cos_bind(Y1, Y2).
 arg_in(Y1, _\Y2) :-
   cos_bind(Y1, Y2).
-arg_in(Y1, conj(Y2)) :-
-  cos_bind(Y1, Y2).
+arg_in(Y1, conj(X2)) :-
+  arg_in(Y1, X2).
 arg_in(Y1, X2/_) :-
   arg_in(Y1, X2).
 arg_in(Y1, X2\_) :-

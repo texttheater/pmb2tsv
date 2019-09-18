@@ -90,6 +90,7 @@ der_deps(Der, Deps) :-
   coder_number(CODer),
   findall(t(Sem, CO, Token, Atts),
       ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
+        %,write_term(CO, [module(slashes)]),nl
       ), Tokens0),
   find_top(TopToken, TopCO, Tokens0, Tokens),
   co_tokens_head_deps(TopCO, Tokens, [], TopToken, Head, Deps, [dep(Head, _)]).
@@ -110,8 +111,8 @@ co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ; CO = X\Y
   ),
   find_arg(Y, ArgHead0, ArgCO, Tokens0, Tokens1),
-  co_tokens_head_deps(ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
   !,
+  co_tokens_head_deps(ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
   (  cat_co(Cat, CO),
      ( is_modifier_cat(Cat)
      ; is_adjective_cat(Cat)
@@ -128,10 +129,11 @@ co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
      Dep = dep(ArgHead, Head0)
   ),
   co_tokens_head_deps(X, Tokens2, Tokens, Head1, Head, Deps1, Deps).
-co_tokens_head_deps(conj(Y), Tokens0, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
+co_tokens_head_deps(conj(X/Y), Tokens0, Tokens, Head0, Head, [dep(Head0, ArgHead)|Deps0], Deps) :-
   find_arg(Y, ArgHead0, ArgCO, Tokens0, Tokens1),
-  co_tokens_head_deps(ArgCO, Tokens1, Tokens, ArgHead0, ArgHead, Deps0, Deps),
-  !.
+  !,
+  co_tokens_head_deps(ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
+  co_tokens_head_deps(X, Tokens2, Tokens, ArgHead, Head, Deps1, Deps).
 co_tokens_head_deps(_, Tokens, Tokens, Head, Head, Deps, Deps).
 
 find_arg(Y10, ArgToken, ArgCO, Tokens0, Tokens) :-
