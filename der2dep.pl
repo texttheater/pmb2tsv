@@ -134,6 +134,10 @@ co_tokens_head_deps(conj(X/Y), Tokens0, Tokens, Head0, Head, [dep(Head0, ArgHead
   !,
   co_tokens_head_deps(ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
   co_tokens_head_deps(X, Tokens2, Tokens, ArgHead, Head, Deps1, Deps).
+co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, Deps0, Deps) :-
+  member(CO, [X/_, X\_, conj(X/_)]),
+  !,
+  co_tokens_head_deps(X, Tokens0, Tokens, Head0, Head, Deps0, Deps).
 co_tokens_head_deps(_, Tokens, Tokens, Head, Head, Deps, Deps).
 
 find_arg(Y10, ArgToken, ArgCO, Tokens0, Tokens) :-
