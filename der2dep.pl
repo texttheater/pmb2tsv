@@ -148,7 +148,7 @@ is_subordinating_cat(Cat) :-
 
 is_subordinating_conjunction_cat(Cat) :-
   member(Cat, [X/Y, X\Y]),
-  member(X, [s\s, s/s, (s\np)\(s\np), (s\np)/(s\np), (s/np)\(s/np), (s/np)/(s/np)]),
+  member(X, [s:A\s:A, s:A/s:A, (s:A\np)\(s:A\np), (s:A\np)/(s:A\np), (s:A/np)\(s:A/np), (s:A/np)/(s:A/np)]),
   member(Y, [s:dcl, s:to, s:ng\np, s:ng/np]).
 
 is_complementizer_cat(Cat) :-
@@ -161,7 +161,7 @@ is_relative_pronoun_cat(Cat) :-
 
 is_adposition_cat(Cat) :-
   member(Cat, [PP/np, PP\np]),
-  member(PP, [pp, n\n, n/n, np\np, np/np, s\s, s/s, (s\np)\(s\np), (s\np)/(s\np), (s/np)\(s/np), (s/np)/(s/np)]).
+  member(PP, [pp, n\n, n/n, np\np, np/np, s:A\s:A, s:A/s:A, (s:A\np)\(s:A\np), (s:A\np)/(s:A\np), (s:A/np)\(s:A/np), (s:A/np)/(s:A/np)]).
 
 is_auxiliary_cat(Cat) :-
   member(Cat, [X/Y, X\Y]),
