@@ -92,7 +92,7 @@ der_deps(Der, Deps) :-
       ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
       ), Tokens0),
   find_top(TopToken, TopCO, Tokens0, Tokens),
-  co_tokens_head_deps(TopCO, _, Tokens, [], TopToken, Head, Deps, [dep(Head, _)]).
+  co_tokens_head_deps(TopCO, Tokens, [], TopToken, Head, Deps, [dep(Head, _)]).
 
 find_top(TopToken, TopCO, Tokens0, Tokens) :-
   select(TopToken, Tokens0, Tokens),
@@ -104,14 +104,14 @@ find_top(TopToken, TopCO, Tokens0, Tokens) :-
        cos_bind(Y1, Y2)
      ).
 
-co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
-  ( CO0 = X/Y
-  ; CO0 = X\Y
+co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
+  ( CO = X/Y
+  ; CO = X\Y
   ),
-  find_arg(Y, ArgHead0, ArgCO0, Tokens0, Tokens1),
-  co_tokens_head_deps(ArgCO0, _, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
+  find_arg(Y, ArgHead0, ArgCO, Tokens0, Tokens1),
+  co_tokens_head_deps(ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
   !,
-  (  cat_co(Cat, CO0),
+  (  cat_co(Cat, CO),
      ( is_modifier_cat(Cat)
      ; is_adjective_cat(Cat)
      ; is_determiner_cat(Cat)
@@ -126,12 +126,12 @@ co_tokens_head_deps(CO0, CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ;  Head1 = Head0,
      Dep = dep(ArgHead, Head0)
   ),
-  co_tokens_head_deps(X, CO, Tokens2, Tokens, Head1, Head, Deps1, Deps).
-co_tokens_head_deps(conj(Y), conj(Y), Tokens0, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
-  find_arg(Y, ArgHead0, ArgCO0, Tokens0, Tokens1),
-  co_tokens_head_deps(ArgCO0, _, Tokens1, Tokens, ArgHead0, ArgHead, Deps0, Deps),
+  co_tokens_head_deps(X, Tokens2, Tokens, Head1, Head, Deps1, Deps).
+co_tokens_head_deps(conj(Y), Tokens0, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
+  find_arg(Y, ArgHead0, ArgCO, Tokens0, Tokens1),
+  co_tokens_head_deps(ArgCO, Tokens1, Tokens, ArgHead0, ArgHead, Deps0, Deps),
   !.
-co_tokens_head_deps(CO, CO, Tokens, Tokens, Head, Head, Deps, Deps).
+co_tokens_head_deps(_, Tokens, Tokens, Head, Head, Deps, Deps).
 
 find_arg(Y1, ArgToken, ArgCO, Tokens0, Tokens) :-
   select(ArgToken, Tokens0, Tokens),
