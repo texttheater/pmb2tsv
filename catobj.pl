@@ -140,14 +140,14 @@ coder_bind(gbxc((X/Z)/A, _, D1, D2)) :-
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(ftr(A/(B\C), _, D1)) :-
-  const_cat(D1, B1),
-  cos_bind(A, C),
-  cos_bind(B, B1),
+  const_cat(D1, C1),
+  cos_bind(A, B),
+  cos_bind(C, C1),
   coder_bind(D1).
 coder_bind(btr(A\(B/C), _, D1)) :-
-  const_cat(D1, B1),
-  cos_bind(A, C),
-  cos_bind(B, B1),
+  const_cat(D1, C1),
+  cos_bind(A, B),
+  cos_bind(C, C1),
   coder_bind(D1).
 coder_bind(conj(_, _, D1, D2)) :-
   const_cat(D1, conj(Y1)),
