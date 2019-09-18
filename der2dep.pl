@@ -38,7 +38,8 @@ der2dep(M, [der(M, Der0)|Ders]) :-
   !,
   add_toknums(Der0, Der),
   der_deps(Der, Deps),
-  funsort(depnum, Deps, SortedDeps),
+  include(real_dep, Deps, RealDeps),
+  funsort(depnum, RealDeps, SortedDeps),
   maplist(print_dep, SortedDeps),
   nl,
   N is M + 1,
@@ -74,6 +75,9 @@ atts_roles(Atts, Roles) :-
   member(verbnet:Roles, Atts),
   !.
 atts_roles(_, []).
+
+real_dep(dep(t(_, _, Token, _), _)) :-
+  Token \= ø.
 
 %%% CONVERSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
