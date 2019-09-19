@@ -86,14 +86,16 @@ real_dep(dep(t(_, _, Token, _), _)) :-
 %%% CONVERSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 der_deps(Der, Deps) :-
+  with_output_to(user_error, der_pp(Der)),
   der_fix(Der, FixedDer),
+  with_output_to(user_error, der_pp(FixedDer)),
   der_coder(FixedDer, CODer),
   coder_bind(CODer),
   coder_number(CODer),
-  %der_pp(CODer),
+  with_output_to(user_error, der_pp(CODer)),
   findall(t(Sem, CO, Token, Atts),
       ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
-        %,write_term(CO, [module(slashes)]),nl
+        ,write_term(user_error, CO, [module(slashes)]),nl(user_error)
       ), Tokens0),
   find_top(TopToken, TopCO, Tokens0, Tokens),
   co_tokens_head_deps(TopCO, Tokens, [], TopToken, Head, Deps, [dep(Head, _)]).
@@ -211,7 +213,9 @@ depnum(dep(t(_, _, _, Atts), _), From) :-
 
 %%% OUTPUT HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-print_dep(dep(_, t(_, _, _, HAtts))) :-
+print_dep(Dep) :-
+  format(user_error, '~w~n', [Dep]),
+  Dep = dep(_, t(_, _, _, HAtts)),
   once(member(toknum:HToknum, HAtts)),
   (  var(HToknum)
   -> write(0)
