@@ -25,6 +25,12 @@ der_fix(ba(X/(X\Y), Sem, ftr(X/(X\Y), Sem2, D0), t(Sem1, (X/(X\Y))\(X/(X\Y)), To
     bxc(X/(X\Y), Sem, ftr(X/(X\Y), Sem2, D), t(Sem1, X\X, Token, Atts))) :-
   !,
   der_fix(D0, D).
+der_fix(ba(X/(X\Y), Sem, ftr(X/(X\Y), Sem2, D0), conj((X/(X\Y))\(X/(X\Y)), Sem1, E0, F0)), % HACK: not really coordination anymore. cat_co/2 and code_bind/1 will fix it.
+    bxc(X/(X\Y), Sem, ftr(X/(X\Y), Sem2, D), conj(X\X, Sem1, E, F))) :-
+    !,
+    der_fix(D0, D),
+    der_fix(E0, E),
+    der_fix(F0, F).
 der_fix(fa(X\(X/Y), Sem, t(Sem1, (X\(X/Y))/(X\(X/Y)), Token, Atts), btr(X\(X/Y), Sem2, D0)),
     fxc(X\(X/Y), Sem, t(Sem1, X/X, Token, Atts), btr(X\(X/Y), Sem2, D))) :-
   !,
