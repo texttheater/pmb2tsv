@@ -10,7 +10,9 @@
     der_coder/2,
     res_in/2]).
 :- use_module(der, [
-    const_cat/2]).
+    const_cat/2,
+    der_fix/2,
+    der_pp/1]).
 :- use_module(slashes).
 :- use_module(util, [
     argv/1,
@@ -85,9 +87,11 @@ real_dep(dep(t(_, _, Token, _), _)) :-
 %%% CONVERSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 der_deps(Der, Deps) :-
-  der_coder(Der, CODer),
+  der_fix(Der, FixedDer),
+  der_coder(FixedDer, CODer),
   coder_bind(CODer),
   coder_number(CODer),
+  %der_pp(CODer),
   findall(t(Sem, CO, Token, Atts),
       ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
         %,write_term(CO, [module(slashes)]),nl
