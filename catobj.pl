@@ -98,6 +98,11 @@ coder_bind(gfxc((X\Z)\A, _, D1, D2)) :-
   const_cat(D2, (Y\Z)\A),
   coder_bind(D1),
   coder_bind(D2).
+coder_bind(gfxc((X\Z)/A, _, D1, D2)) :-
+  const_cat(D1, X/Y),
+  const_cat(D2, (Y\Z)/A),
+  coder_bind(D1),
+  coder_bind(D2).
 coder_bind(gbxc((X/Z)/A, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, (Y/Z)/A),
