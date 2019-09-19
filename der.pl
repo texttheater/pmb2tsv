@@ -17,6 +17,11 @@ der_pp(Der) :-
 
 % Using a type-raised category as an argument (to punctuation) is an
 % abomination to the Gods and a bane to our dependency conversion code.
+der_fix(fa(X\(X/Y), Sem, t(Sem1, (X\(X/Y))/(X\(X/Y)), Token, Atts), btr(X\(X/Y), Sem2, D0)),
+    fxc(X\(X/Y), Sem, t(Sem1, X/X, Token, Atts), btr(X\(X/Y), Sem2, D))) :-
+  !,
+  format(user_error, 'fixing~n', []),
+  der_fix(D0, D).
 der_fix(ba(X\(X/Y), Sem, btr(X\(X/Y), Sem2, D0), t(Sem1, (X\(X/Y))\(X\(X/Y)), Token, Atts)),
     bc(X\(X/Y), Sem, btr(X\(X/Y), Sem2, D), t(Sem1, X\X, Token, Atts))) :-
   !,
