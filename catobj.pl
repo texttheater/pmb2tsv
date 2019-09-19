@@ -83,12 +83,17 @@ coder_bind(gfc((X/Z)/A, _, D1, D2)) :-
   const_cat(D2, (Y/Z)/A),
   coder_bind(D1),
   coder_bind(D2).
+coder_bind(gfc((X/Z)\A, _, D1, D2)) :-
+  const_cat(D1, X/Y),
+  const_cat(D2, (Y/Z)\A),
+  coder_bind(D1),
+  coder_bind(D2).
 coder_bind(gbc((X\Z)\A, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, (Y\Z)\A),
   coder_bind(D1),
   coder_bind(D2).
-coder_bind(gbc((X\Z)/A, _, D2, D1)) :- % The slashes of the delayed arguments lean different ways here! Didn't think EasyCCG supported this but apparently it does. And labels it as harmonic. ¯\_(ツ)_/¯
+coder_bind(gbc((X\Z)/A, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, (Y\Z)/A),
   coder_bind(D1),
@@ -106,6 +111,11 @@ coder_bind(gfxc((X\Z)/A, _, D1, D2)) :-
 coder_bind(gbxc((X/Z)/A, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, (Y/Z)/A),
+  coder_bind(D1),
+  coder_bind(D2).
+coder_bind(gbxc((X/Z)\A, _, D2, D1)) :-
+  const_cat(D1, X\Y),
+  const_cat(D2, (Y/Z)\A),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(ftr(X/(X\Y), _, D1)) :-
