@@ -3,7 +3,6 @@
     cat_co/2,
     coder_bind/1,
     coder_number/1,
-    cos_bind/2,
     der_coder/2,
     res_in/2]).
 
@@ -45,132 +44,74 @@ der_coder(Der, CODer) :-
   maplist(der_coder, Dtrs0, Dtrs),
   CODer =.. [Fun, CO, Sem|Dtrs].
 
-%%	cos_bind(+CO1, +CO2)
-%
-%	Identifies the indices in the category objects CO1 and CO2.
-%	TODO We might be able to replace this by simple unification, because
-%	the Boxer output does not have underspecified modifier categories
-%	(which don't unify with the fully specified ones).
-cos_bind(X1/Y1, X2/Y2) :-
-  cos_bind(X1, X2),
-  cos_bind(Y1, Y2).
-cos_bind(X1\Y1, X2\Y2) :-
-  cos_bind(X1, X2),
-  cos_bind(Y1, Y2).
-cos_bind(conj(Y1), conj(Y2)) :-
-  cos_bind(Y1, Y2).
-cos_bind(co(_, I), co(_, I)).
-
 %%	coder_bind(+CODer)
 %
 %	In a derivation with category objects with variable indices, binds the
 %	variables to enforce equalities mandated by CCG's combinators.
 coder_bind(fa(X, _, D1, D2)) :-
-  const_cat(D1, X1/Y1),
-  const_cat(D2, Y2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
+  const_cat(D1, X/Y),
+  const_cat(D2, Y),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(ba(X, _, D2, D1)) :-
-  const_cat(D1, X1\Y1),
-  const_cat(D2, Y2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
+  const_cat(D1, X\Y),
+  const_cat(D2, Y),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(fc(X/Z, _, D1, D2)) :-
-  const_cat(D1, X1/Y1),
-  const_cat(D2, Y2/Z2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
+  const_cat(D1, X/Y),
+  const_cat(D2, Y/Z),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(bc(X\Z, _, D2, D1)) :-
-  const_cat(D1, X1\Y1),
-  const_cat(D2, Y2\Z2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
+  const_cat(D1, X\Y),
+  const_cat(D2, Y\Z),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(fxc(X\Z, _, D1, D2)) :-
-  const_cat(D1, X1/Y1),
-  const_cat(D2, Y2\Z2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
+  const_cat(D1, X/Y),
+  const_cat(D2, Y\Z),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(bxc(X/Z, _, D2, D1)) :-
-  const_cat(D1, X1\Y1),
-  const_cat(D2, Y2/Z2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
+  const_cat(D1, X\Y),
+  const_cat(D2, Y/Z),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(gfc((X/Z)/A, _, D1, D2)) :-
-  const_cat(D1, X1/Y1),
-  const_cat(D2, (Y2/Z2)/A2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
-  cos_bind(A2, A),
+  const_cat(D1, X/Y),
+  const_cat(D2, (Y/Z)/A),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(gbc((X\Z)\A, _, D2, D1)) :-
-  const_cat(D1, X1\Y1),
-  const_cat(D2, (Y2\Z2)\A2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
-  cos_bind(A2, A),
+  const_cat(D1, X\Y),
+  const_cat(D2, (Y\Z)\A),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(gbc((X\Z)/A, _, D2, D1)) :- % The slashes of the delayed arguments lean different ways here! Didn't think EasyCCG supported this but apparently it does. And labels it as harmonic. ¯\_(ツ)_/¯
-  const_cat(D1, X1\Y1),
-  const_cat(D2, (Y2\Z2)/A2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
-  cos_bind(A2, A),
+  const_cat(D1, X\Y),
+  const_cat(D2, (Y\Z)/A),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(gfxc((X\Z)\A, _, D1, D2)) :-
-  const_cat(D1, X1/Y1),
-  const_cat(D2, (Y2\Z2)\A2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
-  cos_bind(A2, A),
+  const_cat(D1, X/Y),
+  const_cat(D2, (Y\Z)\A),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(gbxc((X/Z)/A, _, D2, D1)) :-
-  const_cat(D1, X1\Y1),
-  const_cat(D2, (Y2/Z2)/A2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
-  cos_bind(Z2, Z),
-  cos_bind(A2, A),
+  const_cat(D1, X\Y),
+  const_cat(D2, (Y/Z)/A),
   coder_bind(D1),
   coder_bind(D2).
-coder_bind(ftr(A/(B\C), _, D1)) :-
-  const_cat(D1, C1),
-  cos_bind(A, B),
-  cos_bind(C, C1),
+coder_bind(ftr(X/(X\Y), _, D1)) :-
+  const_cat(D1, Y),
   coder_bind(D1).
-coder_bind(btr(A\(B/C), _, D1)) :-
-  const_cat(D1, C1),
-  cos_bind(A, B),
-  cos_bind(C, C1),
+coder_bind(btr(X\(X/Y), _, D1)) :-
+  const_cat(D1, Y),
   coder_bind(D1).
 coder_bind(conj(X, _, D1, D2)) :-
-  const_cat(D1, conj(X1/Y1)),
-  const_cat(D2, Y2),
-  cos_bind(X, X1),
-  cos_bind(Y1, Y2),
+  const_cat(D1, conj(X/Y)),
+  const_cat(D2, Y),
   coder_bind(D1),
   coder_bind(D2).
 coder_bind(t(_, _, _, _)).
@@ -219,8 +160,7 @@ coder_number(Der, M, N) :-
 %
 %	For X1, X2 category objects with integer indices, true if X1 appears as
 %	a result category in X2.
-res_in(X1, X2) :-
-  cos_bind(X1, X2).
+res_in(X, X).
 res_in(X1, X2/_) :-
   res_in(X1, X2).
 res_in(X1, X2\_) :-
@@ -232,10 +172,8 @@ res_in(X1, conj(X2)) :-
 %
 %	For Y1, X2 category objects with integer indices, true if Y1 appears as
 %	an argument category in X2.
-arg_in(Y1, _/Y2) :-
-  cos_bind(Y1, Y2).
-arg_in(Y1, _\Y2) :-
-  cos_bind(Y1, Y2).
+arg_in(Y, _/Y).
+arg_in(Y, _\Y).
 arg_in(Y1, conj(X2)) :-
   arg_in(Y1, X2).
 arg_in(Y1, X2/_) :-

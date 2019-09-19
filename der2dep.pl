@@ -6,7 +6,6 @@
     cat_co/2,
     coder_bind/1,
     coder_number/1,
-    cos_bind/2,
     der_coder/2,
     res_in/2]).
 :- use_module(der, [
@@ -104,10 +103,9 @@ find_top(TopToken, TopCO, Tokens0, Tokens) :-
   const_cat(TopToken, TopCO),
   \+ ( member(FunToken, Tokens),
        const_cat(FunToken, FunCO),
-       arg_in(Y10, FunCO),
-       res_in(Y1, Y10),
-       res_in(Y2, TopCO),
-       cos_bind(Y1, Y2)
+       arg_in(Y0, FunCO),
+       res_in(Y, Y0),
+       res_in(Y, TopCO)
      ).
 
 % Pseudo-tokens (created by Boxer in lieu of type-changing) are always dependents
@@ -157,12 +155,11 @@ co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, Deps0, Deps) :-
 % Basic categories without arguments
 co_tokens_head_deps(_, Tokens, Tokens, Head, Head, Deps, Deps).
 
-find_arg(Y10, ArgToken, ArgCO, Tokens0, Tokens) :-
-  res_in(Y1, Y10),
+find_arg(Y0, ArgToken, ArgCO, Tokens0, Tokens) :-
+  res_in(Y, Y0),
   select(ArgToken, Tokens0, Tokens),
   const_cat(ArgToken, ArgCO),
-  res_in(Y2, ArgCO),
-  cos_bind(Y1, Y2).
+  res_in(Y, ArgCO).
 
 %%% CCG HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -209,6 +206,8 @@ is_auxiliary_cat(Cat) :-
 
 depnum(dep(t(_, _, _, Atts), _), From) :-
   member(from:From, Atts).
+
+% TODO what about copulas?
 
 %%% OUTPUT HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
