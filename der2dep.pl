@@ -110,6 +110,16 @@ find_top(TopToken, TopCO, Tokens0, Tokens) :-
        cos_bind(Y1, Y2)
      ).
 
+% Pseudo-tokens (created by Boxer in lieu of type-changing) are always dependents
+co_tokens_head_deps(CO, Tokens0, Tokens, t(Sem, CO, ø, Atts), Head, [dep(t(Sem, CO, ø, Atts), ArgHead)|Deps0], Deps) :-
+  ( CO = X/Y
+  ; CO = X\Y
+  ),
+  find_arg(Y, ArgHead0, ArgCO, Tokens0, Tokens1),
+  !,
+  co_tokens_head_deps(ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
+  co_tokens_head_deps(X, Tokens2, Tokens, ArgHead, Head, Deps1, Deps).
+% Functonal category with an argument: decide which is the dependent based on the functor category
 co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ( CO = X/Y
   ; CO = X\Y
@@ -124,7 +134,6 @@ co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
      ; is_subordinating_cat(Cat)
      ; is_complementizer_cat(Cat)
      ; is_relative_pronoun_cat(Cat)
-     ; is_reduced_relative_pronoun_cat(Cat)
      ; is_adposition_cat(Cat)
      ; is_auxiliary_cat(Cat)
      )
@@ -134,15 +143,18 @@ co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
      Dep = dep(ArgHead, Head0)
   ),
   co_tokens_head_deps(X, Tokens2, Tokens, Head1, Head, Deps1, Deps).
+% Coordination: the conjunction is the dependent
 co_tokens_head_deps(conj(X/Y), Tokens0, Tokens, Head0, Head, [dep(Head0, ArgHead)|Deps0], Deps) :-
   find_arg(Y, ArgHead0, ArgCO, Tokens0, Tokens1),
   !,
   co_tokens_head_deps(ArgCO, Tokens1, Tokens2, ArgHead0, ArgHead, Deps0, Deps1),
   co_tokens_head_deps(X, Tokens2, Tokens, ArgHead, Head, Deps1, Deps).
+% Functional categories where the argument is not realized
 co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, Deps0, Deps) :-
   member(CO, [X/_, X\_, conj(X/_)]),
   !,
   co_tokens_head_deps(X, Tokens0, Tokens, Head0, Head, Deps0, Deps).
+% Basic categories without arguments
 co_tokens_head_deps(_, Tokens, Tokens, Head, Head, Deps, Deps).
 
 find_arg(Y10, ArgToken, ArgCO, Tokens0, Tokens) :-
@@ -184,11 +196,6 @@ is_relative_pronoun_cat(Cat) :-
   member(Cat, [X/Y, X\Y]),
   member(X, [n\n, n/n, np\np, np/np]),
   member(Y, [s:dcl/np, s:dcl\np]).
-
-is_reduced_relative_pronoun_cat(Cat) :- % categories Boxer gives to pseudo-tokens (ø) that replace type-changing rules in reduced relative clauses
-  member(Cat, [X/Y, X\Y]),
-  member(X, [n\n, n/n, np\np, np/np]),
-  member(Y, [s:ng/np, s:ng\np, s:pss/np, s:pss\np, s:adj/np, s:adj\np]).
 
 is_adposition_cat(Cat) :-
   member(Cat, [PP/np, PP\np]),
