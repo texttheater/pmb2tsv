@@ -12,7 +12,7 @@ import subprocess
 
 _start_pattern = re.compile(r"^ccg\((\d+),$")
 _token_pattern = re.compile(
-        r"(\s*)t\((\S+), '(\S+)', \[(.*)\]\)(.*)")
+        r"(\s*)t\((\S+), '([^ ]+)', \[(.*)\]\)(.*)")
 _constopen_pattern = re.compile(
         r" +([a-z]{2,3}\(.*,)$")
 rolelist_pattern = re.compile(r"\[([A-Z][a-z]+(?:,[A-Z][a-z]+)*)\]")
