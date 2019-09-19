@@ -25,11 +25,14 @@ cat_co(X0\Y0, X\Y) :-
   !,
   cat_co(X0, X),
   cat_co(Y0, Y).
-cat_co(conj:Y0, conj((A\B)/C)) :-
-  !,
-  cat_co(Y0, C),
-  cat_co(Y0, B),
-  cat_co(Y0, A).
+% HACK: we annotate the conj category not with the *conjunct category* X (as
+% Boxer does) but with a *conjunction category*  which is usually (X\X)/X
+% (an alternative category for the conjunction that would work without the
+% special conj rule), but may also be of the form (X\X)/Y (we use this for
+% fixing certain irregular cases involving type raising). Here, we do not fill
+% in the conjunction category, but let coder_bind/1 determine it later.
+cat_co(conj:_ConjunctCategory, conj(_ConjunctionCategory)) :-
+  !.
 cat_co(B, co(B, _)).
 
 %%	der_coder(+Der, -CODer)
