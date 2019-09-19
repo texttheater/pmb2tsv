@@ -48,6 +48,9 @@ der_coder(Der, CODer) :-
 %%	cos_bind(+CO1, +CO2)
 %
 %	Identifies the indices in the category objects CO1 and CO2.
+%	TODO We might be able to replace this by simple unification, because
+%	the Boxer output does not have underspecified modifier categories
+%	(which don't unify with the fully specified ones).
 cos_bind(X1/Y1, X2/Y2) :-
   cos_bind(X1, X2),
   cos_bind(Y1, Y2).
