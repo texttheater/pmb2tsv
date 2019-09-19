@@ -124,6 +124,7 @@ co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
      ; is_subordinating_cat(Cat)
      ; is_complementizer_cat(Cat)
      ; is_relative_pronoun_cat(Cat)
+     ; is_reduced_relative_pronoun_cat(Cat)
      ; is_adposition_cat(Cat)
      ; is_auxiliary_cat(Cat)
      )
@@ -183,6 +184,11 @@ is_relative_pronoun_cat(Cat) :-
   member(Cat, [X/Y, X\Y]),
   member(X, [n\n, n/n, np\np, np/np]),
   member(Y, [s:dcl/np, s:dcl\np]).
+
+is_reduced_relative_pronoun_cat(Cat) :- % categories Boxer gives to pseudo-tokens (ø) that replace type-changing rules in reduced relative clauses
+  member(Cat, [X/Y, X\Y]),
+  member(X, [n\n, n/n, np\np, np/np]),
+  member(Y, [s:ng/np, s:ng\np, s:pss/np, s:pss\np, s:adj/np, s:adj\np]).
 
 is_adposition_cat(Cat) :-
   member(Cat, [PP/np, PP\np]),
