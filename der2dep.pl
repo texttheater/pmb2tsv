@@ -38,7 +38,7 @@ main :-
 der2dep(_, []).
 der2dep(M, [der(M, Der0)|Ders]) :-
   !,
-  %format(user_error, '~w~n', [M]),
+  debug(snum, '~w', [M]),
   add_toknums(Der0, Der),
   der_deps(Der, Deps),
   include(real_dep, Deps, RealDeps),
@@ -85,15 +85,15 @@ real_dep(dep(t(_, _, Token, _), _)) :-
 %%% CONVERSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 der_deps(Der, Deps) :-
-  %with_output_to(user_error, der_pp(Der)),
+  debug(der, '@', [pp_der(Der)]),
   der_coder(Der, CODer),
   coder_bind(CODer),
-  %with_output_to(user_error, der_pp(CODer)),
+  debug(der, '@', [pp_der(CODer)]),
   coder_number(CODer),
-  %with_output_to(user_error, der_pp(CODer)),
+  debug(der, '@', [pp_der(CODer)]),
   findall(t(Sem, CO, Token, Atts),
-      ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
-        %,write_term(user_error, CO, [module(slashes)]),nl(user_error)
+      ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer),
+        debug(co, '~W', [CO, [module(slashes)]])
       ), Tokens0),
   find_top(TopToken, TopCO, Tokens0, Tokens),
   co_tokens_head_deps(TopCO, Tokens, [], TopToken, Head, Deps, [dep(Head, _)]).
@@ -216,11 +216,12 @@ depnum(dep(t(_, _, _, Atts), _), From) :-
 %%% OUTPUT HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 print_dep(Dep) :-
-  format(user_error, '~w~n', [Dep]),
-  Dep = dep(_, t(_, _, _, HAtts)),
-  once(member(toknum:HToknum, HAtts)),
-  (  var(HToknum)
-  -> write(0)
-  ;  write(HToknum)
+  Dep = dep(t(_, _, DForm, DAtts), t(_, _, HForm, HAtts)),
+  member(toknum:DToknum, DAtts),
+  (  var(HAtts)
+  -> HToknum = 0,
+     HForm = 'ROOT'
+  ;  member(toknum:HToknum, HAtts)
   ),
-  nl.
+  debug(deps, '~w\t~w\t~w\t~w', [DToknum, DForm, HToknum, HForm]),
+  format('~w~n', [HToknum]).
