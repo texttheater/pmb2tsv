@@ -10,7 +10,6 @@
     res_in/2]).
 :- use_module(der, [
     const_cat/2,
-    der_fix/2,
     der_pp/1]).
 :- use_module(slashes).
 :- use_module(util, [
@@ -39,7 +38,7 @@ main :-
 der2dep(_, []).
 der2dep(M, [der(M, Der0)|Ders]) :-
   !,
-  format(user_error, '~w~n', [M]),
+  %format(user_error, '~w~n', [M]),
   add_toknums(Der0, Der),
   der_deps(Der, Deps),
   include(real_dep, Deps, RealDeps),
@@ -86,16 +85,15 @@ real_dep(dep(t(_, _, Token, _), _)) :-
 %%% CONVERSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 der_deps(Der, Deps) :-
-  with_output_to(user_error, der_pp(Der)),
-  der_fix(Der, FixedDer),
-  with_output_to(user_error, der_pp(FixedDer)),
-  der_coder(FixedDer, CODer),
+  %with_output_to(user_error, der_pp(Der)),
+  der_coder(Der, CODer),
   coder_bind(CODer),
+  %with_output_to(user_error, der_pp(CODer)),
   coder_number(CODer),
-  with_output_to(user_error, der_pp(CODer)),
+  %with_output_to(user_error, der_pp(CODer)),
   findall(t(Sem, CO, Token, Atts),
       ( subsumed_sub_term(t(Sem, CO, Token, Atts), CODer)
-        ,write_term(user_error, CO, [module(slashes)]),nl(user_error)
+        %,write_term(user_error, CO, [module(slashes)]),nl(user_error)
       ), Tokens0),
   find_top(TopToken, TopCO, Tokens0, Tokens),
   co_tokens_head_deps(TopCO, Tokens, [], TopToken, Head, Deps, [dep(Head, _)]).
@@ -136,6 +134,7 @@ co_tokens_head_deps(CO, Tokens0, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
      ; is_relative_pronoun_cat(Cat)
      ; is_adposition_cat(Cat)
      ; is_auxiliary_cat(Cat)
+     ; is_type_raised(Cat)
      )
   -> Head1 = ArgHead,
      Dep = dep(Head0, ArgHead)
@@ -205,6 +204,9 @@ is_auxiliary_cat(Cat) :-
   member(X, [s:F\np, s:F/np]),
   member(Y, [s:G\np, s:G/np]),
   member(F-G, [dcl-b, b-ng, dcl-ng, ng-ng, pt-ng, b-pt, dcl-pt, ng-pt, pt-pt]). % HACK dcl-X could also be modal...
+
+is_type_raised(X/(X\_)).
+is_type_raised(X\(X/_)).
 
 depnum(dep(t(_, _, _, Atts), _), From) :-
   member(from:From, Atts).

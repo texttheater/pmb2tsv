@@ -25,14 +25,14 @@ cat_co(X0\Y0, X\Y) :-
   !,
   cat_co(X0, X),
   cat_co(Y0, Y).
-% HACK: we annotate the conj category not with the *conjunct category* X (as
-% Boxer does) but with a *conjunction category*  which is usually (X\X)/X
-% (an alternative category for the conjunction that would work without the
-% special conj rule), but may also be of the form (X\X)/Y (we use this for
-% fixing certain irregular cases involving type raising). Here, we do not fill
-% in the conjunction category, but let coder_bind/1 determine it later.
-cat_co(conj:_ConjunctCategory, conj(_ConjunctionCategory)) :-
-  !.
+% We annotate the conj category not with the *conjunct category* X (as Boxer
+% does) but with the *conjunction category* (X\X)/X. This way, we can
+% distinguish between the three instantiations of X.
+cat_co(conj:Y0, conj((A\B)/C)) :-
+  !,
+  cat_co(Y0, C),
+  cat_co(Y0, B),
+  cat_co(Y0, A).
 cat_co(B, co(B, _)).
 
 %%	der_coder(+Der, -CODer)
@@ -55,72 +55,86 @@ coder_bind(fa(X, _, D1, D2)) :-
   const_cat(D1, X/Y),
   const_cat(D2, Y),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X/Y).
 coder_bind(ba(X, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, Y),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X\Y).
 coder_bind(fc(X/Z, _, D1, D2)) :-
   const_cat(D1, X/Y),
   const_cat(D2, Y/Z),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X/Y).
 coder_bind(bc(X\Z, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, Y\Z),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X\Y).
 coder_bind(fxc(X\Z, _, D1, D2)) :-
   const_cat(D1, X/Y),
   const_cat(D2, Y\Z),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X/Y).
 coder_bind(bxc(X/Z, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, Y/Z),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X\Y).
 coder_bind(gfc((X/Z)/A, _, D1, D2)) :-
   const_cat(D1, X/Y),
   const_cat(D2, (Y/Z)/A),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X/Y).
 coder_bind(gfc((X/Z)\A, _, D1, D2)) :-
   const_cat(D1, X/Y),
   const_cat(D2, (Y/Z)\A),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X/Y).
 coder_bind(gbc((X\Z)\A, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, (Y\Z)\A),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X\Y).
 coder_bind(gbc((X\Z)/A, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, (Y\Z)/A),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X\Y).
 coder_bind(gfxc((X\Z)\A, _, D1, D2)) :-
   const_cat(D1, X/Y),
   const_cat(D2, (Y\Z)\A),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X/Y).
 coder_bind(gfxc((X\Z)/A, _, D1, D2)) :-
   const_cat(D1, X/Y),
   const_cat(D2, (Y\Z)/A),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X/Y).
 coder_bind(gbxc((X/Z)/A, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, (Y/Z)/A),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X\Y).
 coder_bind(gbxc((X/Z)\A, _, D2, D1)) :-
   const_cat(D1, X\Y),
   const_cat(D2, (Y/Z)\A),
   coder_bind(D1),
-  coder_bind(D2).
+  coder_bind(D2),
+  fixtr(X\Y).
 coder_bind(ftr(X/(X\Y), _, D1)) :-
   const_cat(D1, Y),
   coder_bind(D1).
@@ -134,6 +148,35 @@ coder_bind(conj(X, _, D1, D2)) :-
   coder_bind(D2).
 coder_bind(t(_, _, _, _)).
 
+% If the primary input to composition is a modifier of a type-raised category
+% X/(X\Y) or X\(X/Y), coindexes the instances of the argument category X\Y or
+% X/Y so that we can correctly read off the dependencies later.
+fixtr((A/(B\C))/(D/(E\F))) :-
+  cat_co(X/(X\Y), A/(B\C)),
+  cat_co(X/(X\Y), D/(E\F)),
+  !,
+  B = E,
+  C = F.
+fixtr((A/(B\C))\(D/(E\F))) :-
+  cat_co(X/(X\Y), A/(B\C)),
+  cat_co(X/(X\Y), D/(E\F)),
+  !,
+  B = E,
+  C = F.
+fixtr((A\(B/C))/(D\(E/F))) :-
+  cat_co(X\(X/Y), A\(B/C)),
+  cat_co(X\(X/Y), D\(E/F)),
+  !,
+  B = E,
+  C = F.
+fixtr((A\(B/C))\(D\(E/F))) :-
+  cat_co(X\(X/Y), A\(B/C)),
+  cat_co(X\(X/Y), D\(E/F)),
+  !,
+  B = E,
+  C = F.
+fixtr(_).
+
 %%	co_number(+CO, +M, -N)
 %
 %	Replaces variable indices in category objects with integers, starting
@@ -145,7 +188,11 @@ co_number(X\Y, M, N) :-
   co_number(X, M, O),
   co_number(Y, O, N).
 co_number(conj(Y), M, N) :-
-  co_number(Y, M, N).
+  (  var(Y),
+     M = N
+  -> true
+  ;  co_number(Y, M, N)
+  ).
 co_number(co(_, I), M, N) :-
   (  var(I)
   -> I = M,
