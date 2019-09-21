@@ -211,8 +211,6 @@ is_type_raised(X\(X/_)).
 depnum(dep(t(_, _, _, Atts), _), From) :-
   member(from:From, Atts).
 
-% TODO what about copulas?
-
 %%% OUTPUT HELPERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 print_dep(Dep) :-
