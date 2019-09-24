@@ -23,7 +23,7 @@ if __name__ == '__main__':
             print('ERROR: block length mismatch. Mismatching blocks follow.', file=sys.stderr)
             print(file=sys.stderr)
             for path, block in zip(sys.argv[1:], blocks):
-                print('==> {} <=='.format(path), file=sys.stderr)
+                print('==> {} ({} lines) <=='.format(path, len(block)), file=sys.stderr)
                 for line in block:
                     print(line, file=sys.stderr)
             sys.exit(1)
