@@ -27,13 +27,18 @@ t_depdirs(t(_, _, Atts), [inv]) :-
 % noun copulas
 t_depdirs(t(_, _, Atts), [inv, noninv]) :-
   member(super:Super, Atts),
-  member(Super, [(s:_\np)/np, (s:_\np)\np]),
+  member(Super, [(s:_\np)/np, (s:_\np)\np, (s:q/np)/np]),
   member(lemma:be, Atts),
   !.
 % auxiliaries
 t_depdirs(t(_, _, Atts), [inv]) :-
   member(super:Super, Atts),
   member(Super, [(s:_\np)/(s:_\np), (s:_\np)\(s:_\np)]),
+  member(sem:Sem, Atts),
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
+  !.
+t_depdirs(t(_, _, Atts), [noninv, inv]) :-
+  member(super:(s:q/(s:_\np))/np, Atts), % HACK noun should really depend on main verb
   member(sem:Sem, Atts),
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
   !.
@@ -111,7 +116,7 @@ inv(np/n).
 inv(np/(n/pp)).
 % subordinating conjunctions
 inv(X/Y) :-
-  member(X, [s\s, s/s, (s\np)\(s\np), (s\np)/(s\np)]), % left/right sentence/VP modification
+  member(X, [s\s, s/s, (s\np)\(s\np), (s\np)/(s\np), (s/np)\(s/np), (s/np)/(s/np)]), % left/right sentence/VP/question VP modification
   member(Y, [s:dcl, s:to, s:ng\np, s:ng/np]). % type of embedded clause
 % complementizers
 inv(s:em/s:dcl).
@@ -144,3 +149,4 @@ inv((s:wq/_)/_).
 % adjective copulas
 inv((s:_\np)/(s:adj\np)).
 inv((s:_\np)\(s:adj\np)).
+inv((s:q/(s:adj\np))/np).
