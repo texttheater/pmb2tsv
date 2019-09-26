@@ -25,23 +25,23 @@ t_depdirs(t(_, _, Atts), [inv]) :-
   member(Super, [lrb, rrb, ., ,, ;]),
   !.
 % noun copulas
-t_depdirs(t(_, _, Atts), [inv, noninv]) :-
-  member(super:Super, Atts),
-  member(Super, [(s:_\np)/np, (s:_\np)\np, (s:q/np)/np]),
-  member(lemma:be, Atts),
-  !.
-% auxiliaries
-t_depdirs(t(_, _, Atts), [inv]) :-
-  member(super:Super, Atts),
-  member(Super, [(s:_\np)/(s:_\np), (s:_\np)\(s:_\np)]),
-  member(sem:Sem, Atts),
-  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
-  !.
-t_depdirs(t(_, _, Atts), [noninv, inv]) :-
-  member(super:(s:q/(s:_\np))/np, Atts), % HACK noun should really depend on main verb
-  member(sem:Sem, Atts),
-  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
-  !.
+%t_depdirs(t(_, _, Atts), [inv, noninv]) :-
+%  member(super:Super, Atts),
+%  member(Super, [(s:_\np)/np, (s:_\np)\np, (s:q/np)/np]),
+%  member(lemma:be, Atts),
+%  !.
+%% auxiliaries
+%t_depdirs(t(_, _, Atts), [inv]) :-
+%  member(super:Super, Atts),
+%  member(Super, [(s:_\np)/(s:_\np), (s:_\np)\(s:_\np)]),
+%  member(sem:Sem, Atts),
+%  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
+%  !.
+%t_depdirs(t(_, _, Atts), [noninv, inv]) :-
+%  member(super:(s:q/(s:_\np))/np, Atts), % HACK noun should really depend on main verb
+%  member(sem:Sem, Atts),
+%  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
+%  !.
 % other
 t_depdirs(t(_, _, Atts), Dirs) :-
   member(super:Super, Atts),
@@ -147,6 +147,6 @@ inv((s/s)/(s:pss\np)) :-
 inv(s:wq/_).
 inv((s:wq/_)/_).
 % adjective copulas
-inv((s:_\np)/(s:adj\np)).
-inv((s:_\np)\(s:adj\np)).
-inv((s:q/(s:adj\np))/np).
+%inv((s:_\np)/(s:adj\np)).
+%inv((s:_\np)\(s:adj\np)).
+%inv((s:q/(s:adj\np))/np).
