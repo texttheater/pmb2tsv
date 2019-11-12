@@ -16,6 +16,8 @@
     res_in/2]).
 :- use_module(dep, [
     t_depdirs/2]).
+:- use_module(dir, [
+    cac_annotate/1]).
 :- use_module(slashes).
 :- use_module(util, [
     argv/1,
@@ -24,14 +26,14 @@
     subsumed_sub_term/2,
     term_in_file/3]).
 
-  %  :- debug(snum).
+    :- debug(snum).
   %  :- debug(original_const).
   %  :- debug(const_with_toknums).
   %  :- debug(indexed_const).
   %  :- debug(bound_const).
-  %  :- debug(numbered_const).
+    :- debug(numbered_const).
   %  :- debug(cats).
-  %  :- debug(depdirs).
+    :- debug(depdirs).
 
 main :-
   argv([CacFile]),
@@ -56,8 +58,10 @@ cac2dep(N, Const0) :-
   -> debug(bound_const, 'bound: ~@', [cac_pp(Const)]),
      cac_number(Const),
      debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
-     %( N = 2285 -> gtrace ; true ),
-     cac2dep(Const)
+     %( N = 539 -> gtrace ; true ),
+     cac_annotate(Const),
+     debug(annotated_const, 'annotated: ~@', [cac_pp(Const)])
+     %cac2dep(Const)
   ;  format(user_error, 'WARNING: failed to preprocess derivation ~w, skipping~n', [N]),
      nl
   ).
@@ -90,6 +94,7 @@ find_root(RootToken, RootCat, RootDirs, Tokens0, Tokens) :-
 
 % functional category, consume argument
 cac2dep(Cat, [Dir|Dirs0], Dirs, Head0, Head, Tokens0, Tokens, [Dep|Deps0], Deps) :-
+  debug(depdirs, '~W ~w', [Cat, [module(slashes)], [Dir|Dirs0]]),
   member(Cat, [X\Y, X/Y]),
   find_arg(Y, ArgHead0, ArgCat, ArgDirs0, Tokens0, Tokens1),
   !,
@@ -98,12 +103,17 @@ cac2dep(Cat, [Dir|Dirs0], Dirs, Head0, Head, Tokens0, Tokens, [Dep|Deps0], Deps)
   % determine dependency and head, depending on dependency direction
   (  Dir = noninv
   -> Head1 = Head0,
-     Dep = dep(ArgHead, Head0)
-  ;  Head1 = ArgHead,
-     Dep = dep(Head0, ArgHead)
+     Dep = dep(ArgHead, Head0),
+     Dirs0 = Dirs1
+  ;  Dir = inv
+  -> Head1 = ArgHead,
+     Dep = dep(Head0, ArgHead),
+     Dirs0 = Dirs1
+  ;  Dir = mod
+  -> Head1 = ArgHead,
+     Dep = dep(Head0, ArgHead),
+     ArgDirs = Dirs1
   ),
-  % take unconsumed argument arguments on board
-  append(ArgDirs, Dirs0, Dirs1),
   % process remaining arguments
   cac2dep(X, Dirs1, Dirs, Head1, Head, Tokens2, Tokens, Deps1, Deps).
 % no argument to consume

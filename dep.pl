@@ -12,15 +12,15 @@
 %   which case the remaining directions are those of the unfilled arguments of
 %   the argument.
 % pseudo categories
-t_depdirs(t(((_\_)/_)\_, _, Atts), [inv, inv, inv]) :-
+t_depdirs(t(((_\_)/_)\_, _, Atts), [inv, inv, mod]) :-
   member(super:Super, Atts),
   member(Super, [conj, lrb, rrb, ., ,, ;]),
   !.
-t_depdirs(t((_\_)/_, _, Atts), [inv, inv]) :-
+t_depdirs(t((_\_)/_, _, Atts), [inv, mod]) :-
   member(super:Super, Atts),
   member(Super, [conj, lrb, rrb, ., ,, ;]),
   !.
-t_depdirs(t(_, _, Atts), [inv]) :-
+t_depdirs(t(_, _, Atts), [mod]) :-
   member(super:Super, Atts),
   member(Super, [lrb, rrb, ., ,, ;]),
   !.
@@ -55,15 +55,15 @@ cat_depdirs((X/(X\Y))/Y, [inv|Rest]) :-
   !,
   cat_depdirs(X/(X\Y), Rest).
 % type-raised categories
-cat_depdirs(X\(X/_), [inv]) :-
+cat_depdirs(X\(X/_), [mod]) :-
   !.
-cat_depdirs(X/(X\_), [inv]) :-
+cat_depdirs(X/(X\_), [mod]) :-
   !.
 % modifiers
-cat_depdirs(X\X, [inv]) :-
+cat_depdirs(X\X, [mod]) :-
   inv(X\X),
   !.
-cat_depdirs(X/X, [inv]) :-
+cat_depdirs(X/X, [mod]) :-
   inv(X/X),
   !.
 % function categories
@@ -134,7 +134,7 @@ inv((n\n)/(s:pss\np)) :-
   !.
 inv((n\n)/(s:adj\np)) :-
   !.
-inv((n\n)/(s:dcl/np)) :-
+inv((n\n)/(s:dcl\np)) :-
   !.
 % other pseudo tokens
 inv((n/n)/(s:adj\np)) :-
