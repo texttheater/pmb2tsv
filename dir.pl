@@ -25,7 +25,7 @@ cat_match(co(F:_, _, _, _), F).
 
 % conjunctions and punctuation
 cat_annotate(((A\B)/C)\D, Sem) :-
-  member(Sem, ['NIL', 'GRP', 'COO']),
+  member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
   !,
@@ -34,7 +34,7 @@ cat_annotate(((A\B)/C)\D, Sem) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 cat_annotate((A\B)\C, Sem) :-
-  member(Sem, ['NIL', 'GRP', 'COO']),
+  member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
   !,
@@ -42,7 +42,7 @@ cat_annotate((A\B)\C, Sem) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 cat_annotate((A\B)/C, Sem) :-
-  member(Sem, ['NIL', 'GRP', 'COO']),
+  member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
   !,
