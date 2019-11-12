@@ -26,14 +26,15 @@
     subsumed_sub_term/2,
     term_in_file/3]).
 
-    :- debug(snum).
-  %  :- debug(original_const).
-  %  :- debug(const_with_toknums).
-  %  :- debug(indexed_const).
-  %  :- debug(bound_const).
-    :- debug(numbered_const).
-  %  :- debug(cats).
-    :- debug(depdirs).
+:- debug(snum).
+:- debug(original_const).
+%:- debug(const_with_toknums).
+%:- debug(indexed_const).
+%:- debug(bound_const).
+%:- debug(numbered_const).
+:- debug(annotated_const).
+%:- debug(cats).
+%:- debug(depdirs).
 
 main :-
   argv([CacFile]),
