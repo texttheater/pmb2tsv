@@ -33,11 +33,12 @@
 %:- debug(const_with_toknums).
 %:- debug(indexed_const).
 %:- debug(bound_const).
-%:- debug(numbered_const).
+:- debug(numbered_const).
 :- debug(annotated_const).
 %:- debug(cats).
 %:- debug(depdirs).
 :- debug(head).
+:- debug(dep).
 
 main :-
   argv([CacFile]),
@@ -64,6 +65,7 @@ cac2dep(N, Const0) :-
      debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
      cac_annotate(Const),
      debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
+     %( N = 8478 -> gtrace ; true ),
      cac2dep(Const)
   ;  format(user_error, 'WARNING: failed to preprocess derivation ~w, skipping~n', [N]),
      nl
@@ -77,37 +79,54 @@ cac2dep(Const) :-
       ( member(Token, Tokens)
       ),
       ( debug(head, 'token ~@', [cac_pp(Token)]),
-        t_head(Token, Tokens, Head),
-        debug(head, 'head ~@', [cac_pp(Head)])
+        t2dep(Token, Tokens, Head, Deps, []),
+        debug(head, 'head ~@', [cac_pp(Head)]),
+        forall(
+            ( member(dep(D, H), Deps)
+            ),
+            ( debug(dep, '~@ <- ~@', [cac_pp(D), cac_pp(H)])
+            ) )
       ) ).
+% FIXME we get ø as head
+% FIXME we get duplicates - how to prevent that?
 
-t_head(Token, Tokens, Head) :-
+t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
-  cat_head(Cat, Tokens, Token, Head).
+  cat2dep(Cat, Tokens, Token, Head, Deps0, Deps).
 
-cat_head(X/Y, Tokens, Head0, Head) :-
+cat2dep(X/Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
+  cat_id(X, ID),
   cat_id(Y, ArgID),
+  ID \= ArgID, % break cycle with type raising
   member(Arg, Tokens),
   cac_cat(Arg, ArgCat),
   cat_id(ArgCat, ArgID),
   !,
   cat_dir(ArgCat, Dir),
   (  Dir = noninv
-  -> cat_head(X, Tokens, Head0, Head)
-  ;  t_head(Arg, Tokens, Head)
+  -> Dep = dep(Arg, Head0),
+     cat2dep(X, Tokens, Head0, Head, Deps0, Deps)
+   ; Dep = dep(Head0, Arg),
+     t2dep(Arg, Tokens, Head1, Deps0, Deps1),
+     cat2dep(X, Tokens, Head1, Head, Deps1, Deps)
   ).
-cat_head(X\Y, Tokens, Head0, Head) :-
+cat2dep(X\Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
+  cat_id(X, ID),
   cat_id(Y, ArgID),
+  ID \= ArgID, % break cycle with type raising
   member(Arg, Tokens),
   cac_cat(Arg, ArgCat),
   cat_id(ArgCat, ArgID),
   !,
   cat_dir(ArgCat, Dir),
   (  Dir = noninv
-  -> cat_head(X, Tokens, Head0, Head)
-  ;  t_head(Arg, Tokens, Head)
+  -> Dep = dep(Arg, Head0),
+     cat2dep(X, Tokens, Head0, Head, Deps0, Deps)
+  ;  Dep = dep(Head0, Arg),
+     t2dep(Arg, Tokens, Head1, Deps0, Deps1),
+     cat2dep(X, Tokens, Head1, Head, Deps1, Deps)
   ).
-cat_head(_, _, Head, Head).
+cat2dep(_, _, Head, Head, Deps, Deps).
 
 
 

@@ -59,12 +59,10 @@ cat_annotate((A\B)/C, Sem) :-
 % auxiliaries
 % TODO
 % type-raising pseudo-tokens
-cat_annotate((X\(X/Y))/Y, _) :-
+cat_annotate(X/Y, _) :-
+  trcat(X),
   !,
-  cat_dir(Y, inv). % TODO need to do anything about the rest?
-cat_annotate((X/(X\Y))/Y, _) :-
-  !,
-  cat_dir(Y, inv). % TODO need to do anything about the rest?
+  cat_dir(Y, inv).
 % type-raised categories
 cat_annotate(X\(X/Y), Sem) :-
   !,
@@ -244,6 +242,13 @@ cat_annotate(X/Y, Sem) :-
   cat_annotate(X, Sem).
 % basic categories
 cat_annotate(_, _).
+
+trcat(A/(B\_)) :-
+  cat_id(A, ID),
+  cat_id(B, ID).
+trcat(A\(B/_)) :-
+  cat_id(A, ID),
+  cat_id(B, ID).
 
 %%	cat_annotate_mod(?X, ?Y)
 %

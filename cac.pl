@@ -7,6 +7,7 @@
     cac_pp/1]).
 
 :- use_module(cat, [
+    cat_id/2,
     cat_index/2,
     cat_number/3]).
 :- use_module(slashes).
@@ -67,11 +68,19 @@ cac_index(gfxc(Cat0, D10, D20), gfxc(Cat, D1, D2)) :-
   cat_index(Cat0, Cat),
   cac_index(D10, D1),
   cac_index(D20, D2).
-% HACK: replace type raising/changing by forward application of an empty
+% replace type raising/changing by forward application of an empty
 % element, like Boxer does for type changing.
 cac_index(lx(New0, Old0, D0), fa(New, t(New/Old, ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
   cat_index(New0, New),
   cat_index(Old0, Old),
+  (  member(New0/Old0, [(X/(X\Y))/Y, (X\(X/Y))/Y])
+  -> member(New/Old, [(A/(B\C))/E, (A\(B/C))/E]),
+     cat_id(A, XID),
+     cat_id(B, XID),
+     cat_id(C, YID),
+     cat_id(E, YID)
+  ;  true
+  ),
   cac_index(D0, D).
 
 % token
