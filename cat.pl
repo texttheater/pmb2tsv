@@ -1,5 +1,7 @@
 :- module(cat, [
     arg_in/2,
+    cat_dir/2,
+    cat_id/2,
     cat_index/2,
     cat_number/1,
     cat_number/3,
@@ -71,3 +73,15 @@ res_in(X1, X2/_) :-
   res_in(X1, X2).
 res_in(X1, X2\_) :-
   res_in(X1, X2).
+
+cat_dir(X/_, Dir) :-
+  cat_dir(X, Dir).
+cat_dir(X\_, Dir) :-
+  cat_dir(X, Dir).
+cat_dir(co(_, _, _, Dir), Dir).
+
+cat_id(X/_, ID) :-
+  cat_id(X, ID).
+cat_id(X\_, ID) :-
+  cat_id(X, ID).
+cat_id(co(_, _, ID, _), ID).

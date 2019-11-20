@@ -1,6 +1,9 @@
 :- module(dir, [
     cac_annotate/1]).
 
+:- use_module(cat, [
+    cat_dir/2,
+    cat_id/2]).
 :- use_module(slashes).
 
 cac_annotate(t(Cat, _, Atts)) :-
@@ -254,12 +257,6 @@ cat_annotate_mod(A/B, C/D) :-
   cat_dir(B, Dir),
   cat_annotate_mod(A, C).
 cat_annotate_mod(co(_, _, _, _), co(_, _, _, _)).
-
-cat_dir(X/_, Dir) :-
-  cat_dir(X, Dir).
-cat_dir(X\_, Dir) :-
-  cat_dir(X, Dir).
-cat_dir(co(_, _, _, Dir), Dir).
 
 :- begin_tests(dir).
 

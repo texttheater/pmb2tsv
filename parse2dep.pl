@@ -13,6 +13,8 @@
     cac_pp/1]).
 :- use_module(cat, [
     arg_in/2,
+    cat_dir/2,
+    cat_id/2,
     res_in/2]).
 :- use_module(dep, [
     t_depdirs/2]).
@@ -35,6 +37,7 @@
 :- debug(annotated_const).
 %:- debug(cats).
 %:- debug(depdirs).
+:- debug(head).
 
 main :-
   argv([CacFile]),
@@ -59,27 +62,62 @@ cac2dep(N, Const0) :-
   -> debug(bound_const, 'bound: ~@', [cac_pp(Const)]),
      cac_number(Const),
      debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
-     %( N = 539 -> gtrace ; true ),
      cac_annotate(Const),
-     debug(annotated_const, 'annotated: ~@', [cac_pp(Const)])
-     %cac2dep(Const)
+     debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
+     cac2dep(Const)
   ;  format(user_error, 'WARNING: failed to preprocess derivation ~w, skipping~n', [N]),
      nl
   ).
 
 cac2dep(Const) :-
   findall(t(Cat, Form, Atts),
-      ( subsumed_sub_term(t(Cat, Form, Atts), Const),
-        copy_term(Cat, CopyCat),
-        numbervars(CopyCat),
-        debug(cats, '~W', [CopyCat, [module(slashes), numbervars(true)]])
-      ), Tokens0),
-  find_root(Root0, Cat, Dirs, Tokens0, Tokens),
-  cac2dep(Cat, Dirs, _, Root0, Root, Tokens, [], Deps, [dep(Root, _)]),
-  include(real_dep, Deps, RealDeps),
-  funsort(depnum, RealDeps, SortedDeps),
-  maplist(dep_pp, SortedDeps),
-  nl.
+      ( subsumed_sub_term(t(Cat, Form, Atts), Const)
+      ), Tokens),
+  forall(
+      ( member(Token, Tokens)
+      ),
+      ( debug(head, 'token ~@', [cac_pp(Token)]),
+        t_head(Token, Tokens, Head),
+        debug(head, 'head ~@', [cac_pp(Head)])
+      ) ).
+
+t_head(Token, Tokens, Head) :-
+  cac_cat(Token, Cat),
+  cat_head(Cat, Tokens, Token, Head).
+
+cat_head(X/Y, Tokens, Head0, Head) :-
+  cat_id(Y, ArgID),
+  member(Arg, Tokens),
+  cac_cat(Arg, ArgCat),
+  cat_id(ArgCat, ArgID),
+  !,
+  cat_dir(ArgCat, Dir),
+  (  Dir = noninv
+  -> cat_head(X, Tokens, Head0, Head)
+  ;  t_head(Arg, Tokens, Head)
+  ).
+cat_head(X\Y, Tokens, Head0, Head) :-
+  cat_id(Y, ArgID),
+  member(Arg, Tokens),
+  cac_cat(Arg, ArgCat),
+  cat_id(ArgCat, ArgID),
+  !,
+  cat_dir(ArgCat, Dir),
+  (  Dir = noninv
+  -> cat_head(X, Tokens, Head0, Head)
+  ;  t_head(Arg, Tokens, Head)
+  ).
+cat_head(_, _, Head, Head).
+
+
+
+
+    %  find_root(Root0, Cat, Dirs, Tokens0, Tokens),
+    %  cac2dep(Cat, Dirs, _, Root0, Root, Tokens, [], Deps, [dep(Root, _)]),
+    %  include(real_dep, Deps, RealDeps),
+    %  funsort(depnum, RealDeps, SortedDeps),
+    %  maplist(dep_pp, SortedDeps),
+    %  nl.
 
 find_root(RootToken, RootCat, RootDirs, Tokens0, Tokens) :-
   select(RootToken, Tokens0, Tokens),
