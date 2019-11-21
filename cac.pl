@@ -4,7 +4,8 @@
     cac_cat/2,
     cac_index/2,
     cac_number/1,
-    cac_pp/1]).
+    cac_pp/1,
+    cac_top/2]).
 
 :- use_module(cat, [
     cat_id/2,
@@ -209,6 +210,28 @@ cac_number(gfxc(Cat, D1, D2), M, N) :-
   cat_number(Cat, M, O),
   cac_number(D1, O, P),
   cac_number(D2, P, N).
+
+cac_top(t(Cat, Form, Atts), t(Cat, Form, Atts)).
+cac_top(ba(_, _, D2), Top) :-
+  cac_top(D2, Top).
+cac_top(fa(_, D1, _), Top) :-
+  cac_top(D1, Top).
+cac_top(bc(_, _, D2), Top) :-
+  cac_top(D2, Top).
+cac_top(fc(_, D1, _), Top) :-
+  cac_top(D1, Top).
+cac_top(bxc(_, _, D2), Top) :-
+  cac_top(D2, Top).
+cac_top(fxc(_, D1, _), Top) :-
+  cac_top(D1, Top).
+cac_top(gbc(_, _, D2), Top) :-
+  cac_top(D2, Top).
+cac_top(gfc(_, D1, _), Top) :-
+  cac_top(D1, Top).
+cac_top(gbxc(_, _, D2), Top) :-
+  cac_top(D2, Top).
+cac_top(gfxc(_, D1, _), Top) :-
+  cac_top(D1, Top).
 
 cac_pp(Const) :-
   print_indented(Const, [t(_, _, _), _/_, _\_, _:_, co(_, _, _, _)], [module(slashes)]).

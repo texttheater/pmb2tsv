@@ -10,7 +10,8 @@
     cac_index/2,
     cac_bind/1,
     cac_number/1,
-    cac_pp/1]).
+    cac_pp/1,
+    cac_top/2]).
 :- use_module(cat, [
     arg_in/2,
     cat_dir/2,
@@ -75,20 +76,14 @@ cac2dep(Const) :-
   findall(t(Cat, Form, Atts),
       ( subsumed_sub_term(t(Cat, Form, Atts), Const)
       ), Tokens),
+  cac_top(Const, Top),
+  t2dep(Top, Tokens, _, Deps, []),
   forall(
-      ( member(Token, Tokens)
+      ( member(dep(D, H), Deps)
       ),
-      ( debug(head, 'token ~@', [cac_pp(Token)]),
-        t2dep(Token, Tokens, Head, Deps, []),
-        debug(head, 'head ~@', [cac_pp(Head)]),
-        forall(
-            ( member(dep(D, H), Deps)
-            ),
-            ( debug(dep, '~@ <- ~@', [cac_pp(D), cac_pp(H)])
-            ) )
+      ( debug(dep, '~@ <- ~@', [cac_pp(D), cac_pp(H)])
       ) ).
-% FIXME we get ø as head
-% FIXME we get duplicates - how to prevent that?
+% FIXME this only extracts few dependencies.
 
 t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
