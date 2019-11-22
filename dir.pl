@@ -26,6 +26,11 @@ cat_match(co(F0:A0, _, _, _), F:A) :-
   F0:A0 = F:A.
 cat_match(co(F:_, _, _, _), F).
 
+% type-raising pseudo tokens
+cat_annotate((X/(X\Y))/Y, _) :-
+  !.
+cat_annotate((X\(X/Y))/Y, _) :-
+  !.
 % conjunctions and punctuation
 cat_annotate(((A\B)/C)\D, Sem) :-
   member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
@@ -57,19 +62,10 @@ cat_annotate((A\B)/C, Sem) :-
 % preposition copulas
 % TODO
 % auxiliaries
-% TODO
-% type-raising pseudo-tokens
 cat_annotate(X/Y, _) :-
   trcat(X),
   !,
   cat_dir(Y, inv).
-% type-raised categories
-cat_annotate(X\(X/Y), Sem) :-
-  !,
-  cat_annotate(Y, Sem).
-cat_annotate(X/(X\Y), Sem) :-
-  !,
-  cat_annotate(Y, Sem).
 % verbs with VP arguments (special case so they are not mistaken for
 % modifiers)
 cat_annotate(X/Y, Sem) :-
