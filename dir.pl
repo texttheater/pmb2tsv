@@ -62,10 +62,6 @@ cat_annotate((A\B)/C, Sem) :-
 % preposition copulas
 % TODO
 % auxiliaries
-cat_annotate(X/Y, _) :-
-  trcat(X),
-  !,
-  cat_dir(Y, inv).
 % verbs with VP arguments (special case so they are not mistaken for
 % modifiers)
 cat_annotate(X/Y, Sem) :-
@@ -238,13 +234,6 @@ cat_annotate(X/Y, Sem) :-
   cat_annotate(X, Sem).
 % basic categories
 cat_annotate(_, _).
-
-trcat(A/(B\_)) :-
-  cat_id(A, ID),
-  cat_id(B, ID).
-trcat(A\(B/_)) :-
-  cat_id(A, ID),
-  cat_id(B, ID).
 
 %%	cat_annotate_mod(?X, ?Y)
 %
