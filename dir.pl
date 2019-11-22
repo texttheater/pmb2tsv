@@ -73,7 +73,7 @@ cat_annotate(X/(X\Y), Sem) :-
 % verbs with VP arguments (special case so they are not mistaken for
 % modifiers)
 cat_annotate(X/Y, Sem) :-
-  cat_match(X/Y, (s:b\np)\(s:b\np)),
+  cat_match(X/Y, (s:b\np)/(s:b\np)),
   member(Sem, ['EXS', 'ENS', 'EPS', 'EXG', 'EXT']),
   !,
   cat_dir(Y, noninv),
