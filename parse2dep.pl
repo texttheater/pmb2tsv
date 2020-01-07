@@ -29,17 +29,17 @@
     subsumed_sub_term/2,
     term_in_file/3]).
 
-:- debug(snum).
-:- debug(original_const).
+%:- debug(snum).
+%:- debug(original_const).
 %:- debug(const_with_toknums).
 %:- debug(indexed_const).
 %:- debug(bound_const).
-:- debug(numbered_const).
-:- debug(annotated_const).
+%:- debug(numbered_const).
+%:- debug(annotated_const).
 %:- debug(cats).
 %:- debug(depdirs).
-:- debug(head).
-:- debug(dep).
+%:- debug(head).
+%:- debug(dep).
 
 main :-
   argv([CacFile]),
@@ -82,12 +82,17 @@ cac2dep(Const) :-
       ( member(dep(D, H), Deps)
       ),
       ( debug(dep, '~@ <- ~@', [cac_pp(D), cac_pp(H)])
-      ) ).
+      ) ),
+  include(real_dep, Deps, RealDeps),
+  funsort(depfrom, [dep(Top, _)|RealDeps], SortedDeps),
+  maplist(dep_pp, SortedDeps),
+  nl.
 
 t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
   cat2dep(Cat, Tokens, Token, Head, Deps0, Deps).
 
+% forward type-raising pseudo-slash
 cat2dep((X/(X\Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
@@ -95,6 +100,7 @@ cat2dep((X/(X\Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) 
   cat_id(ArgCat, ArgID),
   !,
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps).
+% backward type-raising pseudo-slash
 cat2dep((X\(X/Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
@@ -102,6 +108,7 @@ cat2dep((X\(X/Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) 
   cat_id(ArgCat, ArgID),
   !,
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps).
+% forward slash
 cat2dep(X/Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
@@ -116,6 +123,7 @@ cat2dep(X/Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
    ; Dep = dep(Head0, ArgHead),
      cat2dep(X, Tokens, ArgHead, Head, Deps1, Deps)
   ).
+% backward slash
 cat2dep(X\Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
@@ -130,12 +138,13 @@ cat2dep(X\Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ;  Dep = dep(Head0, ArgHead),
      cat2dep(X, Tokens, ArgHead, Head, Deps1, Deps)
   ).
+% no slash
 cat2dep(_, _, Head, Head, Deps, Deps).
 
 real_dep(dep(t(_, Token, _), _)) :-
   Token \= ø.
 
-depnum(dep(t(_, _, Atts), _), From) :-
+depfrom(dep(t(_, _, Atts), _), From) :-
   member(from:From, Atts).
 
 dep_pp(dep(_, t(_, _, HeadAtts))) :-
