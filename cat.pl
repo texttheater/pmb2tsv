@@ -3,6 +3,7 @@
     cat_dir/2,
     cat_id/2,
     cat_index/2,
+    cat_is_pseudo/1,
     cat_number/1,
     cat_number/3,
     res_in/2]).
@@ -85,3 +86,12 @@ cat_id(X/_, ID) :-
 cat_id(X\_, ID) :-
   cat_id(X, ID).
 cat_id(co(_, _, ID, _), ID).
+
+cat_is_pseudo((A/(B\C))/D) :-
+  A == B,
+  C == D,
+  !.
+cat_is_pseudo((A\(B/C))/D) :-
+  A == B,
+  C == D,
+  !.

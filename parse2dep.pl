@@ -16,6 +16,7 @@
     arg_in/2,
     cat_dir/2,
     cat_id/2,
+    cat_is_pseudo/1,
     res_in/2]).
 :- use_module(dep, [
     t_depdirs/2]).
@@ -92,11 +93,21 @@ t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
   cat2dep(Cat, Tokens, Token, Head, Deps0, Deps).
 
+% Find the argument corresponding to the given category Y.
+% Prefer non-pseudotokens, but return a pseudotokens if no other exists.
 find_arg(Y, Tokens, Arg, ArgCat) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
   cac_cat(Arg, ArgCat),
-  cat_id(ArgCat, ArgID).
+  cat_id(ArgCat, ArgID),
+  \+ cat_is_pseudo(ArgCat),
+  !.
+find_arg(Y, Tokens, Arg, ArgCat) :-
+  cat_id(Y, ArgID),
+  member(Arg, Tokens),
+  cac_cat(Arg, ArgCat),
+  cat_id(ArgCat, ArgID),
+  !.
 
 % forward type-raising pseudo-slash
 cat2dep((X/(X\Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
