@@ -87,7 +87,7 @@ cac_index(lx(New0, Old0, D0), fa(New, t(New/Old, ø, [lemma:ø, sem:'NIL']), D))
   cac_index(D0, D).
 
 % token
-cac_bind(t(_, _, __)).
+cac_bind(t(_, _, _)).
 % application
 cac_bind(ba(X, D2, D1)) :-
   cac_cat(D1, X\Y),
