@@ -117,7 +117,7 @@ cat2dep(X/Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   (  Dir = noninv
   -> Dep = dep(ArgHead, Head0),
      cat2dep(X, Tokens, Head0, Head, Deps1, Deps)
-   ; Dep = dep(Head0, ArgHead),
+  ;  Dep = dep(Head0, ArgHead),
      cat2dep(X, Tokens, ArgHead, Head, Deps1, Deps)
   ).
 % backward slash
