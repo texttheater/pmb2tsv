@@ -131,6 +131,10 @@ cat2dep(X/Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ;  Dep = dep(Head0, ArgHead),
      cat2dep(X, Tokens, ArgHead, Head, Deps1, Deps)
   ).
+cat2dep(X/Y, Tokens, Head0, Head, Deps0, Deps) :-
+  \+ cat_is_pseudo(X/Y),
+  !,
+  cat2dep(X, Tokens, Head0, Head, Deps0, Deps).
 % backward slash
 cat2dep(X\Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   find_arg(Y, Tokens, Arg, ArgCat),
@@ -143,6 +147,9 @@ cat2dep(X\Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ;  Dep = dep(Head0, ArgHead),
      cat2dep(X, Tokens, ArgHead, Head, Deps1, Deps)
   ).
+cat2dep(X\_, Tokens, Head0, Head, Deps0, Deps) :-
+  !,
+  cat2dep(X, Tokens, Head0, Head, Deps0, Deps).
 % no slash
 cat2dep(_, _, Head, Head, Deps, Deps).
 
