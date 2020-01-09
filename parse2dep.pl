@@ -77,7 +77,8 @@ cac2dep(Const) :-
   findall(t(Cat, Form, Atts),
       ( subsumed_sub_term(t(Cat, Form, Atts), Const)
       ), Tokens),
-  cac_top(Const, Top),
+  find_top(Const, Tokens, Top),
+  debug(top, 'top: ~w', [Top]),
   t2dep(Top, Tokens, _, Deps, []),
   forall(
       ( member(dep(D, H), Deps)
@@ -85,16 +86,56 @@ cac2dep(Const) :-
       ( debug(dep, '~@ <- ~@', [cac_pp(D), cac_pp(H)])
       ) ),
   include(real_dep, Deps, RealDeps),
-  funsort(depfrom, [dep(Top, _)|RealDeps], SortedDeps),
+  add_root_dep(RealDeps, RootedDeps),
+  funsort(depfrom, RootedDeps, SortedDeps),
   maplist(dep_pp, SortedDeps),
   nl.
+
+%%	add_dep_to_root(+Deps, +Top, -RootedDeps)
+%
+%	Above the highest node in the dependency tree Deps, add another
+%	dependency to an artificial root node, represented by an unbound
+%	variable.
+add_root_dep(Deps0, Deps) :-
+  select_highest_dep(dep(D, H), Deps0, Deps1),
+  (  cat_is_pseudo(H)
+  -> Deps = [dep(D, _)|Deps1] % drop H, attach D to root
+  ;  Deps = [dep(H, _)|Deps0] % attach H to root
+  ).
+
+select_highest_dep(dep(D, H), Deps0, Deps) :-
+  select(dep(D, H), Deps0, Deps),
+  \+ member(dep(H, _), Deps0).
+
+add_dep_to_root(Deps0, Top, [dep(Dep, _)|Deps]) :-
+  cac_cat(Top, Cat),
+  cat_is_pseudo(Cat),
+  !,
+  select(dep(Dep, Top), Deps0, Deps).
+/* case 2: use Top as root */
+add_dep_to_root(Deps, Top, [dep(Top, _)|Deps]).
+
 
 t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
   cat2dep(Cat, Tokens, Token, Head, Deps0, Deps).
 
+% Find a token whose top category does not appear as an argument.
+% Prefer real tokens, but return a pseudotoken if no other exists.
+find_top(Const, Tokens, Top) :-
+  cac_top(Const, Top0),
+  cac_cat(Top0, Cat0),
+  cat_id(Cat0, ID),
+  (  member(Top, Tokens),
+     cac_cat(Top, Cat),
+     \+ cat_is_pseudo(Cat),
+     cat_id(Cat, ID)
+  -> true
+  ;  Top = Top0
+  ).
+
 % Find the argument corresponding to the given category Y.
-% Prefer non-pseudotokens, but return a pseudotokens if no other exists.
+% Prefer real tokens, but return a pseudotoken if no other exists.
 find_arg(Y, Tokens, Arg, ArgCat) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
