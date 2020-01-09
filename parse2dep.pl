@@ -92,28 +92,25 @@ t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
   cat2dep(Cat, Tokens, Token, Head, Deps0, Deps).
 
-% forward type-raising pseudo-slash
-cat2dep((X/(X\Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
+find_arg(Y, Tokens, Arg, ArgCat) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
   cac_cat(Arg, ArgCat),
-  cat_id(ArgCat, ArgID),
+  cat_id(ArgCat, ArgID).
+
+% forward type-raising pseudo-slash
+cat2dep((X/(X\Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
+  find_arg(Y, Tokens, Arg, _),
   !,
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps).
 % backward type-raising pseudo-slash
 cat2dep((X\(X/Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
-  cat_id(Y, ArgID),
-  member(Arg, Tokens),
-  cac_cat(Arg, ArgCat),
-  cat_id(ArgCat, ArgID),
+  find_arg(Y, Tokens, Arg, _),
   !,
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps).
 % forward slash
 cat2dep(X/Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
-  cat_id(Y, ArgID),
-  member(Arg, Tokens),
-  cac_cat(Arg, ArgCat),
-  cat_id(ArgCat, ArgID),
+  find_arg(Y, Tokens, Arg, ArgCat),
   !,
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
   cat_dir(ArgCat, Dir),
@@ -125,10 +122,7 @@ cat2dep(X/Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
   ).
 % backward slash
 cat2dep(X\Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
-  cat_id(Y, ArgID),
-  member(Arg, Tokens),
-  cac_cat(Arg, ArgCat),
-  cat_id(ArgCat, ArgID),
+  find_arg(Y, Tokens, Arg, ArgCat),
   !,
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
   cat_dir(ArgCat, Dir),
