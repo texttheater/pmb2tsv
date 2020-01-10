@@ -78,11 +78,13 @@ cat_annotate(X\Y, Sem) :-
   cat_annotate(X, Sem).
 % NPs with NP arguments
 cat_annotate(X/Y, Sem) :-
+  member(Sem, ['EXG']),
   cat_match(X/Y, np/np),
   !,
   cat_dir(Y, noninv),
   cat_annotate(X, Sem).
 cat_annotate(X\Y, Sem) :-
+  member(Sem, ['EXG']),
   cat_match(X\Y, np\np),
   !,
   cat_dir(Y, noninv),
