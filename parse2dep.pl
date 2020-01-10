@@ -151,29 +151,22 @@ find_arg(Y, Tokens, Arg, ArgCat) :-
 
 % forward type-raising pseudo-slash
 cat2dep((X/(X\Y))/Y, Tokens, Head0, Head, Deps0, Deps) :-
-  arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps),
-  !.
+  !,
+  arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps).
 % backward type-raising pseudo-slash
 cat2dep((X\(X/Y))/Y, Tokens, Head0, Head, Deps0, Deps) :-
-  arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps),
-  !.
+  !,
+  arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps).
 % forward slash
 cat2dep(X/Y, Tokens, Head0, Head, Deps0, Deps) :-
   arg2dep(Y, Tokens, Head0, Head1, Deps0, Deps1),
   !,
   cat2dep(X, Tokens, Head1, Head, Deps1, Deps).
-cat2dep(X/Y, Tokens, Head0, Head, Deps0, Deps) :-
-  \+ cat_is_pseudo(X/Y),
-  !,
-  cat2dep(X, Tokens, Head0, Head, Deps0, Deps).
 % backward slash
 cat2dep(X\Y, Tokens, Head0, Head, Deps0, Deps) :-
   arg2dep(Y, Tokens, Head0, Head1, Deps0, Deps1),
   !,
   cat2dep(X, Tokens, Head1, Head, Deps1, Deps).
-cat2dep(X\_, Tokens, Head0, Head, Deps0, Deps) :-
-  !,
-  cat2dep(X, Tokens, Head0, Head, Deps0, Deps).
 % no slash
 cat2dep(_, _, Head, Head, Deps, Deps).
 
@@ -181,7 +174,6 @@ arg2dep(Y, Tokens, Head0, Head, Deps0, Deps) :-
   findall(Arg,
       ( find_arg(Y, Tokens, Arg, _)
       ), Args),
-  Args \= [],
   cat_dir(Y, Dir),
   (  Dir = noninv
   -> args2deps_noninv(Args, Tokens, Head0, Head, Deps0, Deps)
