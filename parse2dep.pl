@@ -37,6 +37,7 @@
 %:- debug(bound_const).
 %:- debug(numbered_const).
 %:- debug(annotated_const).
+%:- debug(top).
 %:- debug(cats).
 %:- debug(depdirs).
 %:- debug(head).
@@ -115,7 +116,6 @@ add_dep_to_root(Deps0, Top, [dep(Dep, _)|Deps]) :-
 /* case 2: use Top as root */
 add_dep_to_root(Deps, Top, [dep(Top, _)|Deps]).
 
-
 t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
   cat2dep(Cat, Tokens, Token, Head, Deps0, Deps).
@@ -147,52 +147,64 @@ find_arg(Y, Tokens, Arg, ArgCat) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
   cac_cat(Arg, ArgCat),
-  cat_id(ArgCat, ArgID),
-  !.
+  cat_id(ArgCat, ArgID).
 
 % forward type-raising pseudo-slash
-cat2dep((X/(X\Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
-  find_arg(Y, Tokens, Arg, _),
-  !,
-  t2dep(Arg, Tokens, ArgHead, Deps0, Deps).
+cat2dep((X/(X\Y))/Y, Tokens, Head0, Head, Deps0, Deps) :-
+  arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps),
+  !.
 % backward type-raising pseudo-slash
-cat2dep((X\(X/Y))/Y, Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
-  find_arg(Y, Tokens, Arg, _),
-  !,
-  t2dep(Arg, Tokens, ArgHead, Deps0, Deps).
+cat2dep((X\(X/Y))/Y, Tokens, Head0, Head, Deps0, Deps) :-
+  arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps),
+  !.
 % forward slash
-cat2dep(X/Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
-  find_arg(Y, Tokens, Arg, ArgCat),
+cat2dep(X/Y, Tokens, Head0, Head, Deps0, Deps) :-
+  arg2dep(Y, Tokens, Head0, Head1, Deps0, Deps1),
   !,
-  t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
-  cat_dir(ArgCat, Dir),
-  (  Dir = noninv
-  -> Dep = dep(ArgHead, Head0),
-     cat2dep(X, Tokens, Head0, Head, Deps1, Deps)
-  ;  Dep = dep(Head0, ArgHead),
-     cat2dep(X, Tokens, ArgHead, Head, Deps1, Deps)
-  ).
+  cat2dep(X, Tokens, Head1, Head, Deps1, Deps).
 cat2dep(X/Y, Tokens, Head0, Head, Deps0, Deps) :-
   \+ cat_is_pseudo(X/Y),
   !,
   cat2dep(X, Tokens, Head0, Head, Deps0, Deps).
 % backward slash
-cat2dep(X\Y, Tokens, Head0, Head, [Dep|Deps0], Deps) :-
-  find_arg(Y, Tokens, Arg, ArgCat),
+cat2dep(X\Y, Tokens, Head0, Head, Deps0, Deps) :-
+  arg2dep(Y, Tokens, Head0, Head1, Deps0, Deps1),
   !,
-  t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
-  cat_dir(ArgCat, Dir),
-  (  Dir = noninv
-  -> Dep = dep(ArgHead, Head0),
-     cat2dep(X, Tokens, Head0, Head, Deps1, Deps)
-  ;  Dep = dep(Head0, ArgHead),
-     cat2dep(X, Tokens, ArgHead, Head, Deps1, Deps)
-  ).
+  cat2dep(X, Tokens, Head1, Head, Deps1, Deps).
 cat2dep(X\_, Tokens, Head0, Head, Deps0, Deps) :-
   !,
   cat2dep(X, Tokens, Head0, Head, Deps0, Deps).
 % no slash
 cat2dep(_, _, Head, Head, Deps, Deps).
+
+arg2dep(Y, Tokens, Head0, Head, Deps0, Deps) :-
+  findall(Arg,
+      ( find_arg(Y, Tokens, Arg, _)
+      ), Args),
+  Args \= [],
+  cat_dir(Y, Dir),
+  (  Dir = noninv
+  -> args2deps_noninv(Args, Tokens, Head0, Head, Deps0, Deps)
+  ;  args2deps_inv(Args, Tokens, Head0, Head, Deps0, Deps)
+  ).
+
+% version of the above that inverts the dependency regardless of annotation
+arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps) :-
+  findall(Arg,
+      ( find_arg(Y, Tokens, Arg, _)
+      ), Args),
+  Args \= [],
+  args2deps_inv(Args, Tokens, Head0, Head, Deps0, Deps).
+
+args2deps_noninv([], _, Head, Head, Deps, Deps).
+args2deps_noninv([Arg|Args], Tokens, Head0, Head, [dep(ArgHead, Head0)|Deps0], Deps) :-
+  t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
+  args2deps_noninv(Args, Tokens, Head0, Head, Deps1, Deps).
+
+args2deps_inv([], _, Head, Head, Deps, Deps).
+args2deps_inv([Arg|Args], Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
+  t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
+  args2deps_inv(Args, Tokens, Head0, _, Deps1, Deps).
 
 real_dep(dep(t(_, Token, _), _)) :-
   Token \= ø.
