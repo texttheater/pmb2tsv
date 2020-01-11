@@ -18,8 +18,6 @@
     cat_id/2,
     cat_is_pseudo/1,
     res_in/2]).
-:- use_module(dep, [
-    t_depdirs/2]).
 :- use_module(dir, [
     cac_annotate/1,
     cac_flip/2]).
