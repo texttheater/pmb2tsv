@@ -24,9 +24,12 @@ cat_match(X0\Y0, X\Y) :-
   cat_match(X0, X),
   cat_match(Y0, Y).
 cat_match(co(F0:A0, _, _, _), F:A) :-
+  nonvar(F0),
   !,
   F0:A0 = F:A.
-cat_match(co(F:_, _, _, _), F).
+cat_match(co(F0:_, _, _, _), F) :-
+  nonvar(F0),
+  F0 = F.
 
 % type-raising pseudo tokens
 cat_annotate((X/(X\Y))/Y, _) :-
