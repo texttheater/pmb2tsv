@@ -21,7 +21,8 @@
 :- use_module(dep, [
     t_depdirs/2]).
 :- use_module(dir, [
-    cac_annotate/1]).
+    cac_annotate/1,
+    cac_flip/2]).
 :- use_module(slashes).
 :- use_module(util, [
     argv/1,
@@ -88,9 +89,24 @@ cac2dep(Const) :-
       ) ),
   include(real_dep, Deps, RealDeps),
   add_root_dep(RealDeps, RootedDeps),
-  funsort(depfrom, RootedDeps, SortedDeps),
+  flip_deps(RootedDeps, FlippedDeps),
+  funsort(depfrom, FlippedDeps, SortedDeps),
   maplist(dep_pp, SortedDeps),
   nl.
+
+flip_deps(Deps0, Deps) :-
+  select(dep(A, C), Deps0, Deps1),
+  cac_flip(A, C),
+  !,
+  select(dep(C, R), Deps1, Deps2),
+  maplist(replace_head(C, A), Deps2, Deps3),
+  Deps4 = [dep(A, R), dep(C, A)|Deps3],
+  flip_deps(Deps4, Deps).
+flip_deps(Deps, Deps).
+
+replace_head(Old, New, dep(D, Old), dep(D, New)) :-
+  !.
+replace_head(_, _, dep(D, H), dep(D, H)).
 
 %%	add_root_dep(+Deps, +Top, -RootedDeps)
 %

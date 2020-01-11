@@ -1,6 +1,9 @@
 :- module(dir, [
-    cac_annotate/1]).
+    cac_annotate/1,
+    cac_flip/2]).
 
+:- use_module(cac, [
+    cac_cat/2]).
 :- use_module(cat, [
     cat_dir/2,
     cat_id/2]).
@@ -215,8 +218,6 @@ cat_annotate(X/Y, Sem) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem).
-% adjective copulas
-% TODO
 % modifiers
 cat_annotate(X\Y, _) :-
   cat_match(X, Cat),
@@ -254,6 +255,20 @@ cat_annotate_mod(A/B, C/D) :-
   cat_dir(B, Dir),
   cat_annotate_mod(A, C).
 cat_annotate_mod(co(_, _, _, _), co(_, _, _, _)).
+
+cac_flip(D, H) :-
+  nonvar(H),
+  cac_cat(D, DCat),
+  cac_cat(H, HCat),
+  cat_flip(DCat, HCat).
+
+% adjective copulas
+cat_flip(DCat, HCat) :-
+  cat_match(DCat, s:adj\np),
+  cat_match(HCat, (s:_\np)/(s:adj\np)).
+cat_flip(DCat, HCat) :-
+  cat_match(DCat, s:adj\np),
+  cat_match(HCat, (s:q/(s:adj\np))/np).
 
 :- begin_tests(dir).
 
