@@ -97,12 +97,8 @@ cac2dep(Const) :-
 %	Above the highest node in the dependency tree Deps, add another
 %	dependency to an artificial root node, represented by an unbound
 %	variable.
-add_root_dep(Deps0, Deps) :-
-  select_highest_dep(dep(D, H), Deps0, Deps1),
-  (  cat_is_pseudo(H)
-  -> Deps = [dep(D, _)|Deps1] % drop H, attach D to root
-  ;  Deps = [dep(H, _)|Deps0] % attach H to root
-  ).
+add_root_dep(Deps, [dep(H, _)|Deps]) :-
+  select_highest_dep(dep(_, H), Deps, _).
 
 select_highest_dep(dep(D, H), Deps0, Deps) :-
   select(dep(D, H), Deps0, Deps),
