@@ -5,11 +5,13 @@
     cat_dir/2,
     cat_id/2]).
 :- use_module(slashes).
+:- use_module(util, [
+    must/1]).
 
 cac_annotate(t(Cat, _, Atts)) :-
   !,
   member(sem:Sem, Atts),
-  cat_annotate(Cat, Sem).
+  must(cat_annotate(Cat, Sem)).
 cac_annotate(Const) :-
   Const =.. [_, _, L, R],
   cac_annotate(L),
