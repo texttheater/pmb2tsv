@@ -92,7 +92,7 @@ cac2dep(Const) :-
   maplist(dep_pp, SortedDeps),
   nl.
 
-%%	add_dep_to_root(+Deps, +Top, -RootedDeps)
+%%	add_root_dep(+Deps, +Top, -RootedDeps)
 %
 %	Above the highest node in the dependency tree Deps, add another
 %	dependency to an artificial root node, represented by an unbound
@@ -107,14 +107,6 @@ add_root_dep(Deps0, Deps) :-
 select_highest_dep(dep(D, H), Deps0, Deps) :-
   select(dep(D, H), Deps0, Deps),
   \+ member(dep(H, _), Deps0).
-
-add_dep_to_root(Deps0, Top, [dep(Dep, _)|Deps]) :-
-  cac_cat(Top, Cat),
-  cat_is_pseudo(Cat),
-  !,
-  select(dep(Dep, Top), Deps0, Deps).
-/* case 2: use Top as root */
-add_dep_to_root(Deps, Top, [dep(Top, _)|Deps]).
 
 t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
@@ -135,7 +127,7 @@ find_top(Const, Tokens, Top) :-
   ).
 
 % Find the argument corresponding to the given category Y.
-% Prefer real tokens, but return a pseudotoken if no other exists.
+% Prefer real tokens, but return pseudotokens if no other exists.
 find_arg(Y, Tokens, Arg, ArgCat) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
