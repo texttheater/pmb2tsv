@@ -106,25 +106,25 @@ cat_annotate(X\Y, Sem) :-
   cat_dir(Y, inv),
   cat_annotate(X, Sem).
 cat_annotate((X\Y)/Z, Sem) :-
-  cat_annotate(X\Y, Sem),
-  cat_dir(Y, inv),
+  cat_match(X\Y, A\A),
   !,
-  cat_dir(Z, inv).
+  cat_dir(Z, inv),
+  cat_annotate(X\Y, Sem).
 cat_annotate((X/Y)/Z, Sem) :-
-  cat_annotate(X/Y, Sem),
-  cat_dir(Y, inv),
+  cat_match(X/Y, A/A),
   !,
-  cat_dir(Z, inv).
+  cat_dir(Z, inv),
+  cat_annotate(X/Y, Sem).
 cat_annotate((X\Y)\Z, Sem) :-
-  cat_annotate(X\Y, Sem),
-  cat_dir(Y, inv),
+  cat_match(X\Y, A\A),
   !,
-  cat_dir(Z, inv).
+  cat_dir(Z, inv),
+  cat_annotate(X\Y, Sem).
 cat_annotate((X/Y)\Z, Sem) :-
-  cat_annotate(X/Y, Sem),
-  cat_dir(Y, inv),
+  cat_match(X/Y, A/A),
   !,
-  cat_dir(Z, inv).
+  cat_dir(Z, inv),
+  cat_annotate(X/Y, Sem).
 % determiners
 cat_annotate(X/Y, Sem) :-
   cat_match(X/Y, np/n),
