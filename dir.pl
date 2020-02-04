@@ -231,6 +231,19 @@ cat_annotate(X/Y, _) :-
   !,
   cat_dir(Y, inv),
   cat_annotate_mod(X, Y).
+% "modifiers" of relational nouns
+cat_annotate(X/Y, Sem) :-
+  cat_match(X, n),
+  cat_match(Y, n/pp),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem).
+cat_annotate(X\Y, Sem) :-
+  cat_match(X, n),
+  cat_match(Y, n/pp),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem).
 % other function categories
 cat_annotate(X\Y, Sem) :-
   !,
