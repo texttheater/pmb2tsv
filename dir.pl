@@ -134,6 +134,18 @@ cat_annotate(X\Y, Sem, will) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, have).
+cat_annotate(X/Y, Sem, would) :-
+  cat_match(X, s:_\np),
+  cat_match(Y, s:b\np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, have).
+cat_annotate(X\Y, Sem, would) :-
+  cat_match(X, s:_\np),
+  cat_match(Y, s:b\np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, have).
 cat_annotate(X/Y, Sem, be) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:ng\np),
