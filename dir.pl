@@ -68,26 +68,30 @@ cat_annotate((A\B)/C, Sem, _) :-
   cat_annotate_mod(A, B).
 % noun copulas
 cat_annotate((A\B)/C, Sem, be) :-
-  cat_match(A\B, s:_\np),
+  cat_match(A\B, s:_\np:F),
+  F \== thr,
   cat_match(C, np),
   !,
   cat_dir(C, inv),
   cat_annotate(A\B, Sem, be).
 cat_annotate((A\B)\C, Sem, be) :-
-  cat_match(A\B, s:_\np),
+  cat_match(A\B, s:_\np:F),
+  F \== thr,
   cat_match(C, np),
   !,
   cat_dir(C, inv),
   cat_annotate(A\B, Sem, be).
 % preposition copulas
 cat_annotate((A\B)/C, Sem, be) :-
-  cat_match(A\B, s:_\np),
+  cat_match(A\B, s:_\np:F),
+  F \== thr,
   cat_match(C, pp),
   !,
   cat_dir(C, inv),
   cat_annotate(A\B, Sem, be).
 cat_annotate((A\B)\C, Sem, be) :-
-  cat_match(A\B, s:_\np),
+  cat_match(A\B, s:_\np:F),
+  F \== thr,
   cat_match(C, pp),
   !,
   cat_dir(C, inv),
