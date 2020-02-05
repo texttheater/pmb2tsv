@@ -14,7 +14,8 @@
 cac_annotate(t(Cat, _, Atts)) :-
   !,
   member(sem:Sem, Atts),
-  must(cat_annotate(Cat, Sem)).
+  member(lemma:Lemma, Atts),
+  must(cat_annotate(Cat, Sem, Lemma)).
 cac_annotate(Const) :-
   Const =.. [_, _, L, R],
   cac_annotate(L),
@@ -35,12 +36,12 @@ cat_match(co(F0:_, _, _, _), F) :-
   F0 = F.
 
 % type-raising pseudo tokens
-cat_annotate((X/(X\Y))/Y, _) :-
+cat_annotate((X/(X\Y))/Y, _, _) :-
   !.
-cat_annotate((X\(X/Y))/Y, _) :-
+cat_annotate((X\(X/Y))/Y, _, _) :-
   !.
 % conjunctions and punctuation
-cat_annotate(((A\B)/C)\D, Sem) :-
+cat_annotate(((A\B)/C)\D, Sem, _) :-
   member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
@@ -49,7 +50,7 @@ cat_annotate(((A\B)/C)\D, Sem) :-
   cat_dir(C, inv),
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
-cat_annotate((A\B)\C, Sem) :-
+cat_annotate((A\B)\C, Sem, _) :-
   member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
@@ -57,7 +58,7 @@ cat_annotate((A\B)\C, Sem) :-
   cat_dir(C, inv),
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
-cat_annotate((A\B)/C, Sem) :-
+cat_annotate((A\B)/C, Sem, _) :-
   member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
@@ -65,82 +66,94 @@ cat_annotate((A\B)/C, Sem) :-
   cat_dir(C, inv),
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
-% noun couplas
+% noun copulas
+cat_annotate((A\B)/C, Sem, be) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C, np),
+  !,
+  cat_dir(C, inv),
+  cat_annotate(A\B, Sem, be).
+cat_annotate((A\B)\C, Sem, be) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C, np),
+  !,
+  cat_dir(C, inv),
+  cat_annotate(A\B, Sem, be).
 % TODO
 % preposition copulas
 % TODO
 % auxiliaries
 % verbs with VP arguments (special case so they are not mistaken for
 % modifiers)
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   cat_match(X/Y, (s:b\np)/(s:b\np)),
   member(Sem, ['EXS', 'ENS', 'EPS', 'EXG', 'EXT']),
   !,
   cat_dir(Y, noninv),
-  cat_annotate(X, Sem).
-cat_annotate(X\Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X\Y, Sem, Lemma) :-
   cat_match(X\Y, (s:b\np)\(s:b\np)),
   member(Sem, ['EXS', 'ENS', 'EPS', 'EXG', 'EXT']),
   !,
   cat_dir(Y, noninv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % NPs with NP arguments
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   member(Sem, ['EXG']),
   cat_match(X/Y, np/np),
   !,
   cat_dir(Y, noninv),
-  cat_annotate(X, Sem).
-cat_annotate(X\Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X\Y, Sem, Lemma) :-
   member(Sem, ['EXG']),
   cat_match(X\Y, np\np),
   !,
   cat_dir(Y, noninv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % adpositions
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   cat_match(X/Y, pp/np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
-cat_annotate(X\Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X\Y, Sem, Lemma) :-
   cat_match(X\Y, pp\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
-cat_annotate((X\Y)/Z, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate((X\Y)/Z, Sem, Lemma) :-
   cat_match(X\Y, A\A),
   !,
   cat_dir(Z, inv),
-  cat_annotate(X\Y, Sem).
-cat_annotate((X/Y)/Z, Sem) :-
+  cat_annotate(X\Y, Sem, Lemma).
+cat_annotate((X/Y)/Z, Sem, Lemma) :-
   cat_match(X/Y, A/A),
   !,
   cat_dir(Z, inv),
-  cat_annotate(X/Y, Sem).
-cat_annotate((X\Y)\Z, Sem) :-
+  cat_annotate(X/Y, Sem, Lemma).
+cat_annotate((X\Y)\Z, Sem, Lemma) :-
   cat_match(X\Y, A\A),
   !,
   cat_dir(Z, inv),
-  cat_annotate(X\Y, Sem).
-cat_annotate((X/Y)\Z, Sem) :-
+  cat_annotate(X\Y, Sem, Lemma).
+cat_annotate((X/Y)\Z, Sem, Lemma) :-
   cat_match(X/Y, A/A),
   !,
   cat_dir(Z, inv),
-  cat_annotate(X/Y, Sem).
+  cat_annotate(X/Y, Sem, Lemma).
 % determiners
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   cat_match(X/Y, np/n),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
-cat_annotate(X/Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X/Y, Sem, Lemma) :-
   cat_match(X/Y, np/(n/pp)),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % subordinating conjunctions
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   % left/right sentence/VP/question VP modification
   ( cat_match(X, s\s)
   ; cat_match(X, s/s)
@@ -157,30 +170,30 @@ cat_annotate(X/Y, Sem) :-
   ),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % complementizers
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   cat_match(X/Y, s:em/s:dcl),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
-cat_annotate(X\Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X\Y, Sem, Lemma) :-
   cat_match(X\Y, s:em\s:dcl),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
-cat_annotate(X/Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X/Y, Sem, Lemma) :-
   cat_match(X/Y, (s:to\np)/(s:b\np)),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
-cat_annotate(X\Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X\Y, Sem, Lemma) :-
   cat_match(X\Y, (s:to\np)\(s:b\np)),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % relative pronouns
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   ( cat_match(X, n\n)
   ; cat_match(X, np\np)
   ),
@@ -189,9 +202,9 @@ cat_annotate(X/Y, Sem) :-
   ),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % pseudo tokens starting reduced relative clauses
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   cat_match(X, n\n),
   ( cat_match(Y, s:ng\np)
   ; cat_match(Y, s:pss\np)
@@ -200,61 +213,61 @@ cat_annotate(X/Y, Sem) :-
   ),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % other pseudo tokens
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   ( cat_match(X/Y, (n/n)/(s:adj\np))
   ; cat_match(X/Y, (s/s)/(s:to\np))
   ; cat_match(X/Y, (s/s)/(s:pss\np))
   ),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % question words
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   ( cat_match(X, s:wq)
   ; cat_match(X, s:wq/_)
   ),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % modifiers
-cat_annotate(X\Y, _) :-
+cat_annotate(X\Y, _, _) :-
   cat_match(X, Cat),
   cat_match(Y, Cat),
   !,
   cat_dir(Y, inv),
   cat_annotate_mod(X, Y).
-cat_annotate(X/Y, _) :-
+cat_annotate(X/Y, _, _) :-
   cat_match(X, Cat),
   cat_match(Y, Cat),
   !,
   cat_dir(Y, inv),
   cat_annotate_mod(X, Y).
 % "modifiers" of relational nouns
-cat_annotate(X/Y, Sem) :-
+cat_annotate(X/Y, Sem, Lemma) :-
   cat_match(X, n),
   cat_match(Y, n/pp),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
-cat_annotate(X\Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X\Y, Sem, Lemma) :-
   cat_match(X, n),
   cat_match(Y, n/pp),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % other function categories
-cat_annotate(X\Y, Sem) :-
+cat_annotate(X\Y, Sem, Lemma) :-
   !,
   cat_dir(Y, noninv),
-  cat_annotate(X, Sem).
-cat_annotate(X/Y, Sem) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X/Y, Sem, Lemma) :-
   !,
   cat_dir(Y, noninv),
-  cat_annotate(X, Sem).
+  cat_annotate(X, Sem, Lemma).
 % basic categories
-cat_annotate(_, _).
+cat_annotate(_, _, _).
 
 %%	cat_annotate_mod(?X, ?Y)
 %

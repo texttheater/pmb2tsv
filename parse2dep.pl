@@ -151,6 +151,47 @@ find_arg(Y, Tokens, Arg, ArgCat) :-
   cac_cat(Arg, ArgCat),
   cat_id(ArgCat, ArgID).
 
+% right modifier of backward type-raised category
+cat2dep((A\(B/C))\(X\(X/Y)), Tokens, Head0, Head, Deps0, Deps) :-
+  !,
+  arg2dep(X\(X/Y), Tokens, Head0, Head1, Deps0, Deps1),
+  cat_dir(C, Dir),
+  (  Dir = noninv
+  -> arg2dep_inv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+  ;  arg2dep_noninv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+  ),
+  cat2dep(A, Tokens, Head2, Head, Deps2, Deps).
+% left modifier of backward type-raised category
+cat2dep((A\(B/C))/(X\(X/Y)), Tokens, Head0, Head, Deps0, Deps) :-
+  !,
+  arg2dep(X\(X/Y), Tokens, Head0, Head1, Deps0, Deps1),
+  cat_dir(C, Dir),
+  (  Dir = noninv
+  -> arg2dep_inv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+  ;  arg2dep_noninv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+  ),
+  cat2dep(A, Tokens, Head2, Head, Deps2, Deps).
+% right modifier of forward type-raised category
+cat2dep((A/(B\C))\(X/(X\Y)), Tokens, Head0, Head, Deps0, Deps) :-
+  !,
+  arg2dep(X/(X\Y), Tokens, Head0, Head1, Deps0, Deps1),
+  cat_dir(C, Dir),
+  (  Dir = noninv
+  -> arg2dep_inv(B\C, Tokens, Head1, Head2, Deps1, Deps2)
+  ;  arg2dep_noninv(B\C, Tokens, Head1, Head2, Deps1, Deps2)
+  ),
+  cat2dep(A, Tokens, Head2, Head, Deps2, Deps).
+% left modifier of forward type-raised category
+cat2dep((A/(B\C))/(X/(X\Y)), Tokens, Head0, Head, Deps0, Deps) :-
+  !,
+  arg2dep(X/(X\Y), Tokens, Head0, Head1, Deps0, Deps1),
+  cat_dir(C, Dir),
+  (  Dir = noninv
+  -> arg2dep_inv(B\C, Tokens, Head1, Head2, Deps1, Deps2)
+  ;  arg2dep_noninv(B\C, Tokens, Head1, Head2, Deps1, Deps2)
+  ),
+  cat2dep(A, Tokens, Head2, Head, Deps2, Deps).
+% TODO
 % forward type-raising pseudo-slash
 cat2dep((X/(X\Y))/Y, Tokens, Head0, Head, Deps0, Deps) :-
   !,
@@ -189,6 +230,14 @@ arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps) :-
       ), Args),
   Args \= [],
   args2deps_inv(Args, Tokens, Head0, Head, Deps0, Deps).
+
+% version of the above that does not invert the dependency regardless of annotation
+arg2dep_noninv(Y, Tokens, Head0, Head, Deps0, Deps) :-
+  findall(Arg,
+      ( find_arg(Y, Tokens, Arg, _)
+      ), Args),
+  Args \= [],
+  args2deps_noninv(Args, Tokens, Head0, Head, Deps0, Deps).
 
 args2deps_noninv([], _, Head, Head, Deps, Deps).
 args2deps_noninv([Arg|Args], Tokens, Head0, Head, [dep(ArgHead, Head0)|Deps0], Deps) :-
