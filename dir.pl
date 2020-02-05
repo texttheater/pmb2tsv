@@ -80,7 +80,18 @@ cat_annotate((A\B)\C, Sem, be) :-
   cat_dir(C, inv),
   cat_annotate(A\B, Sem, be).
 % preposition copulas
-% TODO
+cat_annotate((A\B)/C, Sem, be) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C, pp),
+  !,
+  cat_dir(C, inv),
+  cat_annotate(A\B, Sem, be).
+cat_annotate((A\B)\C, Sem, be) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C, pp),
+  !,
+  cat_dir(C, inv),
+  cat_annotate(A\B, Sem, be).
 % auxiliaries
 cat_annotate(X/Y, Sem, have) :-
   cat_match(X, s:_\np),
