@@ -67,35 +67,35 @@ cat_annotate((A\B)/C, Sem, _) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 % noun copulas
-cat_annotate((A\B)/C, Sem, be) :-
-  cat_match(A\B, s:_\np:F),
+cat_annotate(X/Y, Sem, be) :-
+  cat_match(X, s:_\np:F),
   F \== thr,
-  cat_match(C, np),
+  cat_match(Y, np),
   !,
-  cat_dir(C, inv),
-  cat_annotate(A\B, Sem, be).
-cat_annotate((A\B)\C, Sem, be) :-
-  cat_match(A\B, s:_\np:F),
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, be).
+cat_annotate(X\Y, Sem, be) :-
+  cat_match(X, s:_\np:F),
   F \== thr,
-  cat_match(C, np),
+  cat_match(Y, np),
   !,
-  cat_dir(C, inv),
-  cat_annotate(A\B, Sem, be).
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, be).
 % preposition copulas
-cat_annotate((A\B)/C, Sem, be) :-
-  cat_match(A\B, s:_\np:F),
+cat_annotate(X/Y, Sem, be) :-
+  cat_match(X, s:_\np:F),
   F \== thr,
-  cat_match(C, pp),
+  cat_match(Y, pp),
   !,
-  cat_dir(C, inv),
-  cat_annotate(A\B, Sem, be).
-cat_annotate((A\B)\C, Sem, be) :-
-  cat_match(A\B, s:_\np:F),
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, be).
+cat_annotate(X\Y, Sem, be) :-
+  cat_match(X, s:_\np:F),
   F \== thr,
-  cat_match(C, pp),
+  cat_match(Y, pp),
   !,
-  cat_dir(C, inv),
-  cat_annotate(A\B, Sem, be).
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, be).
 % auxiliaries
 cat_annotate(X/Y, Sem, have) :-
   cat_match(X, s:_\np),
