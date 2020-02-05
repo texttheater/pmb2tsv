@@ -102,7 +102,9 @@ flip_deps(Deps0, Deps) :-
   flip_deps(Deps4, Deps).
 flip_deps(Deps, Deps).
 
-replace_head(Old, New, dep(D, Old), dep(D, New)) :-
+replace_head(Old, New, dep(D, Old0), dep(D, New)) :-
+  nonvar(Old0),
+  Old = Old0,
   !.
 replace_head(_, _, dep(D, H), dep(D, H)).
 
