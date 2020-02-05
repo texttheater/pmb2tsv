@@ -66,6 +66,19 @@ cat_annotate((A\B)/C, Sem, _) :-
   cat_dir(C, inv),
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
+% adjective copulas
+cat_annotate(X/Y, Sem, be) :-
+  cat_match(X, s:_\np),
+  cat_match(Y, s:adj\np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, be).
+cat_annotate(X\Y, Sem, be) :-
+  cat_match(X, s:_\np),
+  cat_match(Y, s:adj\np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, be).
 % noun copulas
 cat_annotate(X/Y, Sem, be) :-
   cat_match(X, s:_\np:F),
@@ -351,10 +364,6 @@ cac_flip(D, H) :-
   cat_flip(DCat, HCat).
 
 % adjective copulas
-cat_flip(DCat, HCat) :-
-  cat_match(DCat, s:adj\np),
-  cat_match(HCat, (s:F\np)/(s:adj\np)),
-  F \= adj.
 cat_flip(DCat, HCat) :-
   cat_match(DCat, s:adj\np),
   cat_match(HCat, (s:q/(s:adj\np))/np).
