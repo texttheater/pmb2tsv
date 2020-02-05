@@ -291,7 +291,8 @@ cac_flip(D, H) :-
 % adjective copulas
 cat_flip(DCat, HCat) :-
   cat_match(DCat, s:adj\np),
-  cat_match(HCat, (s:_\np)/(s:adj\np)).
+  cat_match(HCat, (s:F\np)/(s:adj\np)),
+  F \= adj.
 cat_flip(DCat, HCat) :-
   cat_match(DCat, s:adj\np),
   cat_match(HCat, (s:q/(s:adj\np))/np).
