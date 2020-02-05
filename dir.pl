@@ -357,14 +357,19 @@ cat_annotate_mod(A/B, C/D) :-
   cat_annotate_mod(A, C).
 cat_annotate_mod(co(_, _, _, _), co(_, _, _, _)).
 
-cac_flip(D, H) :-
-  nonvar(H),
-  cac_cat(D, DCat),
-  cac_cat(H, HCat),
-  cat_flip(DCat, HCat).
+cac_flip(t(DCat, _, DAtts), t(HCat, _, HAtts)) :-
+  nonvar(HCat),
+  member(sem:DSem, DAtts),
+  member(lemma:DLemma, DAtts),
+  member(sem:HSem, HAtts),
+  member(lemma:HLemma, HAtts),
+  cat_flip(DCat, DSem, DLemma, HCat, HSem, HLemma).
 
 % adjective copulas
-cat_flip(DCat, HCat) :-
+cat_flip(DCat, _, _, HCat, _, be) :-
+  cat_match(DCat, s:adj\np),
+  cat_match(HCat, (s:q/(s:adj\np))/np).
+cat_flip(DCat, _, _, HCat, _, ai) :- % HACK: "ain't"
   cat_match(DCat, s:adj\np),
   cat_match(HCat, (s:q/(s:adj\np))/np).
 
