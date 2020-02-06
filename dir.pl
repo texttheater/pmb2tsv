@@ -1,6 +1,5 @@
 :- module(dir, [
-    cac_annotate/1,
-    cac_flip/2]).
+    cac_annotate/1]).
 
 :- use_module(cac, [
     cac_cat/2]).
@@ -67,18 +66,27 @@ cat_annotate((A\B)/C, Sem, _) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 % adjective copulas
-cat_annotate(X/Y, Sem, be) :-
+cat_annotate(X/Y, Sem, Lemma) :-
+  member(Lemma, [be, ai]),
   cat_match(X, s:_\np),
   cat_match(Y, s:adj\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, be).
-cat_annotate(X\Y, Sem, be) :-
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X\Y, Sem, Lemma) :-
+  member(Lemma, [be, ai]),
   cat_match(X, s:_\np),
   cat_match(Y, s:adj\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, be).
+  cat_annotate(X, Sem, Lemma).
+cat_annotate(X/Y, Sem, Lemma) :-
+  member(Lemma, [be, ai]),
+  cat_match(X, s:q),
+  cat_match(Y, s:adj\np),
+  !,
+  cat_dir(Y, flip),
+  cat_annotate(X, Sem, Lemma).
 % noun copulas
 cat_annotate(X/Y, Sem, be) :-
   cat_match(X, s:_\np:F),
@@ -368,22 +376,6 @@ cat_annotate_mod(A/B, C/D) :-
   cat_dir(B, Dir),
   cat_annotate_mod(A, C).
 cat_annotate_mod(co(_, _, _, _), co(_, _, _, _)).
-
-cac_flip(t(DCat, _, DAtts), t(HCat, _, HAtts)) :-
-  nonvar(HCat),
-  member(sem:DSem, DAtts),
-  member(lemma:DLemma, DAtts),
-  member(sem:HSem, HAtts),
-  member(lemma:HLemma, HAtts),
-  cat_flip(DCat, DSem, DLemma, HCat, HSem, HLemma).
-
-% adjective copulas
-cat_flip(DCat, _, _, HCat, _, be) :-
-  cat_match(DCat, s:adj\np),
-  cat_match(HCat, (s:q/(s:adj\np))/np).
-cat_flip(DCat, _, _, HCat, _, ai) :- % HACK: "ain't"
-  cat_match(DCat, s:adj\np),
-  cat_match(HCat, (s:q/(s:adj\np))/np).
 
 :- begin_tests(dir).
 

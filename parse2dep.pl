@@ -19,8 +19,7 @@
     cat_is_pseudo/1,
     res_in/2]).
 :- use_module(dir, [
-    cac_annotate/1,
-    cac_flip/2]).
+    cac_annotate/1]).
 :- use_module(slashes).
 :- use_module(util, [
     argv/1,
@@ -41,6 +40,7 @@
 %:- debug(depdirs).
 %:- debug(head).
 %:- debug(dep).
+%:- debug(flip).
 
 main :-
   argv([CacFile]),
@@ -88,18 +88,23 @@ cac2dep(Const) :-
   include(real_dep, Deps, RealDeps),
   add_root_dep(RealDeps, RootedDeps),
   flip_deps(RootedDeps, FlippedDeps),
+  %RootedDeps = FlippedDeps,
   funsort(depfrom, FlippedDeps, SortedDeps),
   maplist(dep_pp, SortedDeps),
   nl.
 
 flip_deps(Deps0, Deps) :-
-  select(dep(A, C), Deps0, Deps1),
-  cac_flip(A, C),
+  select(dep(C, A), Deps0, Deps1),
+  nonvar(A),
+  cac_cat(C, CCat),
+  arg_in(Arg, CCat),
+  res_in(co(_, _, _, flip), Arg),
+  select(dep(S, H), Deps1, Deps2),
+  nonvar(H),
+  H = C,
   !,
-  select(dep(C, R), Deps1, Deps2),
-  maplist(replace_head(C, A), Deps2, Deps3),
-  Deps4 = [dep(A, R), dep(C, A)|Deps3],
-  flip_deps(Deps4, Deps).
+  debug(flip, 'moving ~w from ~w to ~w', [S, C, A]),
+  flip_deps([dep(C, A), dep(S, A)|Deps2], Deps).
 flip_deps(Deps, Deps).
 
 replace_head(Old, New, dep(D, Old0), dep(D, New)) :-
