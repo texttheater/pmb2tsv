@@ -36,9 +36,6 @@
 %:- debug(numbered_const).
 %:- debug(annotated_const).
 %:- debug(top).
-%:- debug(cats).
-%:- debug(depdirs).
-%:- debug(head).
 %:- debug(dep).
 %:- debug(flip).
 
