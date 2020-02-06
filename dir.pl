@@ -117,7 +117,7 @@ cat_annotate(X\Y, Sem, be) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, be).
-% auxiliaries
+% auxiliaries: have
 cat_annotate(X/Y, Sem, have) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:pt\np),
@@ -130,54 +130,107 @@ cat_annotate(X\Y, Sem, have) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, have).
+cat_annotate(X/Y, Sem, have) :-
+  cat_match(X, s:q),
+  cat_match(Y, s:pt\np),
+  !,
+  cat_dir(Y, flip),
+  cat_annotate(X, Sem, have).
+% auxiliaries: will
 cat_annotate(X/Y, Sem, will) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:b\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, have).
+  cat_annotate(X, Sem, will).
 cat_annotate(X\Y, Sem, will) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:b\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, have).
+  cat_annotate(X, Sem, will).
+cat_annotate(X/Y, Sem, will) :-
+  cat_match(X, s:q),
+  cat_match(Y, s:b\np),
+  !,
+  cat_dir(Y, flip),
+  cat_annotate(X, Sem, will).
+% auxiliaries: would
 cat_annotate(X/Y, Sem, would) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:b\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, have).
+  cat_annotate(X, Sem, would).
 cat_annotate(X\Y, Sem, would) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:b\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, have).
+  cat_annotate(X, Sem, would).
+cat_annotate(X/Y, Sem, would) :-
+  cat_match(X, s:q),
+  cat_match(Y, s:b\np),
+  !,
+  cat_dir(Y, flip),
+  cat_annotate(X, Sem, would).
+% auxiliaries: do
+cat_annotate(X/Y, Sem, do) :-
+  cat_match(X, s:_\np),
+  cat_match(Y, s:b\np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, do).
+cat_annotate(X\Y, Sem, do) :-
+  cat_match(X, s:_\np),
+  cat_match(Y, s:b\np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, do).
+cat_annotate(X/Y, Sem, do) :-
+  cat_match(X, s:q),
+  cat_match(Y, s:b\np),
+  !,
+  cat_dir(Y, flip),
+  cat_annotate(X, Sem, do).
+% auxiliaries: be (progressive)
 cat_annotate(X/Y, Sem, be) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:ng\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, have).
+  cat_annotate(X, Sem, be).
 cat_annotate(X\Y, Sem, be) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:ng\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, have).
+  cat_annotate(X, Sem, be).
+cat_annotate(X/Y, Sem, be) :-
+  cat_match(X, s:q),
+  cat_match(Y, s:ng\np),
+  !,
+  cat_dir(Y, flip),
+  cat_annotate(X, Sem, be).
+% auxiliaries: be (passive)
 cat_annotate(X/Y, Sem, be) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:pss\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, have).
+  cat_annotate(X, Sem, be).
 cat_annotate(X\Y, Sem, be) :-
   cat_match(X, s:_\np),
   cat_match(Y, s:pss\np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, have).
+  cat_annotate(X, Sem, be).
+cat_annotate(X/Y, Sem, be) :-
+  cat_match(X, s:q),
+  cat_match(Y, s:pss\np),
+  !,
+  cat_dir(Y, flip),
+  cat_annotate(X, Sem, be).
 % verbs with VP arguments (special case so they are not mistaken for
 % modifiers)
 cat_annotate(X/Y, Sem, Lemma) :-
