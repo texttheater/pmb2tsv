@@ -372,6 +372,17 @@ cat_annotate(X/Y, Sem, Lemma) :-
   cat_dir(Y, inv),
   cat_annotate(X, Sem, Lemma).
 % question words
+cat_annotate(X/(Y/Z), Sem, Lemma) :-
+  cat_match(X, s:wq),
+  cat_match(Y/Z, s:q/(s:adj\np)),
+  !,
+  cat_dir(Z, Dir),
+  when(nonvar(Dir), % HACK
+      (  Dir = flip
+      -> cat_dir(Y, noninv)
+      ;  cat_dir(Y, inv)
+      ) ),
+  cat_annotate(X, Sem, Lemma).
 cat_annotate(X/Y, Sem, Lemma) :-
   ( cat_match(X, s:wq)
   ; cat_match(X, s:wq/_)
