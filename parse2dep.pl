@@ -82,10 +82,13 @@ cac2dep(Const) :-
       ),
       ( debug(dep, '~@ <- ~@', [cac_pp(D), cac_pp(H)])
       ) ),
-  include(real_dep, Deps, RealDeps),
-  add_root_dep(RealDeps, RootedDeps),
-  flip_deps(RootedDeps, FlippedDeps),
-  %RootedDeps = FlippedDeps,
+  (  Deps = []
+  -> Tokens = [Token],
+     RootedDeps = [dep(Token, _)]
+  ;  add_root_dep(Deps, RootedDeps)
+  ),
+  exclude(pseudo_dep, RootedDeps, RealDeps),
+  flip_deps(RealDeps, FlippedDeps),
   funsort(depfrom, FlippedDeps, SortedDeps),
   maplist(dep_pp, SortedDeps),
   nl.
@@ -265,8 +268,7 @@ args2deps_inv([Arg|Args], Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], D
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
   args2deps_inv(Args, Tokens, Head0, _, Deps1, Deps).
 
-real_dep(dep(t(_, Token, _), _)) :-
-  Token \= ø.
+pseudo_dep(dep(t(_, ø, _), _)).
 
 depfrom(dep(t(_, _, Atts), _), From) :-
   member(from:From, Atts).
