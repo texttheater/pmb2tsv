@@ -161,8 +161,14 @@ cat2dep((A\(B/C))\(X\(X/Y)), Tokens, Head0, Head, Deps0, Deps) :-
   arg2dep(X\(X/Y), Tokens, Head0, Head1, Deps0, Deps1),
   cat_dir(C, Dir),
   (  Dir = noninv
-  -> arg2dep_inv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
-  ;  arg2dep_noninv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+  -> ( arg2dep_inv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+     ; Head1 = Head2,
+       Deps1 = Deps2
+     )
+  ;  ( arg2dep_noninv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+     ; Head1 = Head2,
+       Deps1 = Deps2
+     )
   ),
   cat2dep(A, Tokens, Head2, Head, Deps2, Deps).
 % left modifier of backward type-raised category
@@ -171,8 +177,14 @@ cat2dep((A\(B/C))/(X\(X/Y)), Tokens, Head0, Head, Deps0, Deps) :-
   arg2dep(X\(X/Y), Tokens, Head0, Head1, Deps0, Deps1),
   cat_dir(C, Dir),
   (  Dir = noninv
-  -> arg2dep_inv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
-  ;  arg2dep_noninv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+  -> ( arg2dep_inv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+     ; Head1 = Head2,
+       Deps1 = Deps2
+     )
+  ;  ( arg2dep_noninv(B/C, Tokens, Head1, Head2, Deps1, Deps2)
+     ; Head1 = Head2,
+       Deps1 = Deps2
+     )
   ),
   cat2dep(A, Tokens, Head2, Head, Deps2, Deps).
 % right modifier of forward type-raised category
