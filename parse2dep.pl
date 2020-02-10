@@ -267,7 +267,6 @@ args2deps_noninv(Role, [Arg|Args], Tokens, Head0, Head, [dep(ArgHead, Role, Head
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
   args2deps_noninv(Role, Args, Tokens, Head0, Head, Deps1, Deps).
 
-% FIXME: assigns roles to modifiers that should (only) be assigned to the modifiees
 args2deps_inv(_, [], _, Head, Head, Deps, Deps).
 args2deps_inv(Role, [Arg|Args], Tokens, Head0, ArgHead, [dep(Head0, Role, ArgHead)|Deps0], Deps) :-
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),

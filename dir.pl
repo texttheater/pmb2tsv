@@ -114,7 +114,7 @@ cat_annotate(X\Y, Sem, be, []) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, be, []).
-% preposition copulas
+% adposition copulas
 cat_annotate(X/Y, Sem, be, []) :-
   cat_match(X, s:_\np:F),
   F \== thr,
@@ -322,13 +322,13 @@ cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
   cat_match(X/Y, pp/np),
   !,
   cat_dir(Y, inv),
-  cat_role(X, Role),
+  cat_role(Y, Role),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
   cat_match(X\Y, pp\np),
   !,
   cat_dir(Y, inv),
-  cat_role(X, Role),
+  cat_role(Y, Role),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate((X\Y)/Z, Sem, Lemma, [Role|Roles]) :-
   cat_match(X\Y, A\A),
@@ -584,7 +584,6 @@ cat_annotate_mod(A/B, C/D) :-
   cat_role(D, Role),
   cat_role(B, Role),
   cat_annotate_mod(A, C).
-% FIXME: pp\pp etc. -> result does not have role annotation
 cat_annotate_mod(co(_, _, _, _, _), co(_, _, _, _, _)).
 
 handle_roles([_|Roles], Roles).
