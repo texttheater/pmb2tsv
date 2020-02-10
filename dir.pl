@@ -6,6 +6,7 @@
 :- use_module(cat, [
     cat_dir/2,
     cat_id/2,
+    cat_match/2,
     cat_role/2]).
 :- use_module(slashes).
 :- use_module(util, [
@@ -24,20 +25,6 @@ cac_annotate(Const) :-
   Const =.. [_, _, L, R],
   cac_annotate(L),
   cac_annotate(R).
-
-cat_match(X0/Y0, X/Y) :-
-  cat_match(X0, X),
-  cat_match(Y0, Y).
-cat_match(X0\Y0, X\Y) :-
-  cat_match(X0, X),
-  cat_match(Y0, Y).
-cat_match(co(F0:A0, _, _, _, _), F:A) :-
-  nonvar(F0),
-  !,
-  F0:A0 = F:A.
-cat_match(co(F0:_, _, _, _, _), F) :-
-  nonvar(F0),
-  F0 = F.
 
 % type-raising pseudo tokens
 cat_annotate((X/(X\Y))/Y, _, _, _) :-

@@ -17,6 +17,7 @@
     cat_dir/2,
     cat_id/2,
     cat_is_pseudo/1,
+    cat_match/2,
     cat_role/2,
     res_in/2]).
 :- use_module(dir, [
@@ -90,10 +91,28 @@ cac2dep(Const) :-
   ),
   exclude(pseudo_dep, RootedDeps, RealDeps),
   flip_deps(RealDeps, FlippedDeps),
-  funsort(depfrom, FlippedDeps, SortedDeps),
+  rerole_deps(FlippedDeps, ReroledDeps),
+  funsort(depfrom, ReroledDeps, SortedDeps),
   maplist(dep_pp, SortedDeps),
   nl.
 
+% reassign role labels from adpositions to their arguments
+rerole_deps(Deps0, Deps) :-
+  select(dep(P, Role, A), Deps0, Deps1),
+  nonvar(A),
+  nonvar(Role),
+  cac_cat(P, PCat),
+  ( cat_match(PCat, pp/np)
+  ; cat_match(PCat, pp\np)
+  ),
+  select(dep(A, _, H), Deps1, Deps2),
+  !,
+  rerole_deps([dep(P, _, A), dep(A, Role, H)|Deps2], Deps).
+rerole_deps(Deps, Deps).
+
+% reattach words with "flip" annotation to their grandparents
+% (e.g., reattach subjects that are currently attached to an adjective copula
+% to the adjective)
 flip_deps(Deps0, Deps) :-
   select(dep(C, CRole, A), Deps0, Deps1),
   nonvar(A),

@@ -4,6 +4,7 @@
     cat_id/2,
     cat_index/2,
     cat_is_pseudo/1,
+    cat_match/2,
     cat_number/1,
     cat_number/3,
     cat_role/2,
@@ -103,3 +104,18 @@ cat_is_pseudo((A\(B/C))/D) :-
   A == B,
   C == D,
   !.
+
+% match category objects against plain categories
+cat_match(X0/Y0, X/Y) :-
+  cat_match(X0, X),
+  cat_match(Y0, Y).
+cat_match(X0\Y0, X\Y) :-
+  cat_match(X0, X),
+  cat_match(Y0, Y).
+cat_match(co(F0:A0, _, _, _, _), F:A) :-
+  nonvar(F0),
+  !,
+  F0:A0 = F:A.
+cat_match(co(F0:_, _, _, _, _), F) :-
+  nonvar(F0),
+  F0 = F.
