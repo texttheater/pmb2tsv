@@ -39,7 +39,6 @@ cat_match(co(F0:_, _, _, _, _), F) :-
   nonvar(F0),
   F0 = F.
 
-% FIXME: pass roles through passive auxiliaries
 % type-raising pseudo tokens
 cat_annotate((X/(X\Y))/Y, _, _, _) :-
   !.
@@ -72,7 +71,7 @@ cat_annotate((A\B)/C, Sem, _, _) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 % adjective copulas
-cat_annotate((A\B)/(C\D), Sem, Lemma, Roles0) :-
+cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
   member(Lemma, [be, ai]),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:adj\np),
@@ -80,9 +79,8 @@ cat_annotate((A\B)/(C\D), Sem, Lemma, Roles0) :-
   cat_dir(C\D, inv),
   cat_role(D, Role),
   cat_role(B, Role),
-  handle_roles(Roles0, Roles),
-  cat_annotate(A\B, Sem, Lemma, Roles).
-cat_annotate((A\B)\(C\D), Sem, Lemma, Roles0) :-
+  cat_annotate(A\B, Sem, Lemma, []).
+cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
   member(Lemma, [be, ai]),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:adj\np),
@@ -90,185 +88,204 @@ cat_annotate((A\B)\(C\D), Sem, Lemma, Roles0) :-
   cat_dir(C\D, inv),
   cat_role(D, Role),
   cat_role(B, Role),
-  handle_roles(Roles0, Roles),
-  cat_annotate(A\B, Sem, Lemma, Roles).
-cat_annotate((A/(B\C))/D, Sem, Lemma, Roles0) :-
+  cat_annotate(A\B, Sem, Lemma, []).
+cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   member(Lemma, [be, ai]),
   cat_match(A, s:q),
   cat_match(B\C, s:adj\np),
   !,
   cat_dir(D, noninv),
   cat_dir(B\C, flip),
-  cat_role(B, Role),
+  cat_role(C, Role),
   cat_role(D, Role),
-  handle_roles(Roles0, Roles),
-  cat_annotate(A, Sem, Lemma, Roles).
+  cat_annotate(A, Sem, Lemma, []).
 % noun copulas
-cat_annotate(X/Y, Sem, be, Roles0) :-
+cat_annotate(X/Y, Sem, be, []) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, np),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
-cat_annotate(X\Y, Sem, be, Roles0) :-
+  cat_annotate(X, Sem, be, []).
+cat_annotate(X\Y, Sem, be, []) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, np),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
+  cat_annotate(X, Sem, be, []).
 % preposition copulas
-cat_annotate(X/Y, Sem, be, Roles0) :-
+cat_annotate(X/Y, Sem, be, []) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, pp),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
-cat_annotate(X\Y, Sem, be, Roles0) :-
+  cat_annotate(X, Sem, be, []).
+cat_annotate(X\Y, Sem, be, []) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, pp),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
+  cat_annotate(X, Sem, be, []).
 % auxiliaries: have
-cat_annotate(X/Y, Sem, have, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:pt\np),
+cat_annotate((A\B)/(C\D), Sem, have, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:pt\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, have, Roles).
-cat_annotate(X\Y, Sem, have, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:pt\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, have, []).
+cat_annotate((A\B)\(C\D), Sem, have, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:pt\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, have, Roles).
-cat_annotate(X/Y, Sem, have, Roles0) :-
-  cat_match(X, s:q),
-  cat_match(Y, s:pt\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, have, []).
+cat_annotate((A/(B\C))/D, Sem, have, []) :-
+  cat_match(A, s:q),
+  cat_match(B\C, s:pt\np),
   !,
-  cat_dir(Y, flip),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, have, Roles).
+  cat_dir(D, noninv),
+  cat_dir(B\C, flip),
+  cat_role(C, Role),
+  cat_role(D, Role),
+  cat_annotate(A, Sem, have, []).
 % auxiliaries: will
-cat_annotate(X/Y, Sem, will, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:b\np),
+cat_annotate((A\B)/(C\D), Sem, will, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:b\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, will, Roles).
-cat_annotate(X\Y, Sem, will, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:b\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, will, []).
+cat_annotate((A\B)\(C\D), Sem, will, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:b\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, will, Roles).
-cat_annotate(X/Y, Sem, will, Roles0) :-
-  cat_match(X, s:q),
-  cat_match(Y, s:b\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, will, []).
+cat_annotate((A/(B\C))/D, Sem, will, []) :-
+  cat_match(A, s:q),
+  cat_match(B\C, s:b\np),
   !,
-  cat_dir(Y, flip),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, will, Roles).
+  cat(D, noninv),
+  cat_dir(B\C, flip),
+  cat_role(C, Role),
+  cat_role(D, Role),
+  cat_annotate(A, Sem, will, []).
 % auxiliaries: would
-cat_annotate(X/Y, Sem, would, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:b\np),
+cat_annotate((A\B)/(C\D), Sem, would, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:b\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, would, Roles).
-cat_annotate(X\Y, Sem, would, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:b\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, would, []).
+cat_annotate((A\B)\(C\D), Sem, would, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:b\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, would, Roles).
-cat_annotate(X/Y, Sem, would, Roles0) :-
-  cat_match(X, s:q),
-  cat_match(Y, s:b\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, would, []).
+cat_annotate((A/(B\C))/D, Sem, would, []) :-
+  cat_match(A, s:q),
+  cat_match(B\C, s:b\np),
   !,
-  cat_dir(Y, flip),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, would, Roles).
+  cat_dir(D, noninv),
+  cat_dir(B\C, flip),
+  cat_role(C, Role),
+  cat_role(D, Role),
+  cat_annotate(A, Sem, would, []).
 % auxiliaries: do
-cat_annotate(X/Y, Sem, do, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:b\np),
+cat_annotate((A\B)/(C\D), Sem, do, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:b\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, do, Roles).
-cat_annotate(X\Y, Sem, do, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:b\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, do, []).
+cat_annotate((A\B)\(C\D), Sem, do, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:b\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, do, Roles).
-cat_annotate(X/Y, Sem, do, Roles0) :-
-  cat_match(X, s:q),
-  cat_match(Y, s:b\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, do, []).
+cat_annotate((A/(B\C))/D, Sem, do, []) :-
+  cat_match(A, s:q),
+  cat_match(B\C, s:b\np),
   !,
-  cat_dir(Y, flip),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, do, Roles).
+  cat_dir(D, noninv),
+  cat_dir(B\C, flip),
+  cat_role(C, Role),
+  cat_role(D, Role),
+  cat_annotate(A, Sem, do, []).
 % auxiliaries: be (progressive)
-cat_annotate(X/Y, Sem, be, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:ng\np),
+cat_annotate((A\B)/(C\D), Sem, be, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:ng\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
-cat_annotate(X\Y, Sem, be, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:ng\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, be, []).
+cat_annotate((A\B)\(C\D), Sem, be, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:ng\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
-cat_annotate(X/Y, Sem, be, Roles0) :-
-  cat_match(X, s:q),
-  cat_match(Y, s:ng\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, be, []).
+cat_annotate((A/(B\C))/D, Sem, be, []) :-
+  cat_match(A, s:q),
+  cat_match(B\C, s:ng\np),
   !,
-  cat_dir(Y, flip),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
+  cat_dir(D, noninv),
+  cat_dir(B\C, flip),
+  cat_role(C, Role),
+  cat_role(D, Role),
+  cat_annotate(A, Sem, be, []).
 % auxiliaries: be (passive)
-cat_annotate(X/Y, Sem, be, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:pss\np),
+% TODO "have" with s:pss\np argument? ("He had his tooth pulled")
+cat_annotate((A\B)/(C\D), Sem, be, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:pss\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
-cat_annotate(X\Y, Sem, be, Roles0) :-
-  cat_match(X, s:_\np),
-  cat_match(Y, s:pss\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, be, []).
+cat_annotate((A\B)\(C\D), Sem, be, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:pss\np),
   !,
-  cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
-cat_annotate(X/Y, Sem, be, Roles0) :-
-  cat_match(X, s:q),
-  cat_match(Y, s:pss\np),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, be, []).
+cat_annotate((A/(B\C))/D, Sem, be, []) :-
+  cat_match(A, s:q),
+  cat_match(B\C, s:pss\np),
   !,
-  cat_dir(Y, flip),
-  handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, be, Roles).
+  cat_dir(D, noninv),
+  cat_dir(B\C, flip),
+  cat_role(C, Role),
+  cat_role(D, Role),
+  cat_annotate(A, Sem, be, []).
 % verbs with VP arguments (special case so they are not mistaken for
 % modifiers)
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
