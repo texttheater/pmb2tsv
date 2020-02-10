@@ -550,10 +550,14 @@ cat_annotate(_, _, _, _).
 cat_annotate_mod(A\B, C\D) :-
   cat_dir(D, Dir),
   cat_dir(B, Dir),
+  cat_role(D, Role),
+  cat_role(B, Role),
   cat_annotate_mod(A, C).
 cat_annotate_mod(A/B, C/D) :-
   cat_dir(D, Dir),
   cat_dir(B, Dir),
+  cat_role(D, Role),
+  cat_role(B, Role),
   cat_annotate_mod(A, C).
 cat_annotate_mod(co(_, _, _, _, _), co(_, _, _, _, _)).
 
