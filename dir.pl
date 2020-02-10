@@ -39,7 +39,7 @@ cat_match(co(F0:_, _, _, _, _), F) :-
   nonvar(F0),
   F0 = F.
 
-% FIXME: pass roles through adjective copulas and passive auxiliaries
+% FIXME: pass roles through passive auxiliaries
 % type-raising pseudo tokens
 cat_annotate((X/(X\Y))/Y, _, _, _) :-
   !.
@@ -72,30 +72,37 @@ cat_annotate((A\B)/C, Sem, _, _) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 % adjective copulas
-cat_annotate(X/Y, Sem, Lemma, Roles0) :-
+cat_annotate((A\B)/(C\D), Sem, Lemma, Roles0) :-
   member(Lemma, [be, ai]),
-  cat_match(X, s:_\np),
-  cat_match(Y, s:adj\np),
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:adj\np),
   !,
-  cat_dir(Y, inv),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
   handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, Lemma, Roles).
-cat_annotate(X\Y, Sem, Lemma, Roles0) :-
+  cat_annotate(A\B, Sem, Lemma, Roles).
+cat_annotate((A\B)\(C\D), Sem, Lemma, Roles0) :-
   member(Lemma, [be, ai]),
-  cat_match(X, s:_\np),
-  cat_match(Y, s:adj\np),
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:adj\np),
   !,
-  cat_dir(Y, inv),
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
   handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, Lemma, Roles).
-cat_annotate(X/Y, Sem, Lemma, Roles0) :-
+  cat_annotate(A\B, Sem, Lemma, Roles).
+cat_annotate((A/(B\C))/D, Sem, Lemma, Roles0) :-
   member(Lemma, [be, ai]),
-  cat_match(X, s:q),
-  cat_match(Y, s:adj\np),
+  cat_match(A, s:q),
+  cat_match(B\C, s:adj\np),
   !,
-  cat_dir(Y, flip),
+  cat_dir(D, noninv),
+  cat_dir(B\C, flip),
+  cat_role(B, Role),
+  cat_role(D, Role),
   handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, Lemma, Roles).
+  cat_annotate(A, Sem, Lemma, Roles).
 % noun copulas
 cat_annotate(X/Y, Sem, be, Roles0) :-
   cat_match(X, s:_\np:F),
