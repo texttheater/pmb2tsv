@@ -5,7 +5,8 @@
     cac_cat/2]).
 :- use_module(cat, [
     cat_dir/2,
-    cat_id/2]).
+    cat_id/2,
+    cat_role/2]).
 :- use_module(slashes).
 :- use_module(util, [
     must/1]).
@@ -291,7 +292,44 @@ cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   cat_dir(Y, noninv),
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
-% adpositions
+% role-assigning adpositions
+cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
+  cat_match(X/Y, pp/np),
+  !,
+  cat_dir(Y, inv),
+  cat_role(X, Role),
+  cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
+  cat_match(X\Y, pp\np),
+  !,
+  cat_dir(Y, inv),
+  cat_role(X, Role),
+  cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate((X\Y)/Z, Sem, Lemma, [Role|Roles]) :-
+  cat_match(X\Y, A\A),
+  !,
+  cat_dir(Z, inv),
+  cat_role(Y, Role),
+  cat_annotate(X\Y, Sem, Lemma, Roles).
+cat_annotate((X/Y)/Z, Sem, Lemma, [Role|Roles]) :-
+  cat_match(X/Y, A/A),
+  !,
+  cat_dir(Z, inv),
+  cat_role(Y, Role),
+  cat_annotate(X/Y, Sem, Lemma, Roles).
+cat_annotate((X\Y)\Z, Sem, Lemma, [Role|Roles]) :-
+  cat_match(X\Y, A\A),
+  !,
+  cat_dir(Z, inv),
+  cat_role(Y, Role),
+  cat_annotate(X\Y, Sem, Lemma, Roles).
+cat_annotate((X/Y)\Z, Sem, Lemma, [Role|Roles]) :-
+  cat_match(X/Y, A/A),
+  !,
+  cat_dir(Z, inv),
+  cat_role(Y, Role),
+  cat_annotate(X/Y, Sem, Lemma, Roles).
+% non-role-assigning adpositions (TODO do we need these?)
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_match(X/Y, pp/np),
   !,
@@ -468,6 +506,29 @@ cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   !,
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles).
+% role-assigning verbs with PP argument
+cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
+  cat_match(Y, pp), % PP roles are assigned by adpositions
+  !,
+  cat_dir(Y, noninv),
+  cat_annotate(X, Sem, Lemma, [Role|Roles]).
+cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
+  cat_match(Y, pp), % PP roles are assigned by adpositions
+  !,
+  cat_dir(Y, noninv),
+  cat_role(Y, Role),
+  cat_annotate(X, Sem, Lemma, [Role|Roles]).
+% role-assigning verbs with other argument
+cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
+  !,
+  cat_dir(Y, noninv),
+  cat_role(Y, Role),
+  cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
+  !,
+  cat_dir(Y, noninv),
+  cat_role(Y, Role),
   cat_annotate(X, Sem, Lemma, Roles).
 % other function categories
 cat_annotate(X\Y, Sem, Lemma, Roles0) :-
