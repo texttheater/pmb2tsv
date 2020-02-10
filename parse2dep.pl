@@ -79,9 +79,9 @@ cac2dep(Const) :-
   debug(top, 'top: ~w', [Top]),
   t2dep(Top, Tokens, _, Deps, []),
   forall(
-      ( member(dep(D, _, H), Deps)
+      ( member(dep(D, Role, H), Deps)
       ),
-      ( debug(dep, '~@ <- ~@', [cac_pp(D), cac_pp(H)])
+      ( debug(dep, '~@ <-~w- ~@', [cac_pp(D), Role, cac_pp(H)])
       ) ),
   (  Deps = []
   -> Tokens = [Token],
