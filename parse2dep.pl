@@ -278,9 +278,13 @@ pseudo_dep(dep(t(_, ø, _), _, _)).
 depfrom(dep(t(_, _, Atts), _, _), From) :-
   member(from:From, Atts).
 
-dep_pp(dep(_, _, t(_, _, HeadAtts))) :-
+dep_pp(dep(_, Role, t(_, _, HeadAtts))) :-
   (  var(HeadAtts)
   -> HeadToknum = 0
   ;  member(toknum:HeadToknum, HeadAtts)
   ),
-  format('~w~n', [HeadToknum]).
+  (  var(Role)
+  -> RoleAtom = 'O'
+  ;  RoleAtom = Role
+  ),
+  format('~w\t~w~n', [HeadToknum, RoleAtom]).
