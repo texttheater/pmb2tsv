@@ -87,7 +87,7 @@ cat_role(X/_, Role) :-
   cat_role(X, Role).
 cat_role(X\_, Role) :-
   cat_role(X, Role).
-cat_role(co(_, _, _, Role, _), Role).
+cat_role(co(_, _, _, _, Role), Role).
 
 cat_id(X/_, ID) :-
   cat_id(X, ID).
