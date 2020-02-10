@@ -455,26 +455,25 @@ test(match1) :-
 test(dir1) :-
   cat_index(np/n, Cat),
   cat_number(Cat),
-  cat_annotate(Cat, 'DEF'),
+  cat_annotate(Cat, 'DEF', the),
   Cat = co(np:_, np, 1, _)/co(n:_, n, 2, inv).
 
 test(dir2) :-
   cat_index((s:dcl\np)/np, Cat),
   cat_number(Cat),
-  cat_annotate(Cat, 'ENS'),
+  cat_annotate(Cat, 'ENS', see),
   Cat = (co(s:dcl, _, _, _)\co(np:_, _, _, noninv))/co(np:_, _, _, noninv).
 
 test(dir2a) :-
   cat_index(s\s, Cat),
   cat_number(Cat),
-  cat_annotate(Cat, 'REL'),
+  cat_annotate(Cat, 'REL', '.'),
   Cat = co(s:_, _, _, _)\co(s:_, _, _, inv).
 
 test(dir3) :-
   cat_index((s\s)/np, Cat),
   cat_number(Cat),
-  cat_annotate(Cat, 'REL'),
-  write(Cat),nl,
+  cat_annotate(Cat, 'REL', during),
   Cat = (co(s:_, _, _, _)\co(s:_, _, _, inv))/co(np:_, _, _, inv).
 
 :- end_tests(dir).
