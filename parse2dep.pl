@@ -145,14 +145,14 @@ find_top(Const, Tokens, Top) :-
 
 % Find the argument corresponding to the given category Y.
 % Prefer real tokens, but return pseudotokens if no other exists.
-find_arg(Y, Tokens, Arg, ArgCat) :-
+find_arg(Y, Tokens, Arg) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
   cac_cat(Arg, ArgCat),
   cat_id(ArgCat, ArgID),
   \+ cat_is_pseudo(ArgCat),
   !.
-find_arg(Y, Tokens, Arg, ArgCat) :-
+find_arg(Y, Tokens, Arg) :-
   cat_id(Y, ArgID),
   member(Arg, Tokens),
   cac_cat(Arg, ArgCat),
@@ -234,7 +234,7 @@ cat2dep(_, _, Head, Head, Deps, Deps).
 
 arg2dep(Y, Tokens, Head0, Head, Deps0, Deps) :-
   findall(Arg,
-      ( find_arg(Y, Tokens, Arg, _)
+      ( find_arg(Y, Tokens, Arg)
       ), Args),
   cat_dir(Y, Dir),
   (  Dir = noninv
@@ -245,7 +245,7 @@ arg2dep(Y, Tokens, Head0, Head, Deps0, Deps) :-
 % version of the above that inverts the dependency regardless of annotation
 arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps) :-
   findall(Arg,
-      ( find_arg(Y, Tokens, Arg, _)
+      ( find_arg(Y, Tokens, Arg)
       ), Args),
   Args \= [],
   args2deps_inv(Args, Tokens, Head0, Head, Deps0, Deps).
@@ -253,7 +253,7 @@ arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps) :-
 % version of the above that does not invert the dependency regardless of annotation
 arg2dep_noninv(Y, Tokens, Head0, Head, Deps0, Deps) :-
   findall(Arg,
-      ( find_arg(Y, Tokens, Arg, _)
+      ( find_arg(Y, Tokens, Arg)
       ), Args),
   Args \= [],
   args2deps_noninv(Args, Tokens, Head0, Head, Deps0, Deps).
