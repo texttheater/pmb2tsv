@@ -78,13 +78,13 @@ cac2dep(Const) :-
   debug(top, 'top: ~w', [Top]),
   t2dep(Top, Tokens, _, Deps, []),
   forall(
-      ( member(dep(D, H), Deps)
+      ( member(dep(D, _, H), Deps)
       ),
       ( debug(dep, '~@ <- ~@', [cac_pp(D), cac_pp(H)])
       ) ),
   (  Deps = []
   -> Tokens = [Token],
-     RootedDeps = [dep(Token, _)]
+     RootedDeps = [dep(Token, _, _)]
   ;  add_root_dep(Deps, RootedDeps)
   ),
   exclude(pseudo_dep, RootedDeps, RealDeps),
@@ -94,36 +94,36 @@ cac2dep(Const) :-
   nl.
 
 flip_deps(Deps0, Deps) :-
-  select(dep(C, A), Deps0, Deps1),
+  select(dep(C, CRole, A), Deps0, Deps1),
   nonvar(A),
   cac_cat(C, CCat),
   arg_in(Arg, CCat),
   res_in(co(_, _, _, flip, _), Arg),
-  select(dep(S, H), Deps1, Deps2),
+  select(dep(S, SRole, H), Deps1, Deps2),
   nonvar(H),
   H = C,
   !,
   debug(flip, 'moving ~w from ~w to ~w', [S, C, A]),
-  flip_deps([dep(C, A), dep(S, A)|Deps2], Deps).
+  flip_deps([dep(C, CRole, A), dep(S, SRole, A)|Deps2], Deps).
 flip_deps(Deps, Deps).
 
-replace_head(Old, New, dep(D, Old0), dep(D, New)) :-
+replace_head(Old, New, dep(D, Role, Old0), dep(D, Role, New)) :-
   nonvar(Old0),
   Old = Old0,
   !.
-replace_head(_, _, dep(D, H), dep(D, H)).
+replace_head(_, _, dep(D, Role, H), dep(D, Role, H)).
 
 %%	add_root_dep(+Deps, +Top, -RootedDeps)
 %
 %	Above the highest node in the dependency tree Deps, add another
 %	dependency to an artificial root node, represented by an unbound
 %	variable.
-add_root_dep(Deps, [dep(H, _)|Deps]) :-
-  select_highest_dep(dep(_, H), Deps, _).
+add_root_dep(Deps, [dep(H, _, _)|Deps]) :-
+  select_highest_dep(dep(_, _, H), Deps, _).
 
-select_highest_dep(dep(D, H), Deps0, Deps) :-
-  select(dep(D, H), Deps0, Deps),
-  \+ member(dep(H, _), Deps0).
+select_highest_dep(dep(D, Role, H), Deps0, Deps) :-
+  select(dep(D, Role, H), Deps0, Deps),
+  \+ member(dep(H, _, _), Deps0).
 
 t2dep(Token, Tokens, Head, Deps0, Deps) :-
   cac_cat(Token, Cat),
@@ -259,21 +259,21 @@ arg2dep_noninv(Y, Tokens, Head0, Head, Deps0, Deps) :-
   args2deps_noninv(Args, Tokens, Head0, Head, Deps0, Deps).
 
 args2deps_noninv([], _, Head, Head, Deps, Deps).
-args2deps_noninv([Arg|Args], Tokens, Head0, Head, [dep(ArgHead, Head0)|Deps0], Deps) :-
+args2deps_noninv([Arg|Args], Tokens, Head0, Head, [dep(ArgHead, _, Head0)|Deps0], Deps) :-
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
   args2deps_noninv(Args, Tokens, Head0, Head, Deps1, Deps).
 
 args2deps_inv([], _, Head, Head, Deps, Deps).
-args2deps_inv([Arg|Args], Tokens, Head0, ArgHead, [dep(Head0, ArgHead)|Deps0], Deps) :-
+args2deps_inv([Arg|Args], Tokens, Head0, ArgHead, [dep(Head0, _, ArgHead)|Deps0], Deps) :-
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
   args2deps_inv(Args, Tokens, Head0, _, Deps1, Deps).
 
-pseudo_dep(dep(t(_, ø, _), _)).
+pseudo_dep(dep(t(_, ø, _), _, _)).
 
-depfrom(dep(t(_, _, Atts), _), From) :-
+depfrom(dep(t(_, _, Atts), _, _), From) :-
   member(from:From, Atts).
 
-dep_pp(dep(_, t(_, _, HeadAtts))) :-
+dep_pp(dep(_, _, t(_, _, HeadAtts))) :-
   (  var(HeadAtts)
   -> HeadToknum = 0
   ;  member(toknum:HeadToknum, HeadAtts)
