@@ -39,6 +39,7 @@ cat_match(co(F0:_, _, _, _, _), F) :-
   nonvar(F0),
   F0 = F.
 
+% FIXME: pass roles through adjective copulas and passive auxiliaries
 % type-raising pseudo tokens
 cat_annotate((X/(X\Y))/Y, _, _, _) :-
   !.
@@ -559,6 +560,7 @@ cat_annotate_mod(A/B, C/D) :-
   cat_role(D, Role),
   cat_role(B, Role),
   cat_annotate_mod(A, C).
+% FIXME: pp\pp etc. -> result does not have role annotation
 cat_annotate_mod(co(_, _, _, _, _), co(_, _, _, _, _)).
 
 handle_roles([_|Roles], Roles).

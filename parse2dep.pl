@@ -17,6 +17,7 @@
     cat_dir/2,
     cat_id/2,
     cat_is_pseudo/1,
+    cat_role/2,
     res_in/2]).
 :- use_module(dir, [
     cac_annotate/1]).
@@ -237,9 +238,10 @@ arg2dep(Y, Tokens, Head0, Head, Deps0, Deps) :-
       ( find_arg(Y, Tokens, Arg)
       ), Args),
   cat_dir(Y, Dir),
+  cat_role(Y, Role),
   (  Dir = noninv
-  -> args2deps_noninv(Args, Tokens, Head0, Head, Deps0, Deps)
-  ;  args2deps_inv(Args, Tokens, Head0, Head, Deps0, Deps)
+  -> args2deps_noninv(Role, Args, Tokens, Head0, Head, Deps0, Deps)
+  ;  args2deps_inv(Role, Args, Tokens, Head0, Head, Deps0, Deps)
   ).
 
 % version of the above that inverts the dependency regardless of annotation
@@ -248,7 +250,8 @@ arg2dep_inv(Y, Tokens, Head0, Head, Deps0, Deps) :-
       ( find_arg(Y, Tokens, Arg)
       ), Args),
   Args \= [],
-  args2deps_inv(Args, Tokens, Head0, Head, Deps0, Deps).
+  cat_role(Y, Role),
+  args2deps_inv(Role, Args, Tokens, Head0, Head, Deps0, Deps).
 
 % version of the above that does not invert the dependency regardless of annotation
 arg2dep_noninv(Y, Tokens, Head0, Head, Deps0, Deps) :-
@@ -256,17 +259,19 @@ arg2dep_noninv(Y, Tokens, Head0, Head, Deps0, Deps) :-
       ( find_arg(Y, Tokens, Arg)
       ), Args),
   Args \= [],
-  args2deps_noninv(Args, Tokens, Head0, Head, Deps0, Deps).
+  cat_role(Y, Role),
+  args2deps_noninv(Role, Args, Tokens, Head0, Head, Deps0, Deps).
 
-args2deps_noninv([], _, Head, Head, Deps, Deps).
-args2deps_noninv([Arg|Args], Tokens, Head0, Head, [dep(ArgHead, _, Head0)|Deps0], Deps) :-
+args2deps_noninv(_, [], _, Head, Head, Deps, Deps).
+args2deps_noninv(Role, [Arg|Args], Tokens, Head0, Head, [dep(ArgHead, Role, Head0)|Deps0], Deps) :-
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
-  args2deps_noninv(Args, Tokens, Head0, Head, Deps1, Deps).
+  args2deps_noninv(Role, Args, Tokens, Head0, Head, Deps1, Deps).
 
-args2deps_inv([], _, Head, Head, Deps, Deps).
-args2deps_inv([Arg|Args], Tokens, Head0, ArgHead, [dep(Head0, _, ArgHead)|Deps0], Deps) :-
+% FIXME: assigns roles to modifiers that should (only) be assigned to the modifiees
+args2deps_inv(_, [], _, Head, Head, Deps, Deps).
+args2deps_inv(Role, [Arg|Args], Tokens, Head0, ArgHead, [dep(Head0, Role, ArgHead)|Deps0], Deps) :-
   t2dep(Arg, Tokens, ArgHead, Deps0, Deps1),
-  args2deps_inv(Args, Tokens, Head0, _, Deps1, Deps).
+  args2deps_inv(Role, Args, Tokens, Head0, _, Deps1, Deps).
 
 pseudo_dep(dep(t(_, ø, _), _, _)).
 
