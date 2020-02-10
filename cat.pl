@@ -6,6 +6,7 @@
     cat_is_pseudo/1,
     cat_number/1,
     cat_number/3,
+    cat_role/2,
     res_in/2]).
 
 :- use_module(slashes).
@@ -13,10 +14,11 @@
 %%	cat_index(+Cat, -CO)
 %
 %	Replaces categories with category objects, where basic categories are
-%	of the form co(Cat:F, Cat, I, Dir), where F is the (possibly variable)
-%	feature, I is a variable index, and Dir is a variable dependency direction
-%	annotation. The special categories conj, lrb,
-%	rrb, ., ,, and ; are replaced by variables.
+%	of the form co(Cat:F, Cat, I, Dir, Role), where F is the (possibly
+%       variable) feature, I is a variable index, Dir is a variable dependency
+%       direction annotation, and Role is a variable role annotation. The
+%       special categories conj, lrb,rrb, ., ,, and ; are replaced by
+%       variables.
 cat_index(conj, (_\_)/_) :-
   !.
 cat_index(lrb, _) :-
@@ -37,9 +39,9 @@ cat_index(X0/Y0, X/Y) :-
   !,
   cat_index(X0, X),
   cat_index(Y0, Y).
-cat_index(B:F, co(B:F, B, _, _)) :- % TODO do we need the second argument of co/4?
+cat_index(B:F, co(B:F, B, _, _, _)) :- % TODO do we need the second argument of co/4?
   !.
-cat_index(B, co(B:_, B, _, _)). 
+cat_index(B, co(B:_, B, _, _, _)). 
 
 cat_number(CO) :-
   cat_number(CO, 1, _).
@@ -48,7 +50,7 @@ cat_number(CO) :-
 %
 %	Replaces variable indices in category objects with integers, starting
 %	from M.
-cat_number(co(_, _, I, _), M, N) :-
+cat_number(co(_, _, I, _, _), M, N) :-
   !,
   (  var(I)
   -> I = M,
@@ -79,13 +81,19 @@ cat_dir(X/_, Dir) :-
   cat_dir(X, Dir).
 cat_dir(X\_, Dir) :-
   cat_dir(X, Dir).
-cat_dir(co(_, _, _, Dir), Dir).
+cat_dir(co(_, _, _, Dir, _), Dir).
+
+cat_role(X/_, Role) :-
+  cat_role(X, Role).
+cat_role(X\_, Role) :-
+  cat_role(X, Role).
+cat_role(co(_, _, _, Role, _), Role).
 
 cat_id(X/_, ID) :-
   cat_id(X, ID).
 cat_id(X\_, ID) :-
   cat_id(X, ID).
-cat_id(co(_, _, ID, _), ID).
+cat_id(co(_, _, ID, _, _), ID).
 
 cat_is_pseudo((A/(B\C))/D) :-
   A == B,

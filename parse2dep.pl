@@ -98,7 +98,7 @@ flip_deps(Deps0, Deps) :-
   nonvar(A),
   cac_cat(C, CCat),
   arg_in(Arg, CCat),
-  res_in(co(_, _, _, flip), Arg),
+  res_in(co(_, _, _, flip, _), Arg),
   select(dep(S, H), Deps1, Deps2),
   nonvar(H),
   H = C,

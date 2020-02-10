@@ -26,11 +26,11 @@ cat_match(X0/Y0, X/Y) :-
 cat_match(X0\Y0, X\Y) :-
   cat_match(X0, X),
   cat_match(Y0, Y).
-cat_match(co(F0:A0, _, _, _), F:A) :-
+cat_match(co(F0:A0, _, _, _, _), F:A) :-
   nonvar(F0),
   !,
   F0:A0 = F:A.
-cat_match(co(F0:_, _, _, _), F) :-
+cat_match(co(F0:_, _, _, _, _), F) :-
   nonvar(F0),
   F0 = F.
 
@@ -439,7 +439,7 @@ cat_annotate_mod(A/B, C/D) :-
   cat_dir(D, Dir),
   cat_dir(B, Dir),
   cat_annotate_mod(A, C).
-cat_annotate_mod(co(_, _, _, _), co(_, _, _, _)).
+cat_annotate_mod(co(_, _, _, _, _), co(_, _, _, _, _)).
 
 :- begin_tests(dir).
 
@@ -456,24 +456,24 @@ test(dir1) :-
   cat_index(np/n, Cat),
   cat_number(Cat),
   cat_annotate(Cat, 'DEF', the),
-  Cat = co(np:_, np, 1, _)/co(n:_, n, 2, inv).
+  Cat = co(np:_, np, 1, _, _)/co(n:_, n, 2, inv, _).
 
 test(dir2) :-
   cat_index((s:dcl\np)/np, Cat),
   cat_number(Cat),
   cat_annotate(Cat, 'ENS', see),
-  Cat = (co(s:dcl, _, _, _)\co(np:_, _, _, noninv))/co(np:_, _, _, noninv).
+  Cat = (co(s:dcl, _, _, _, _)\co(np:_, _, _, noninv, _))/co(np:_, _, _, noninv, _).
 
 test(dir2a) :-
   cat_index(s\s, Cat),
   cat_number(Cat),
   cat_annotate(Cat, 'REL', '.'),
-  Cat = co(s:_, _, _, _)\co(s:_, _, _, inv).
+  Cat = co(s:_, _, _, _, _)\co(s:_, _, _, inv, _).
 
 test(dir3) :-
   cat_index((s\s)/np, Cat),
   cat_number(Cat),
   cat_annotate(Cat, 'REL', during),
-  Cat = (co(s:_, _, _, _)\co(s:_, _, _, inv))/co(np:_, _, _, inv).
+  Cat = (co(s:_, _, _, _, _)\co(s:_, _, _, inv, _))/co(np:_, _, _, inv, _).
 
 :- end_tests(dir).
