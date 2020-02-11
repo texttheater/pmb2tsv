@@ -1,5 +1,8 @@
-:- module(dir, [
+:- module(anno, [
     cac_annotate/1]).
+
+/** <module> Annotate categories with dependency directions and semantic roles
+*/
 
 :- use_module(cac, [
     cac_cat/2]).

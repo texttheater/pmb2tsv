@@ -20,7 +20,7 @@
     cat_match/2,
     cat_role/2,
     res_in/2]).
-:- use_module(dir, [
+:- use_module(anno, [
     cac_annotate/1]).
 :- use_module(slashes).
 :- use_module(util, [
