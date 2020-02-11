@@ -30,6 +30,8 @@ following software needs to be present on the system:
   should be on your `$PATH`.
 * [SWI-Prolog](https://www.swi-prolog.org) 7 or higher – the `swipl` executable
   should be on your `$PATH`.
+* [GNU Parallel](https://www.gnu.org/software/parallel/) – the `parallel`
+  executable should be on your `$PATH`.
 
 Conversion
 ----------
