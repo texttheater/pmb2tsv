@@ -33,4 +33,7 @@ if __name__ == '__main__':
             continue
         # Paste side-by-side:
         for lines in zip(*blocks):
-            print('\t'.join(l.rstrip() for l in lines))
+            if all(l == '' for l in lines):
+                print()
+            else:
+                print('\t'.join(l.rstrip() for l in lines))
