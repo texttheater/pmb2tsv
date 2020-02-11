@@ -166,7 +166,7 @@ cat_annotate((A/(B\C))/D, Sem, will, []) :-
   cat_match(A, s:q),
   cat_match(B\C, s:b\np),
   !,
-  cat(D, noninv),
+  cat_dir(D, noninv),
   cat_dir(B\C, flip),
   cat_role(C, Role),
   cat_role(D, Role),
