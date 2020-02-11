@@ -17,4 +17,7 @@ if __name__ == '__main__':
             continue
         token = cac.token(line)
         if token is not None:
-            print(token.tags['wordnet'])
+            if 'wordnet' in token.tags:
+                print(token.tags['wordnet'])
+            else:
+                print('O')
