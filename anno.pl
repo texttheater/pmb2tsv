@@ -119,24 +119,27 @@ cat_annotate(X\Y, Sem, be, []) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, be, []).
-% auxiliaries: have
-cat_annotate((A\B)/(C\D), Sem, have, []) :-
+% auxiliaries
+cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
   cat_match(A\B, s:_\np),
-  cat_match(C\D, s:pt\np),
+  cat_match(C\D, s:_\np),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
   cat_role(B, Role),
-  cat_annotate(A\B, Sem, have, []).
-cat_annotate((A\B)\(C\D), Sem, have, []) :-
+  cat_annotate(A\B, Sem, Lemma, []).
+cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
   cat_match(A\B, s:_\np),
-  cat_match(C\D, s:pt\np),
+  cat_match(C\D, s:_\np),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
   cat_role(B, Role),
-  cat_annotate(A\B, Sem, have, []).
-cat_annotate((A/(B\C))/D, Sem, have, []) :-
+  cat_annotate(A\B, Sem, Lemma, []).
+cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
   cat_match(A, s:q),
   cat_match(B\C, s:pt\np),
   !,
@@ -144,138 +147,38 @@ cat_annotate((A/(B\C))/D, Sem, have, []) :-
   cat_dir(B\C, flip),
   cat_role(C, Role),
   cat_role(D, Role),
-  cat_annotate(A, Sem, have, []).
-% auxiliaries: will
-cat_annotate((A\B)/(C\D), Sem, will, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:b\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, will, []).
-cat_annotate((A\B)\(C\D), Sem, will, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:b\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, will, []).
-cat_annotate((A/(B\C))/D, Sem, will, []) :-
-  cat_match(A, s:q),
-  cat_match(B\C, s:b\np),
-  !,
-  cat_dir(D, noninv),
-  cat_dir(B\C, flip),
-  cat_role(C, Role),
-  cat_role(D, Role),
-  cat_annotate(A, Sem, will, []).
-% auxiliaries: would
-cat_annotate((A\B)/(C\D), Sem, would, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:b\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, would, []).
-cat_annotate((A\B)\(C\D), Sem, would, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:b\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, would, []).
-cat_annotate((A/(B\C))/D, Sem, would, []) :-
-  cat_match(A, s:q),
-  cat_match(B\C, s:b\np),
-  !,
-  cat_dir(D, noninv),
-  cat_dir(B\C, flip),
-  cat_role(C, Role),
-  cat_role(D, Role),
-  cat_annotate(A, Sem, would, []).
-% auxiliaries: do
-cat_annotate((A\B)/(C\D), Sem, do, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:b\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, do, []).
-cat_annotate((A\B)\(C\D), Sem, do, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:b\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, do, []).
-cat_annotate((A/(B\C))/D, Sem, do, []) :-
-  cat_match(A, s:q),
-  cat_match(B\C, s:b\np),
-  !,
-  cat_dir(D, noninv),
-  cat_dir(B\C, flip),
-  cat_role(C, Role),
-  cat_role(D, Role),
-  cat_annotate(A, Sem, do, []).
-% auxiliaries: be (progressive)
-cat_annotate((A\B)/(C\D), Sem, be, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:ng\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, be, []).
-cat_annotate((A\B)\(C\D), Sem, be, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:ng\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, be, []).
-cat_annotate((A/(B\C))/D, Sem, be, []) :-
-  cat_match(A, s:q),
-  cat_match(B\C, s:ng\np),
-  !,
-  cat_dir(D, noninv),
-  cat_dir(B\C, flip),
-  cat_role(C, Role),
-  cat_role(D, Role),
-  cat_annotate(A, Sem, be, []).
-% auxiliaries: be (passive)
+  cat_annotate(A, Sem, Lemma, []).
 % TODO "have" with s:pss\np argument? ("He had his tooth pulled")
-cat_annotate((A\B)/(C\D), Sem, be, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:pss\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, be, []).
-cat_annotate((A\B)\(C\D), Sem, be, []) :-
-  cat_match(A\B, s:_\np),
-  cat_match(C\D, s:pss\np),
-  !,
-  cat_dir(C\D, inv),
-  cat_role(D, Role),
-  cat_role(B, Role),
-  cat_annotate(A\B, Sem, be, []).
-cat_annotate((A/(B\C))/D, Sem, be, []) :-
-  cat_match(A, s:q),
-  cat_match(B\C, s:pss\np),
-  !,
-  cat_dir(D, noninv),
-  cat_dir(B\C, flip),
-  cat_role(C, Role),
-  cat_role(D, Role),
-  cat_annotate(A, Sem, be, []).
+% TODO modal verbs?
+% modal verbs
+%cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
+%  member(Sem, ['NEC', 'POS']),
+%  cat_match(A\B, s:_\np),
+%  cat_match(C\D, s:b\np),
+%  !,
+%  cat_dir(C\D, noninv),
+%  cat_role(D, Role),
+%  cat_role(B, Role),
+%  cat_annotate(A\B, Sem, Lemma, []).
+%cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
+%  member(Sem, ['NEC', 'POS']),
+%  cat_match(A\B, s:_\np),
+%  cat_match(C\D, s:b\np),
+%  !,
+%  cat_dir(C\D, noninv),
+%  cat_role(D, Role),
+%  cat_role(B, Role),
+%  cat_annotate(A\B, Sem, Lemma, []).
+%cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
+%  member(Sem, ['NEC', 'POS']),
+%  cat_match(A, s:q),
+%  cat_match(B\C, s:b\np),
+%  !,
+%  cat_dir(D, noninv),
+%  cat_dir(B\C, flip),
+%  cat_role(C, Role),
+%  cat_role(D, Role),
+%  cat_annotate(A, Sem, Lemma, []).
 % verbs with VP arguments (special case so they are not mistaken for
 % modifiers)
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
