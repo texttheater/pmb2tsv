@@ -14,13 +14,15 @@
 
 %%	cat_index(+Cat, -CO)
 %
-%	Replaces categories with category objects, where basic categories are
-%	of the form co(Cat:F, Cat, I, Dir, Role), where F is the (possibly
-%       variable) feature, I is a variable index, Dir is a variable dependency
-%       direction annotation, and Role is a variable role annotation. The
-%       special categories conj, lrb,rrb, ., ,, and ; are replaced by
-%       variables.
-cat_index(conj, (_\_)/_) :-
+%	Replaces categories with category objects. The category object for
+%	=|X0/Y0|= (=|X0\Y0|=) is =|f(_, X, Y)|= (=|b(_, X, Y)|=) where X (Y) is
+%	the category object for X0 (Y0). The category object for a basic
+%	category =|A:F|= with a feature F is =|a(_, A:F, A)|=. The category
+%	for a featureless basic category A is =|a(_, A:_, A)|=. The category
+%	object for the special category =conj= is =|f(_, b(_, _, _), _)|=. The
+%	category object for the special categories =lrb=, =rrb=, =.=, =,=, and
+%	=;= is a variable.
+cat_index(conj, f(_, b(_, _, _), _)) :-
   !.
 cat_index(lrb, _) :-
   !.
@@ -32,17 +34,17 @@ cat_index(,, _) :-
   !.
 cat_index(;, _) :-
   !.
-cat_index(X0\Y0, X\Y) :-
+cat_index(X0\Y0, b(_, X, Y)) :-
   !,
   cat_index(X0, X),
   cat_index(Y0, Y).
-cat_index(X0/Y0, X/Y) :-
+cat_index(X0/Y0, f(_, X, Y)) :-
   !,
   cat_index(X0, X),
   cat_index(Y0, Y).
-cat_index(B:F, co(B:F, B, _, _, _)) :- % TODO do we need the second argument of co/4?
+cat_index(B:F, a(_, B:F, B)) :-
   !.
-cat_index(B, co(B:_, B, _, _, _)). 
+cat_index(B, a(_, B:_, B)). 
 
 cat_number(CO) :-
   cat_number(CO, 1, _).

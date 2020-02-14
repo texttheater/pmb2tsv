@@ -236,7 +236,7 @@ cac_top(gfxc(_, D1, _), Top) :-
   cac_top(D1, Top).
 
 cac_pp(Const) :-
-  print_indented(Const, [t(_, _, _), _/_, _\_, _:_, co(_, _, _, _, _)], [module(slashes)]).
+  print_indented(Const, [t(_, _, _), _/_, _\_, _:_, f(_, _, _), b(_, _, _), a(_, _, _)], [module(slashes)]).
 
 cac_add_toknums(Der0, Der) :-
   cac_add_toknums(Der0, Der, 1, _).
