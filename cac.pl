@@ -68,22 +68,22 @@ cac_index(gfxc(Cat0, D10, D20), gfxc(Cat, D1, D2)) :-
   cat_index(Cat0, Cat),
   cac_index(D10, D1),
   cac_index(D20, D2).
-% replace type raising/changing by forward application of an empty
-% element, like Boxer does for type changing.
-cac_index(lx(X0/(X0\Y0), Y0, D0), fa(X/(X\Y), t(f(_, X, b(_, X, Y)), ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
+cac_index(lx(X0/(X0\Y0), Y0, D0), lx(f(_, X, b(_, X, Y)), Y, D)) :-
   !,
   cat_index(X0, X),
   cat_index(Y0, Y),
   cac_index(D0, D).
-cac_index(lx(X0\(X0/Y0), Y0, D0), fa(X\(X/Y), t(b(_, X, f(_, X, Y)), ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
+cac_index(lx(X0\(X0/Y0), Y0, D0), lx(b(_, X, f(_, X, Y)), Y, D)) :-
   !,
   cat_index(X0, X),
   cat_index(Y0, Y),
   cac_index(D0, D).
-cac_index(lx(New0, Old0, D0), fa(New, t(f(_, New, Old), ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
+cac_index(lx(New0, _, D0), lx(New, Old, D)) :-
   cat_index(New0, New),
-  cat_index(Old0, Old),
-  cac_index(D0, D).
+  arg(1, New, ID),
+  cac_index(D0, D),
+  arg(1, D, Old),
+  arg(1, Old, ID).
 
 % token
 cac_bind(t(_, _, _)).
@@ -162,6 +162,9 @@ cac_bind(gfxc(f(_, b(_, X, Z), A), D1, D2)) :-
   cac_cat(D2, f(_, b(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
+% unary rules
+cac_bind(lx(_, _, D)) :-
+  cac_bind(D).
 
 cac_cat(Const, Cat) :-
   arg(1, Const, Cat).

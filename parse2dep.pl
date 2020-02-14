@@ -59,9 +59,9 @@ cac2dep(N, Const0) :-
   cac_index(Const1, Const),
   debug(indexed_const, 'indexed: ~@', [cac_pp(Const)]),
 (  cac_bind(Const)
-  -> debug(bound_const, 'bound: ~@', [cac_pp(Const)]),
-     cac_number(Const),
-     debug(numbered_const, 'numbered: ~@', [cac_pp(Const)])
+  -> debug(bound_const, 'bound: ~@', [cac_pp(Const)])
+%     cac_number(Const),
+%     debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
 %     cac_annotate(Const),
 %     debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
 %     %( N = 1 -> gtrace ; true ),
@@ -71,12 +71,13 @@ cac2dep(N, Const0) :-
   ).
 
 cac2dep(Const) :-
-  findall(t(Cat, Form, Atts),
-      ( subsumed_sub_term(t(Cat, Form, Atts), Const)
-      ), Tokens),
-  find_top(Const, Tokens, Top),
-  debug(top, 'top: ~w', [Top]),
-  t2dep(Top, Tokens, _, Deps, []),
+%  findall(t(Cat, Form, Atts),
+%      ( subsumed_sub_term(t(Cat, Form, Atts), Const)
+%      ), Tokens),
+%  find_top(Const, Tokens, Top),
+%  debug(top, 'top: ~w', [Top]),
+%  t2dep(Top, Tokens, _, Deps, []),
+  cac_deps(Const, Deps, []),
   forall(
       ( member(dep(D, Role, H), Deps)
       ),
@@ -93,6 +94,70 @@ cac2dep(Const) :-
   funsort(depfrom, ReroledDeps, SortedDeps),
   maplist(dep_pp, SortedDeps),
   nl.
+
+cac_deps(t(Cat, _, Atts), Deps0, Deps) :-
+  !,
+  % make sure there's at least a skeletal category object for punctuation etc.
+  (  var(Cat) 
+  -> Cat = a(_, _, _)
+  ;  true
+  ),
+  % assign token number to lexical category
+  (  member(toknum:Num, Atts)
+  -> arg(1, Cat, Num)
+  ;  true
+  ),
+  % look up attributes needed for dependency extraction
+  member(sem:Sem, Atts),
+  member(lemma:Lemma, Atts),
+  % extract dependencies
+  cat_deps(Cat, Sem, Lemma, Deps0, Deps).
+cac_deps(Const, Deps0, Deps) :-
+  % recursively extract dependencies from daughters
+  arg(2, Const, D1),
+  arg(3, Const, D2),
+  cac_deps(D1, Deps0, Deps1),
+  cac_deps(D2, Deps1, Deps).
+
+cat_deps(b(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
+  !,
+  cat_id(Arg, ArgID),
+  (  flip(Fun, Sem, Lemma)
+  -> cat_id(Res, FunID),
+     cat_id(Arg, ArgID),
+     D = ArgID,
+     cat_arg(Res, Arg2),
+     cat_id(Arg2, Arg2ID),
+     H = Arg2ID
+  ;  inv(Fun, Sem, Lemma)
+  -> cat_id(Res, ArgID),
+     D = FunID,
+     H = ArgID
+  ;  cat_id(Res, FunID),
+     D = ArgID,
+     H = FunID
+  ),
+  cat_deps(Res, Sem, Lemma, Deps0, Deps).
+cat_deps(f(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
+  !,
+  cat_id(Arg, ArgID),
+  (  flip(Fun, Sem, Lemma)
+  -> cat_id(Res, FunID),
+     cat_id(Arg, ArgID),
+     D = ArgID,
+     cat_arg(Res, Arg2),
+     cat_id(Arg2, Arg2ID),
+     H = Arg2ID
+  ;  inv(Fun, Sem, Lemma)
+  -> cat_id(Res, ArgID),
+     D = FunID,
+     H = ArgID
+  ;  cat_id(Res, FunID),
+     D = ArgID,
+     H = FunID
+  ),
+  cat_deps(Res, Sem, Lemma, Deps0, Deps).
+cat_deps(_, _, _, Deps, Deps).
 
 % reassign role labels from adpositions to their arguments
 rerole_deps(Deps0, Deps) :-
