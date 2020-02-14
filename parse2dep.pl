@@ -34,7 +34,7 @@
 %:- debug(original_const).
 %:- debug(const_with_toknums).
 :- debug(indexed_const).
-%:- debug(bound_const).
+:- debug(bound_const).
 %:- debug(numbered_const).
 %:- debug(annotated_const).
 %:- debug(top).
@@ -59,18 +59,18 @@ cac2dep(N, Const0) :-
   cac_add_toknums(Const0, Const1),
   debug(const_with_toknums, 'with toknums: ~@', [cac_pp(Const1)]),
   cac_index(Const1, Const),
-  debug(indexed_const, 'indexed: ~@', [cac_pp(Const)]).
-%(  cac_bind(Const)
-%  -> debug(bound_const, 'bound: ~@', [cac_pp(Const)]),
+  debug(indexed_const, 'indexed: ~@', [cac_pp(Const)]),
+(  cac_bind(Const)
+  -> debug(bound_const, 'bound: ~@', [cac_pp(Const)])%,
 %     cac_number(Const),
 %     debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
 %     cac_annotate(Const),
 %     debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
 %     %( N = 1 -> gtrace ; true ),
 %     cac2dep(Const)
-%  ;  format(user_error, 'WARNING: failed to preprocess derivation ~w, skipping~n', [N]),
-%     nl
-%  ).
+  ;  format(user_error, 'WARNING: failed to preprocess derivation ~w, skipping~n', [N]),
+     nl
+  ).
 
 cac2dep(Const) :-
   findall(t(Cat, Form, Atts),

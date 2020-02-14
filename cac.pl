@@ -71,17 +71,17 @@ cac_index(gfxc(Cat0, D10, D20), gfxc(Cat, D1, D2)) :-
   cac_index(D20, D2).
 % replace type raising/changing by forward application of an empty
 % element, like Boxer does for type changing.
-cac_index(lx(X0/(X0\Y0), Y0, D0), fa(X/(X\Y), t((X/(X\Y))/Y, ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
+cac_index(lx(X0/(X0\Y0), Y0, D0), fa(X/(X\Y), t(f(_, X, b(_, X, Y)), ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
   !,
   cat_index(X0, X),
   cat_index(Y0, Y),
   cac_index(D0, D).
-cac_index(lx(X0\(X0/Y0), Y0, D0), fa(X\(X/Y), t((X\(X/Y))/Y, ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
+cac_index(lx(X0\(X0/Y0), Y0, D0), fa(X\(X/Y), t(b(_, X, f(_, X, Y)), ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
   !,
   cat_index(X0, X),
   cat_index(Y0, Y),
   cac_index(D0, D).
-cac_index(lx(New0, Old0, D0), fa(New, t(New/Old, ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
+cac_index(lx(New0, Old0, D0), fa(New, t(f(_, New, Old), ø, [lemma:ø, sem:'NIL']), D)) :- % HACK put dummy attributes in for dir.pl; Boxer uses different semtags
   cat_index(New0, New),
   cat_index(Old0, Old),
   cac_index(D0, D).
@@ -90,77 +90,77 @@ cac_index(lx(New0, Old0, D0), fa(New, t(New/Old, ø, [lemma:ø, sem:'NIL']), D))
 cac_bind(t(_, _, _)).
 % application
 cac_bind(ba(X, D2, D1)) :-
-  cac_cat(D1, X\Y),
+  cac_cat(D1, b(_, X, Y)),
   cac_cat(D2, Y),
   cac_bind(D1),
   cac_bind(D2).
 cac_bind(fa(X, D1, D2)) :-
-  cac_cat(D1, X/Y),
+  cac_cat(D1, f(_, X, Y)),
   cac_cat(D2, Y),
   cac_bind(D1),
   cac_bind(D2).
 % harmonic composition
-cac_bind(bc(X\Z, D2, D1)) :-
-  cac_cat(D1, X\Y),
-  cac_cat(D2, Y\Z),
+cac_bind(bc(b(_, X, Z), D2, D1)) :-
+  cac_cat(D1, b(_, X, Y)),
+  cac_cat(D2, b(_, Y, Z)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(fc(X/Z, D1, D2)) :-
-  cac_cat(D1, X/Y),
-  cac_cat(D2, Y/Z),
+cac_bind(fc(f(_, X, Z), D1, D2)) :-
+  cac_cat(D1, f(_, X, Y)),
+  cac_cat(D2, f(_, Y, Z)),
   cac_bind(D1),
   cac_bind(D2).
 % crossing composition
-cac_bind(bxc(X/Z, D2, D1)) :-
-  cac_cat(D1, X\Y),
-  cac_cat(D2, Y/Z),
+cac_bind(bxc(f(_, X, Z), D2, D1)) :-
+  cac_cat(D1, b(_, X, Y)),
+  cac_cat(D2, f(_, Y, Z)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(fxc(X\Z, D1, D2)) :-
-  cac_cat(D1, X/Y),
-  cac_cat(D2, Y\Z),
+cac_bind(fxc(b(_, X, Z), D1, D2)) :-
+  cac_cat(D1, f(_, X, Y)),
+  cac_cat(D2, b(_, Y, Z)),
   cac_bind(D1),
   cac_bind(D2).
 % generalized harmonic composition (degree 2)
-cac_bind(gbc((X\Z)\A, D2, D1)) :-
-  cac_cat(D1, X\Y),
-  cac_cat(D2, (Y\Z)\A),
+cac_bind(gbc(b(_, b(_, X, Z), A), D2, D1)) :-
+  cac_cat(D1, b(_, X, Y)),
+  cac_cat(D2, b(_, b(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gfc((X/Z)/A, D1, D2)) :-
-  cac_cat(D1, X/Y),
-  cac_cat(D2, (Y/Z)/A),
+cac_bind(gfc(f(_, f(_, X, Z), A), D1, D2)) :-
+  cac_cat(D1, f(_, X, Y)),
+  cac_cat(D2, f(_, f(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gbc((X\Z)/A, D2, D1)) :-
-  cac_cat(D1, X\Y),
-  cac_cat(D2, (Y\Z)/A),
+cac_bind(gbc(f(_, b(_, X, Z), A), D2, D1)) :-
+  cac_cat(D1, b(_, X, Y)),
+  cac_cat(D2, f(_, b(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gfc((X/Z)\A, D1, D2)) :-
-  cac_cat(D1, X/Y),
-  cac_cat(D2, (Y/Z)\A),
+cac_bind(gfc(b(_, f(_, X, Z), A), D1, D2)) :-
+  cac_cat(D1, f(_, X, Y)),
+  cac_cat(D2, b(_, f(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
 % generalized crossing composition (degree 2)
-cac_bind(gbxc((X/Z)/A, D2, D1)) :-
-  cac_cat(D1, X\Y),
-  cac_cat(D2, (Y/Z)/A),
+cac_bind(gbxc(f(_, f(_, X, Z), A), D2, D1)) :-
+  cac_cat(D1, b(_, X, Y)),
+  cac_cat(D2, f(_, f(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gfxc((X\Z)\A, D1, D2)) :-
-  cac_cat(D1, X/Y),
-  cac_cat(D2, (Y\Z)\A),
+cac_bind(gfxc(b(_, b(_, X, Z), A), D1, D2)) :-
+  cac_cat(D1, f(_, X, Y)),
+  cac_cat(D2, b(_, b(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gbxc((X/Z)\A, D2, D1)) :-
-  cac_cat(D1, X\Y),
-  cac_cat(D2, (Y/Z)\A),
+cac_bind(gbxc(b(_, f(_, X, Z), A), D2, D1)) :-
+  cac_cat(D1, b(_, X, Y)),
+  cac_cat(D2, b(_, f(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gfxc((X\Z)/A, D1, D2)) :-
-  cac_cat(D1, X/Y),
-  cac_cat(D2, (Y\Z)/A),
+cac_bind(gfxc(f(_, b(_, X, Z), A), D1, D2)) :-
+  cac_cat(D1, f(_, X, Y)),
+  cac_cat(D2, f(_, b(_, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
 
