@@ -20,8 +20,6 @@
     cat_match/2,
     cat_role/2,
     res_in/2]).
-:- use_module(anno, [
-    cac_annotate/1]).
 :- use_module(slashes).
 :- use_module(util, [
     argv/1,
@@ -35,7 +33,7 @@
 %:- debug(const_with_toknums).
 :- debug(indexed_const).
 :- debug(bound_const).
-%:- debug(numbered_const).
+:- debug(numbered_const).
 %:- debug(annotated_const).
 %:- debug(top).
 %:- debug(dep).
@@ -61,9 +59,9 @@ cac2dep(N, Const0) :-
   cac_index(Const1, Const),
   debug(indexed_const, 'indexed: ~@', [cac_pp(Const)]),
 (  cac_bind(Const)
-  -> debug(bound_const, 'bound: ~@', [cac_pp(Const)])%,
-%     cac_number(Const),
-%     debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
+  -> debug(bound_const, 'bound: ~@', [cac_pp(Const)]),
+     cac_number(Const),
+     debug(numbered_const, 'numbered: ~@', [cac_pp(Const)])
 %     cac_annotate(Const),
 %     debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
 %     %( N = 1 -> gtrace ; true ),

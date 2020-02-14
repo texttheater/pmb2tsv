@@ -5,8 +5,6 @@
     cat_index/2,
     cat_is_pseudo/1,
     cat_match/2,
-    cat_number/1,
-    cat_number/3,
     cat_role/2,
     res_in/2]).
 
@@ -45,27 +43,6 @@ cat_index(X0/Y0, f(_, X, Y)) :-
 cat_index(B:F, a(_, B:F, B)) :-
   !.
 cat_index(B, a(_, B:_, B)). 
-
-cat_number(CO) :-
-  cat_number(CO, 1, _).
-
-%%	cat_number(+CO, +M, -N)
-%
-%	Replaces variable indices in category objects with integers, starting
-%	from M.
-cat_number(co(_, _, I, _, _), M, N) :-
-  !,
-  (  var(I)
-  -> I = M,
-     N is M + 1
-  ;  N = M
-  ).
-cat_number(X/Y, M, N) :-
-  cat_number(X, M, O),
-  cat_number(Y, O, N).
-cat_number(X\Y, M, N) :-
-  cat_number(X, M, O),
-  cat_number(Y, O, N).
 
 arg_in(Y, _\Y).
 arg_in(Y, _/Y).

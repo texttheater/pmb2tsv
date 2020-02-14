@@ -9,8 +9,7 @@
 
 :- use_module(cat, [
     cat_id/2,
-    cat_index/2,
-    cat_number/3]).
+    cat_index/2]).
 :- use_module(slashes).
 :- use_module(util, [
     print_indented/3]).
@@ -167,51 +166,45 @@ cac_bind(gfxc(f(_, b(_, X, Z), A), D1, D2)) :-
 cac_cat(Const, Cat) :-
   arg(1, Const, Cat).
 
-cac_number(Const) :-
-  cac_number(Const, 1, _).
-
-cac_number(t(Cat, _, _), M, N) :-
-  cat_number(Cat, M, N).
-cac_number(ba(Cat, D2, D1), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(fa(Cat, D1, D2), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(bc(Cat, D2, D1), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(fc(Cat, D1, D2), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(bxc(Cat, D2, D1), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(fxc(Cat, D1, D2), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(gbc(Cat, D2, D1), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(gfc(Cat, D1, D2), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(gbxc(Cat, D2, D1), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
-cac_number(gfxc(Cat, D1, D2), M, N) :-
-  cat_number(Cat, M, O),
-  cac_number(D1, O, P),
-  cac_number(D2, P, N).
+cac_number(t(Cat, _, Atts)) :-
+  (  var(Cat)
+  -> Cat = a(_, _, _) % HACK
+  ;  true
+  ),
+  (  member(toknum:Num, Atts)
+  -> arg(1, Cat, Num)
+  ;  true
+  ).
+cac_number(ba(_, D2, D1)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(fa(_, D1, D2)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(bc(_, D2, D1)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(fc(_, D1, D2)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(bxc(_, D2, D1)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(fxc(_, D1, D2)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(gbc(_, D2, D1)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(gfc(_, D1, D2)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(gbxc(_, D2, D1)) :-
+  cac_number(D1),
+  cac_number(D2).
+cac_number(gfxc(_, D1, D2)) :-
+  cac_number(D1),
+  cac_number(D2).
 
 cac_top(t(Cat, Form, Atts), t(Cat, Form, Atts)).
 cac_top(ba(_, _, D2), Top) :-
