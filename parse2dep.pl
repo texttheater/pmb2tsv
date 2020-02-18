@@ -4,6 +4,8 @@
 /** <module> Convert C&C-style CCG derivations to dependency trees
 */
 
+:- use_module(anno2, [
+    cac_annotate/1]).
 :- use_module(cac, [
     cac_add_toknums/2,
     cac_cat/2,
@@ -59,7 +61,7 @@ cac2dep(N, Const0) :-
   cac_index(Const1, Const),
   debug(indexed_const, 'indexed: ~@', [cac_pp(Const)]),
 (  cac_bind(Const)
-  -> debug(bound_const, 'bound: ~@', [cac_pp(Const)])
+  -> debug(bound_const, 'bound: ~@', [cac_pp(Const)]),
 %     cac_number(Const),
 %     debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
 %     cac_annotate(Const),
@@ -121,40 +123,24 @@ cac_deps(Const, Deps0, Deps) :-
 
 cat_deps(b(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
   !,
-  cat_id(Arg, ArgID),
-  (  flip(Fun, Sem, Lemma)
-  -> cat_id(Res, FunID),
-     cat_id(Arg, ArgID),
-     D = ArgID,
-     cat_arg(Res, Arg2),
-     cat_id(Arg2, Arg2ID),
-     H = Arg2ID
-  ;  inv(Fun, Sem, Lemma)
-  -> cat_id(Res, ArgID),
-     D = FunID,
+  arg(1, Res, ResID),
+  arg(1, Arg, ArgID),
+  (  FunID == ArgID
+  -> D = ResID,
      H = ArgID
-  ;  cat_id(Res, FunID),
-     D = ArgID,
-     H = FunID
+  ;  D = ArgID,
+     H = ResID
   ),
   cat_deps(Res, Sem, Lemma, Deps0, Deps).
 cat_deps(f(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
   !,
-  cat_id(Arg, ArgID),
-  (  flip(Fun, Sem, Lemma)
-  -> cat_id(Res, FunID),
-     cat_id(Arg, ArgID),
-     D = ArgID,
-     cat_arg(Res, Arg2),
-     cat_id(Arg2, Arg2ID),
-     H = Arg2ID
-  ;  inv(Fun, Sem, Lemma)
-  -> cat_id(Res, ArgID),
-     D = FunID,
+  arg(1, Res, ResID),
+  arg(1, Arg, ArgID),
+  (  FunID == ArgID
+  -> D = ResID,
      H = ArgID
-  ;  cat_id(Res, FunID),
-     D = ArgID,
-     H = FunID
+  ;  D = ArgID,
+     H = ResID
   ),
   cat_deps(Res, Sem, Lemma, Deps0, Deps).
 cat_deps(_, _, _, Deps, Deps).
