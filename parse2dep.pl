@@ -4,7 +4,7 @@
 /** <module> Convert C&C-style CCG derivations to dependency trees
 */
 
-:- use_module(anno2, [
+:- use_module(anno, [
     cac_annotate/1]).
 :- use_module(cac, [
     cac_add_toknums/2,
@@ -125,22 +125,22 @@ cat_deps(b(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
   !,
   arg(1, Res, ResID),
   arg(1, Arg, ArgID),
-  (  FunID == ArgID
-  -> D = ResID,
+  (  ResID == ArgID
+  -> D = FunID,
      H = ArgID
   ;  D = ArgID,
-     H = ResID
+     H = FunID
   ),
   cat_deps(Res, Sem, Lemma, Deps0, Deps).
 cat_deps(f(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
   !,
   arg(1, Res, ResID),
   arg(1, Arg, ArgID),
-  (  FunID == ArgID
-  -> D = ResID,
+  (  ResID == ArgID
+  -> D = FunID,
      H = ArgID
   ;  D = ArgID,
-     H = ResID
+     H = FunID
   ),
   cat_deps(Res, Sem, Lemma, Deps0, Deps).
 cat_deps(_, _, _, Deps, Deps).
