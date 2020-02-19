@@ -30,15 +30,15 @@
     subsumed_sub_term/2,
     term_in_file/3]).
 
-%:- debug(snum).
+:- debug(snum).
 %:- debug(original_const).
 %:- debug(const_with_toknums).
 :- debug(indexed_const).
 :- debug(bound_const).
 :- debug(numbered_const).
-%:- debug(annotated_const).
+:- debug(annotated_const).
 %:- debug(top).
-%:- debug(dep).
+:- debug(dep).
 %:- debug(flip).
 
 main :-
@@ -64,51 +64,57 @@ cac2dep(N, Const0) :-
   -> debug(bound_const, 'bound: ~@', [cac_pp(Const)]),
 %     cac_number(Const),
 %     debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
-%     cac_annotate(Const),
-%     debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
-%     %( N = 1 -> gtrace ; true ),
-%     cac2dep(Const)
+     cac_annotate(Const),
+     debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
+     %( N = 9 -> gtrace ; true ),
+     cac2dep(Const)
   ;  format(user_error, 'WARNING: failed to preprocess derivation ~w, skipping~n', [N]),
      nl
   ).
 
+real_dep(dep(D, _, H)) :-
+  nonvar(D),
+  nonvar(H).
+
 cac2dep(Const) :-
+  cac_deps(Const, Deps, []),
+  debug(dep, 'deps: ~w', [Deps]),
 %  findall(t(Cat, Form, Atts),
 %      ( subsumed_sub_term(t(Cat, Form, Atts), Const)
 %      ), Tokens),
 %  find_top(Const, Tokens, Top),
 %  debug(top, 'top: ~w', [Top]),
 %  t2dep(Top, Tokens, _, Deps, []),
-  cac_deps(Const, Deps, []),
-  forall(
-      ( member(dep(D, Role, H), Deps)
-      ),
-      ( debug(dep, '~@ <-~w- ~@', [cac_pp(D), Role, cac_pp(H)])
-      ) ),
-  (  Deps = []
-  -> Tokens = [Token],
-     RootedDeps = [dep(Token, _, _)]
-  ;  add_root_dep(Deps, RootedDeps)
-  ),
-  exclude(pseudo_dep, RootedDeps, RealDeps),
-  flip_deps(RealDeps, FlippedDeps),
-  rerole_deps(FlippedDeps, ReroledDeps),
-  funsort(depfrom, ReroledDeps, SortedDeps),
-  maplist(dep_pp, SortedDeps),
-  nl.
+  include(real_dep, Deps, RealDeps),
+  debug(dep, 'real deps: ~w', [RealDeps]),
+  sort(RealDeps, SortedDeps),
+  debug(dep, 'sorted deps: ~w', [SortedDeps]).
+%  findall(dep(Toknum, _, 0),
+%      ( subsumed_sub_term(t(_, _, Atts), Const),
+%        member(toknum:Toknum, Atts),
+%        \+ member(dep(Toknum, _, _), RealDeps)
+%      ), [RootDep]),
+%  RootedDeps = [RootDep|SortedDeps],
+%  debug(dep, 'rooted deps: ~w', [RootedDeps]).
+%  (  Deps = []
+%  -> Tokens = [Token],
+%     RootedDeps = [dep(Token, _, _)]
+%  ;  add_root_dep(Deps, RootedDeps)
+%  ),
+%  exclude(pseudo_dep, RootedDeps, RealDeps),
+%  flip_deps(RealDeps, FlippedDeps),
+%  rerole_deps(FlippedDeps, ReroledDeps),
+%  funsort(depfrom, ReroledDeps, SortedDeps),
+%  maplist(dep_pp, SortedDeps),
+%  nl.
 
-cac_deps(t(Cat, _, Atts), Deps0, Deps) :-
+cac_deps(t(CO, _, _), Deps0, Deps) :-
   !,
-  % assign token number to lexical category
-  (  member(toknum:Num, Atts)
-  -> arg(1, Cat, Num)
-  ;  true
-  ),
-  % look up attributes needed for dependency extraction
-  member(sem:Sem, Atts),
-  member(lemma:Lemma, Atts),
   % extract dependencies
-  cat_deps(Cat, Sem, Lemma, Deps0, Deps).
+  cat_deps(CO, Deps0, Deps).
+cac_deps(lx(_, _, D), Deps0, Deps) :-
+  !,
+  cac_deps(D, Deps0, Deps).
 cac_deps(Const, Deps0, Deps) :-
   % recursively extract dependencies from daughters
   arg(2, Const, D1),
@@ -116,7 +122,9 @@ cac_deps(Const, Deps0, Deps) :-
   cac_deps(D1, Deps0, Deps1),
   cac_deps(D2, Deps1, Deps).
 
-cat_deps(b(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
+cat_deps(b(FunID, Res, Arg), [dep(D, _, H)|Deps0], Deps) :-
+  nonvar(Res), % HACK?
+  nonvar(Arg), % HACK?
   !,
   arg(1, Res, ResID),
   arg(1, Arg, ArgID),
@@ -126,8 +134,10 @@ cat_deps(b(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
   ;  D = ArgID,
      H = FunID
   ),
-  cat_deps(Res, Sem, Lemma, Deps0, Deps).
-cat_deps(f(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
+  cat_deps(Res, Deps0, Deps).
+cat_deps(f(FunID, Res, Arg), [dep(D, _, H)|Deps0], Deps) :-
+  nonvar(Res), % HACK?
+  nonvar(Arg), % HACK?
   !,
   arg(1, Res, ResID),
   arg(1, Arg, ArgID),
@@ -137,8 +147,8 @@ cat_deps(f(FunID, Res, Arg), Sem, Lemma, [dep(D, _, H)|Deps0], Deps) :-
   ;  D = ArgID,
      H = FunID
   ),
-  cat_deps(Res, Sem, Lemma, Deps0, Deps).
-cat_deps(_, _, _, Deps, Deps).
+  cat_deps(Res, Deps0, Deps).
+cat_deps(_, Deps, Deps).
 
 % reassign role labels from adpositions to their arguments
 rerole_deps(Deps0, Deps) :-

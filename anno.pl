@@ -10,19 +10,21 @@
 :- use_module(util, [
     must/1]).
 
-cac_annotate(t(Cat, _, Atts)) :-
+cac_annotate(t(CO, _, Atts)) :-
   !,
-  (  var(Cat)
-  -> Cat = a(_, _, _)
+  (  var(CO)
+  -> CO = a(_, _, _)
   ;  true
   ),
   member(sem:Sem, Atts),
   member(lemma:Lemma, Atts),
+  member(toknum:Toknum, Atts),
+  arg(1, CO, Toknum),
   (  member(verbnet:Roles, Atts)
   -> true
   ;  Roles = []
   ),
-  must(cat_annotate(Cat, Sem, Lemma, Roles)).
+  must(cat_annotate(CO, Sem, Lemma, Roles)).
 cac_annotate(lx(_, _, D)) :-
   !,
   cac_annotate(D).
