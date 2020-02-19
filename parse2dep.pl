@@ -99,11 +99,6 @@ cac2dep(Const) :-
 
 cac_deps(t(Cat, _, Atts), Deps0, Deps) :-
   !,
-  % make sure there's at least a skeletal category object for punctuation etc.
-  (  var(Cat) 
-  -> Cat = a(_, _, _)
-  ;  true
-  ),
   % assign token number to lexical category
   (  member(toknum:Num, Atts)
   -> arg(1, Cat, Num)

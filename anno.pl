@@ -12,6 +12,10 @@
 
 cac_annotate(t(Cat, _, Atts)) :-
   !,
+  (  var(Cat)
+  -> Cat = a(_, _, _)
+  ;  true
+  ),
   member(sem:Sem, Atts),
   member(lemma:Lemma, Atts),
   (  member(verbnet:Roles, Atts)
