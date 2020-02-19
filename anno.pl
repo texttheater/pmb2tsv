@@ -19,6 +19,9 @@ cac_annotate(t(Cat, _, Atts)) :-
   ;  Roles = []
   ),
   must(cat_annotate(Cat, Sem, Lemma, Roles)).
+cac_annotate(lx(_, _, D)) :-
+  !,
+  cac_annotate(D).
 cac_annotate(Const) :-
   Const =.. [_, _, L, R],
   cac_annotate(L),
