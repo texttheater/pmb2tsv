@@ -347,4 +347,4 @@ cat_annotate(CO, Sem, Lemma, []) :-
   noninv(CO),
   cat_annotate(Res, Sem, Lemma, []).
 % basic categories
-cat_annotate(_, _, _, []).
+cat_annotate(_, _, _, _). % TODO Rolelists should be empty here, but sometimes aren't - what's up with that?
