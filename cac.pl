@@ -163,7 +163,8 @@ cac_bind(gfxc(f(_, b(_, X, Z), A), D1, D2)) :-
   cac_bind(D1),
   cac_bind(D2).
 % unary rules
-cac_bind(lx(_, _, D)) :-
+cac_bind(lx(_, Old, D)) :-
+  arg(1, D, Old),
   cac_bind(D).
 
 cac_cat(Const, Cat) :-
