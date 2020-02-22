@@ -134,7 +134,10 @@ cat_deps(b(FunID, Res, Arg), [dep(D, _, H)|Deps0], Deps) :-
   ;  D = ArgID,
      H = FunID
   ),
-  cat_deps(Res, Deps0, Deps).
+  (  Res == Arg
+  -> Deps0 = Deps
+  ;  cat_deps(Res, Deps0, Deps)
+  ).
 cat_deps(f(FunID, Res, Arg), [dep(D, _, H)|Deps0], Deps) :-
   nonvar(Res), % HACK?
   nonvar(Arg), % HACK?
@@ -147,7 +150,10 @@ cat_deps(f(FunID, Res, Arg), [dep(D, _, H)|Deps0], Deps) :-
   ;  D = ArgID,
      H = FunID
   ),
-  cat_deps(Res, Deps0, Deps).
+  (  Res == Arg
+  -> Deps0 = Deps
+  ;  cat_deps(Res, Deps0, Deps)
+  ).
 cat_deps(_, Deps, Deps).
 
 % reassign role labels from adpositions to their arguments
