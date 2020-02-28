@@ -72,23 +72,29 @@ cac2dep(N, Const0) :-
      nl
   ).
 
-real_dep(dep(D, _, H)) :-
-  nonvar(D),
-  nonvar(H).
+promote(dep(D, _, H)) :-
+  (  var(D)
+  -> D = H
+  ;  true
+  ).
+
+selfdep(dep(D, _, H)) :-
+  D == H.
 
 cac2dep(Const) :-
+  findall(t(Cat, Form, Atts),
+      ( subsumed_sub_term(t(Cat, Form, Atts), Const)
+      ), Tokens),
   cac_deps(Const, Deps, []),
   debug(dep, 'deps: ~w', [Deps]),
-%  findall(t(Cat, Form, Atts),
-%      ( subsumed_sub_term(t(Cat, Form, Atts), Const)
-%      ), Tokens),
-%  find_top(Const, Tokens, Top),
-%  debug(top, 'top: ~w', [Top]),
-%  t2dep(Top, Tokens, _, Deps, []),
-  include(real_dep, Deps, RealDeps),
-  debug(dep, 'real deps: ~w', [RealDeps]),
-  sort(RealDeps, SortedDeps),
-  debug(dep, 'sorted deps: ~w', [SortedDeps]).
+  maplist(promote, Deps),
+  exclude(selfdep, Deps, PromotedDeps),
+  debug(dep, 'promoted deps: ~w', [PromotedDeps]),
+  sort(PromotedDeps, SortedDeps),
+  debug(dep, 'sorted deps: ~w', [SortedDeps]),
+length(SortedDeps, NumDeps),
+length(Tokens, NumTokens),
+assertion(NumDeps is NumTokens - 1).
 %  findall(dep(Toknum, _, 0),
 %      ( subsumed_sub_term(t(_, _, Atts), Const),
 %        member(toknum:Toknum, Atts),
