@@ -78,12 +78,10 @@ cac_index(lx(X0\(X0/Y0), Y0, D0), lx(b(_, X, f(_, X, Y)), Y, D)) :-
   cat_index(X0, X),
   cat_index(Y0, Y),
   cac_index(D0, D).
-cac_index(lx(New0, _, D0), lx(New, Old, D)) :-
+cac_index(lx(New0, Old0, D0), lx(New, Old, D)) :-
   cat_index(New0, New),
-  arg(1, New, ID),
-  cac_index(D0, D),
-  arg(1, D, Old),
-  arg(1, Old, ID).
+  cat_index(Old0, Old),
+  cac_index(D0, D).
 
 % token
 cac_bind(t(_, _, _)).

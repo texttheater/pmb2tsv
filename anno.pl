@@ -25,8 +25,16 @@ cac_annotate(t(CO, _, Atts)) :-
   ;  Roles = []
   ),
   must(cat_annotate(CO, Sem, Lemma, Roles)).
-cac_annotate(lx(_, _, D)) :-
+cac_annotate(lx(X/(X\Y), Y, D)) :-
   !,
+  cac_annotate(D).
+cac_annotate(lx(X\(X/Y), Y, D)) :-
+  !,
+  cac_annotate(D).
+cac_annotate(lx(New, Old, D)) :-
+  !,
+  inv(f(_, New, Old)),
+  cat_annotate(New, 'NIL', ø, []), % HACK
   cac_annotate(D).
 cac_annotate(Const) :-
   Const =.. [_, _, L, R],
