@@ -32,7 +32,7 @@
 
 :- debug(snum).
 %:- debug(original_const).
-%:- debug(const_with_toknums).
+:- debug(const_with_toknums).
 :- debug(indexed_const).
 :- debug(bound_const).
 :- debug(numbered_const).
@@ -81,6 +81,9 @@ promote(dep(D, _, H)) :-
 selfdep(dep(D, _, H)) :-
   D == H.
 
+varhead(dep(_, _, H)) :-
+  var(H).
+
 cac2dep(Const) :-
   findall(t(Cat, Form, Atts),
       ( subsumed_sub_term(t(Cat, Form, Atts), Const)
@@ -90,7 +93,8 @@ cac2dep(Const) :-
   maplist(promote, Deps),
   exclude(selfdep, Deps, PromotedDeps),
   debug(dep, 'promoted deps: ~w', [PromotedDeps]),
-  sort(PromotedDeps, SortedDeps),
+  exclude(varhead, PromotedDeps, RealDeps),
+  sort(RealDeps, SortedDeps),
   debug(dep, 'sorted deps: ~w', [SortedDeps]),
 length(SortedDeps, NumDeps),
 length(Tokens, NumTokens),
