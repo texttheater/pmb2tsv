@@ -25,16 +25,8 @@ cac_annotate(t(CO, _, Atts)) :-
   ;  Roles = []
   ),
   must(cat_annotate(CO, Sem, Lemma, Roles)).
-cac_annotate(lx(X/(X\Y), Y, D)) :-
+cac_annotate(lx(_, _, D)) :-
   !,
-  cac_annotate(D).
-cac_annotate(lx(X\(X/Y), Y, D)) :-
-  !,
-  cac_annotate(D).
-cac_annotate(lx(New, Old, D)) :-
-  !,
-  inv(f(_, New, Old)),
-  cat_annotate(New, 'NIL', ø, []), % HACK
   cac_annotate(D).
 cac_annotate(Const) :-
   Const =.. [_, _, L, R],
@@ -346,6 +338,20 @@ cat_annotate(CO, Sem, Lemma, []) :-
   !,
   inv(CO),
   cat_annotate(Res, Sem, Lemma, []).
+% pseudo-tokens
+cat_annotate(CO, 'NIL', ø, []) :-
+  CO = f(_, Res, _),
+  ( co_match(CO, (n\n)/(s:ng\np))
+  ; co_match(CO, (n\n)/(s:pss\np))
+  ; co_match(CO, (n\n)/(s:adj\np))
+  ; co_match(CO, (n\n)/(s:dcl\np))
+  ; co_match(CO, (n/n)/(s:adj\np))
+  ; co_match(CO, (s/s)/(s:to\np))
+  ; co_match(CO, (s/s)/(s:pss\np))
+  ),
+  !,
+  inv(CO),
+  cat_annotate(Res, 'NIL', ø, []).
 % wh-words
 cat_annotate(CO, Sem, Lemma, []) :-
   CO = f(_, Res, _),

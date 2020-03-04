@@ -78,7 +78,7 @@ cac_index(lx(X0\(X0/Y0), Y0, D0), lx(b(_, X, f(_, X, Y)), Y, D)) :-
   cat_index(X0, X),
   cat_index(Y0, Y),
   cac_index(D0, D).
-cac_index(lx(New0, Old0, D0), lx(New, Old, D)) :-
+cac_index(lx(New0, Old0, D0), fa(New, t(f(_, New, Old), ø, [lemma: ø, sem: 'NIL', toknum: _]), D)) :-
   cat_index(New0, New),
   cat_index(Old0, Old),
   cac_index(D0, D).

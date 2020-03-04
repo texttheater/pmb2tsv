@@ -86,7 +86,8 @@ varhead(dep(_, _, H)) :-
 
 cac2dep(Const) :-
   findall(t(Cat, Form, Atts),
-      ( subsumed_sub_term(t(Cat, Form, Atts), Const)
+      ( subsumed_sub_term(t(Cat, Form, Atts), Const),
+        Form \= ø
       ), Tokens),
   cac_deps(Const, Deps, []),
   debug(dep, 'deps: ~w', [Deps]),
