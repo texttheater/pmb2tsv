@@ -133,12 +133,19 @@ cac_deps(Const, Deps0, Deps) :-
   cac_deps(D1, Deps0, Deps1),
   cac_deps(D2, Deps1, Deps).
 
+% TODO move to co module
+co_topid(a(ID, _, _), ID).
+co_topid(f(_, Res, _), ID) :-
+  co_topid(Res, ID).
+co_topid(b(_, Res, _), ID) :-
+  co_topid(Res, ID).
+
 cat_deps(b(FunID, Res, Arg), [dep(D, _, H)|Deps0], Deps) :-
   nonvar(Res), % HACK?
   nonvar(Arg), % HACK?
   !,
   arg(1, Res, ResID),
-  arg(1, Arg, ArgID),
+  co_topid(Arg, ArgID),
   (  ResID == ArgID
   -> D = FunID,
      H = ArgID
@@ -154,7 +161,7 @@ cat_deps(f(FunID, Res, Arg), [dep(D, _, H)|Deps0], Deps) :-
   nonvar(Arg), % HACK?
   !,
   arg(1, Res, ResID),
-  arg(1, Arg, ArgID),
+  co_topid(Arg, ArgID),
   (  ResID == ArgID
   -> D = FunID,
      H = ArgID

@@ -50,12 +50,19 @@ co_match(a(_, F0:_, _), F) :-
 
 co_role(_, _). % TODO
 
+% TODO move to co module
+co_topid(a(ID, _, _), ID).
+co_topid(f(_, Res, _), ID) :-
+  co_topid(Res, ID).
+co_topid(b(_, Res, _), ID) :-
+  co_topid(Res, ID).
+
 inv(f(_, Res, Arg)) :-
   arg(1, Res, ID),
-  arg(1, Arg, ID).
+  co_topid(Arg, ID).
 inv(b(_, Res, Arg)) :-
   arg(1, Res, ID),
-  arg(1, Arg, ID).
+  co_topid(Arg, ID).
 
 noninv(f(FunID, Res, _)) :-
   arg(1, Res, FunID).
