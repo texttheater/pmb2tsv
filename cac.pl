@@ -97,67 +97,67 @@ cac_bind(fa(X, D1, D2)) :-
   cac_bind(D1),
   cac_bind(D2).
 % harmonic composition
-cac_bind(bc(b(_, X, Z), D2, D1)) :-
+cac_bind(bc(b(I, X, Z), D2, D1)) :-
   cac_cat(D1, b(_, X, Y)),
-  cac_cat(D2, b(_, Y, Z)),
+  cac_cat(D2, b(I, Y, Z)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(fc(f(_, X, Z), D1, D2)) :-
+cac_bind(fc(f(I, X, Z), D1, D2)) :-
   cac_cat(D1, f(_, X, Y)),
-  cac_cat(D2, f(_, Y, Z)),
+  cac_cat(D2, f(I, Y, Z)),
   cac_bind(D1),
   cac_bind(D2).
 % crossing composition
-cac_bind(bxc(f(_, X, Z), D2, D1)) :-
+cac_bind(bxc(f(I, X, Z), D2, D1)) :-
   cac_cat(D1, b(_, X, Y)),
-  cac_cat(D2, f(_, Y, Z)),
+  cac_cat(D2, f(I, Y, Z)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(fxc(b(_, X, Z), D1, D2)) :-
+cac_bind(fxc(b(I, X, Z), D1, D2)) :-
   cac_cat(D1, f(_, X, Y)),
-  cac_cat(D2, b(_, Y, Z)),
+  cac_cat(D2, b(I, Y, Z)),
   cac_bind(D1),
   cac_bind(D2).
 % generalized harmonic composition (degree 2)
-cac_bind(gbc(b(_, b(_, X, Z), A), D2, D1)) :-
+cac_bind(gbc(b(I, b(J, X, Z), A), D2, D1)) :-
   cac_cat(D1, b(_, X, Y)),
-  cac_cat(D2, b(_, b(_, Y, Z), A)),
+  cac_cat(D2, b(I, b(J, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gfc(f(_, f(_, X, Z), A), D1, D2)) :-
+cac_bind(gfc(f(I, f(J, X, Z), A), D1, D2)) :-
   cac_cat(D1, f(_, X, Y)),
-  cac_cat(D2, f(_, f(_, Y, Z), A)),
+  cac_cat(D2, f(I, f(J, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gbc(f(_, b(_, X, Z), A), D2, D1)) :-
+cac_bind(gbc(f(I, b(J, X, Z), A), D2, D1)) :-
   cac_cat(D1, b(_, X, Y)),
-  cac_cat(D2, f(_, b(_, Y, Z), A)),
+  cac_cat(D2, f(I, b(J, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gfc(b(_, f(_, X, Z), A), D1, D2)) :-
+cac_bind(gfc(b(I, f(J, X, Z), A), D1, D2)) :-
   cac_cat(D1, f(_, X, Y)),
-  cac_cat(D2, b(_, f(_, Y, Z), A)),
+  cac_cat(D2, b(I, f(J, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
 % generalized crossing composition (degree 2)
-cac_bind(gbxc(f(_, f(_, X, Z), A), D2, D1)) :-
+cac_bind(gbxc(f(I, f(J, X, Z), A), D2, D1)) :-
   cac_cat(D1, b(_, X, Y)),
-  cac_cat(D2, f(_, f(_, Y, Z), A)),
+  cac_cat(D2, f(I, f(J, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gfxc(b(_, b(_, X, Z), A), D1, D2)) :-
+cac_bind(gfxc(b(I, b(J, X, Z), A), D1, D2)) :-
   cac_cat(D1, f(_, X, Y)),
-  cac_cat(D2, b(_, b(_, Y, Z), A)),
+  cac_cat(D2, b(I, b(J, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gbxc(b(_, f(_, X, Z), A), D2, D1)) :-
+cac_bind(gbxc(b(I, f(J, X, Z), A), D2, D1)) :-
   cac_cat(D1, b(_, X, Y)),
-  cac_cat(D2, b(_, f(_, Y, Z), A)),
+  cac_cat(D2, b(I, f(J, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
-cac_bind(gfxc(f(_, b(_, X, Z), A), D1, D2)) :-
+cac_bind(gfxc(f(I, b(J, X, Z), A), D1, D2)) :-
   cac_cat(D1, f(_, X, Y)),
-  cac_cat(D2, f(_, b(_, Y, Z), A)),
+  cac_cat(D2, f(I, b(J, Y, Z), A)),
   cac_bind(D1),
   cac_bind(D2).
 % unary rules
