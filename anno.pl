@@ -191,25 +191,33 @@ cat_annotate(CO, _, _, [Role]) :-
   inv(CO),
   co_role(CO, Role).
 % role-assigning modifiers
-cat_annotate(CO, _, _, [Role]) :-
-  CO = b(_, X, X),
+cat_annotate(CO, Sem, Lemma, [Role]) :-
+  CO = b(_, Res, _),
+  co_match(CO, X\X),
   !,
   inv(CO),
-  co_role(CO, Role).
-cat_annotate(CO, _, _, [Role]) :-
-  CO = f(_, X, X),
+  co_role(CO, Role),
+  cat_annotate(Res, Sem, Lemma, []). % FIXME how do we ensure Res gets Arg-like annotations?
+cat_annotate(CO, Sem, Lemma, [Role]) :-
+  CO = f(_, Res, _),
+  co_match(CO, X/X),
   !,
   inv(CO),
-  co_role(CO, Role).
+  co_role(CO, Role),
+  cat_annotate(Res, Sem, Lemma, []). % FIXME how do we ensure Res gets Arg-like annotations?
 % non-role-assigning modifiers
-cat_annotate(CO, _, _, []) :-
-  CO = b(_, X, X),
+cat_annotate(CO, Sem, Lemma, []) :-
+  CO = b(_, Res, _),
+  co_match(CO, X\X),
   !,
-  inv(CO).
-cat_annotate(CO, _, _, []) :-
-  CO = f(_, X, X),
+  inv(CO),
+  cat_annotate(Res, Sem, Lemma, []). % FIXME how do we ensure Res gets Arg-like annotations?
+cat_annotate(CO, Sem, Lemma, []) :-
+  CO = f(_, Res, _),
+  co_match(CO, X/X),
   !,
-  inv(CO).
+  inv(CO),
+  cat_annotate(Res, Sem, Lemma, []). % FIXME how do we ensure Res gets Arg-like annotations?
 % role-assigning adpositions
 cat_annotate(CO, Sem, Lemma, [Role|Roles]) :-
   CO = f(_, Res, _),
