@@ -267,6 +267,14 @@ cat_annotate(CO, Sem, Lemma, Roles) :-
   !,
   noninv(CO),
   cat_annotate(Res, Sem, Lemma, Roles).
+% possessive suffix
+cat_annotate(CO, Sem, Lemma, [Role]) :-
+  CO = b(_, Res, _),
+  co_match(CO, (np/(n/pp))\np),
+  !,
+  inv(CO),
+  co_role(CO, Role),
+  cat_annotate(Res, Sem, Lemma, []).
 % other role-assigning categories
 cat_annotate(CO, Sem, Lemma, [Role|Roles]) :-
   CO = b(_, Res, _),
