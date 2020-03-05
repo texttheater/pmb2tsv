@@ -148,7 +148,19 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   cat_role(C, Role),
   cat_role(D, Role),
   cat_annotate(A, Sem, Lemma, []).
-% TODO "have" with s:pss\np argument? ("He had his tooth pulled")
+% "have" with s:pss\np argument ("He had his tooth pulled")
+cat_annotate(((A\B)/(C\D))/E, Sem, Lemma, [SubjRole]) :-
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:pss\np),
+  cat_match(E, np),
+  !,
+  cat_dir(E, noninv),
+  cat_dir(C\D, flip),
+  cat_role(B, SubjRole),
+  cat_role(D, ObjRole),
+  cat_role(E, ObjRole),
+  cat_annotate(A, Sem, Lemma, []).
 % TODO modal verbs?
 % modal verbs
 %cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
