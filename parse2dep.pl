@@ -22,6 +22,8 @@
     cat_match/2,
     cat_role/2,
     res_in/2]).
+:- use_module(co, [
+    co_topid/2]).
 :- use_module(slashes).
 :- use_module(util, [
     argv/1,
@@ -132,13 +134,6 @@ cac_deps(Const, Deps0, Deps) :-
   arg(3, Const, D2),
   cac_deps(D1, Deps0, Deps1),
   cac_deps(D2, Deps1, Deps).
-
-% TODO move to co module
-co_topid(a(ID, _, _), ID).
-co_topid(f(_, Res, _), ID) :-
-  co_topid(Res, ID).
-co_topid(b(_, Res, _), ID) :-
-  co_topid(Res, ID).
 
 cat_deps(b(FunID, Res, Arg), [dep(D, _, H)|Deps0], Deps) :-
   nonvar(Res), % HACK?
