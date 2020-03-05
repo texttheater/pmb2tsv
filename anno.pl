@@ -95,11 +95,23 @@ noninv(b(FunID, Res, _)) :-
 
 % conjunctions and punctuation
 cat_annotate(CO, Sem, Lemma, []) :-
-  member(CO, [f(_, Res, Arg), b(_, Res, Arg)]),
+  CO = b(_, Res, Arg),
   member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
   !,
   inv(CO),
-  cat_annotate(Res, Sem, Lemma, []).
+  (  co_match(CO, X\X)
+  -> copy_annotation(Arg, Res)
+  ;  cat_annotate(Res, Sem, Lemma, [])
+  ).
+cat_annotate(CO, Sem, Lemma, []) :-
+  CO = f(_, Res, Arg),
+  member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
+  !,
+  inv(CO),
+  (  co_match(CO, X/X)
+  -> copy_annotation(Arg, Res)
+  ;  cat_annotate(Res, Sem, Lemma, [])
+  ).
 % adjective copulas
 cat_annotate(CO, Sem, Lemma, []) :-
   CO = b(_, Res, _),
@@ -215,33 +227,33 @@ cat_annotate(CO, _, _, [Role]) :-
   inv(CO),
   co_role(CO, Role).
 % role-assigning modifiers
-cat_annotate(CO, Sem, Lemma, [Role]) :-
-  CO = b(_, Res, _),
+cat_annotate(CO, _, _, [Role]) :-
+  CO = b(_, Res, Arg),
   co_match(CO, X\X),
   !,
   inv(CO),
   co_role(CO, Role),
-  cat_annotate(Res, Sem, Lemma, []). % FIXME how do we ensure Res gets Arg-like annotations?
-cat_annotate(CO, Sem, Lemma, [Role]) :-
-  CO = f(_, Res, _),
+  copy_annotation(Arg, Res).
+cat_annotate(CO, _, _, [Role]) :-
+  CO = f(_, Res, Arg),
   co_match(CO, X/X),
   !,
   inv(CO),
   co_role(CO, Role),
-  cat_annotate(Res, Sem, Lemma, []). % FIXME how do we ensure Res gets Arg-like annotations?
+  copy_annotation(Arg, Res).
 % non-role-assigning modifiers
-cat_annotate(CO, Sem, Lemma, []) :-
-  CO = b(_, Res, _),
+cat_annotate(CO, _, _, []) :-
+  CO = b(_, Res, Arg),
   co_match(CO, X\X),
   !,
   inv(CO),
-  cat_annotate(Res, Sem, Lemma, []). % FIXME how do we ensure Res gets Arg-like annotations?
-cat_annotate(CO, Sem, Lemma, []) :-
-  CO = f(_, Res, _),
+  copy_annotation(Arg, Res).
+cat_annotate(CO, _, _, []) :-
+  CO = f(_, Res, Arg),
   co_match(CO, X/X),
   !,
   inv(CO),
-  cat_annotate(Res, Sem, Lemma, []). % FIXME how do we ensure Res gets Arg-like annotations?
+  copy_annotation(Arg, Res).
 % role-assigning adpositions
 cat_annotate(CO, Sem, Lemma, [Role|Roles]) :-
   CO = f(_, Res, _),
@@ -411,3 +423,26 @@ cat_annotate(CO, Sem, Lemma, []) :-
   cat_annotate(Res, Sem, Lemma, []).
 % basic categories
 cat_annotate(_, _, _, _). % TODO Rolelists should be empty here, but sometimes aren't - what's up with that?
+
+copy_annotation(From, To) :- % TODO roles
+  ids2vars(From, VarFrom, [], _),
+  copy_term(VarFrom, To).
+
+ids2vars(a(ID, FCat, Cat), a(Var, FCat, Cat), Bindings0, Bindings) :-
+  id2var(ID, Var, Bindings0, Bindings).
+ids2vars(f(ID, Res0, Arg0), f(Var, Res, Arg), Bindings0, Bindings) :-
+  id2var(ID, Var, Bindings0, Bindings1),
+  ids2vars(Res0, Res, Bindings1, Bindings2),
+  ids2vars(Arg0, Arg, Bindings2, Bindings).
+ids2vars(b(ID, Res0, Arg0), b(Var, Res, Arg), Bindings0, Bindings) :-
+  id2var(ID, Var, Bindings0, Bindings1),
+  ids2vars(Res0, Res, Bindings1, Bindings2),
+  ids2vars(Arg0, Arg, Bindings2, Bindings).
+
+id2var(Var, Var, Bindings, Bindings) :-
+  var(Var),
+  !.
+id2var(ID, Var, Bindings, Bindings) :-
+  member(ID:Var, Bindings),
+  !.
+id2var(ID, Var, Bindings, [ID:Var|Bindings]).
