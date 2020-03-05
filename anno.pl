@@ -11,7 +11,6 @@
     must/1]).
 
 cac_annotate(t(CO, _, Atts)) :-
-  !,
   (  var(CO)
   -> CO = a(_, _, _)
   ;  true
@@ -26,12 +25,37 @@ cac_annotate(t(CO, _, Atts)) :-
   ),
   must(cat_annotate(CO, Sem, Lemma, Roles)).
 cac_annotate(lx(_, _, D)) :-
-  !,
   cac_annotate(D).
-cac_annotate(Const) :-
-  Const =.. [_, _, L, R],
-  cac_annotate(L),
-  cac_annotate(R).
+cac_annotate(ba(_, D2, D1)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(fa(_, D1, D2)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(bc(_, D2, D1)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(fc(_, D1, D2)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(bxc(_, D2, D1)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(fxc(_, D1, D2)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(gbc(_, D2, D1)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(gfc(_, D1, D2)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(gbxc(_, D2, D1)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
+cac_annotate(gfxc(_, D1, D2)) :-
+  cac_annotate(D2),
+  cac_annotate(D1).
 
 % match category objects against plain categories
 co_match(f(_, X0, Y0), X/Y) :-
