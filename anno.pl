@@ -162,6 +162,26 @@ cat_annotate(((A\B)/(C\D))/E, Sem, Lemma, [SubjRole]) :-
   cat_role(D, ObjRole),
   cat_role(E, ObjRole),
   cat_annotate(A, Sem, Lemma, []).
+% "need" with s:ng\np argument ("The shirt needs ironing")
+cat_annotate((A\B)/(C\D), 'NEC', Lemma, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:ng\np),
+  !,
+  cat_dir(C\D, flip),
+  cat_dir(B, noninv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A, 'NEC', Lemma, []).
+cat_annotate((A\B)\(C\D), 'NEC', Lemma, []) :-
+  cat_match(A\B, s:_\np),
+  cat_match(C\D, s:ng\np),
+  !,
+  cat_dir(C\D, flip),
+  cat_dir(B, noninv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A, 'NEC', Lemma, []).
+% TODO what about "need to"?
 % TODO modal verbs?
 % modal verbs
 %cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
