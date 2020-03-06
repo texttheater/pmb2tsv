@@ -157,6 +157,7 @@ cat_annotate(((A\B)/(C\D))/E, Sem, Lemma, [SubjRole]) :-
   !,
   cat_dir(E, noninv),
   cat_dir(C\D, flip),
+  cat_dir(B, noninv),
   cat_role(B, SubjRole),
   cat_role(D, ObjRole),
   cat_role(E, ObjRole),
