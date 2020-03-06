@@ -119,9 +119,9 @@ cat_annotate(X\Y, Sem, be, []) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, be, []).
-% auxiliaries
+% auxiliaries and modals
 cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
-  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
   !,
@@ -130,7 +130,7 @@ cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
   cat_role(B, Role),
   cat_annotate(A\B, Sem, Lemma, []).
 cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
-  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
   !,
@@ -139,7 +139,7 @@ cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
   cat_role(B, Role),
   cat_annotate(A\B, Sem, Lemma, []).
 cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
-  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
   cat_match(A, s:q),
   cat_match(B\C, s:pt\np),
   !,
