@@ -63,7 +63,5 @@ The conversion of CCG derivations to dependency trees tries to follow the
 [UD](https://universaldependencies.org) guidelines: CCG arguments are treated
 as dependents of their functors, except for modifiers, determiners,
 adpositions, subordinating conjunctions, complementizers, relative pronouns,
-and auxiliary verbs, for which the dependency is inverted. Coordinating
-conjunctions depend on the second conjunct, which depends on the first
-conjunct. Departing from UD, we also aim to treat modal verbs like "must",
-"can", "need", and "need to" as dependents of their arguments.
+and auxiliary and modal verbs, for which the dependency is inverted.
+Coordinating conjunctions depend on the second conjunct, which depends on the
