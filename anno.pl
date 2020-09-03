@@ -333,6 +333,18 @@ cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
   cat_dir(Y, inv),
   cat_role(Y, Role),
   cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate(X/Y, Sem, Lemma, []) :-
+  cat_match(X/Y, np/(n/pp)),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, Sem, Lemma, []).
+% possessive suffix
+cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
+  cat_match(X\Y, (np/(n/pp))\np),
+  !,
+  cat_dir(Y, inv),
+  cat_role(Y, Role),
+  cat_annotate(X, Sem, Lemma, Roles).
 % subordinating conjunctions
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   % left/right sentence/VP/question VP modification
