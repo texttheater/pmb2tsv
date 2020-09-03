@@ -144,7 +144,7 @@ cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
 cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
   cat_match(A, s:q),
-  cat_match(B\C, s:pt\np),
+  cat_match(B\C, s:_\np),
   !,
   cat_dir(D, noninv),
   cat_dir(B\C, flip),
