@@ -390,7 +390,7 @@ cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
-% relative pronouns
+% relativizers
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   ( cat_match(X, n\n)
   ; cat_match(X, np\np)
@@ -402,6 +402,18 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate((X/Y)/Z, Sem, Lemma, Roles0) :-
+  ( cat_match(X, n\n)
+  ; cat_match(X, np\np)
+  ),
+  ( cat_match(Y, s:dcl\np)
+  ; cat_match(Y, s:dcl/np)
+  ),
+  cat_match(Z, n),
+  !,
+  cat_dir(Z, inv),
+  handle_roles(Roles0, Roles),
+  cat_annotate(X/Y, Sem, Lemma, Roles).
 % pseudo tokens starting reduced relative clauses
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_match(X, n\n),
