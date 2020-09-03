@@ -91,20 +91,22 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   cat_role(D, Role),
   cat_annotate(A, Sem, Lemma, []).
 % noun copulas
-cat_annotate(X/Y, Sem, be, []) :-
+cat_annotate(X/Y, Sem, be, Roles0) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, be, []).
-cat_annotate(X\Y, Sem, be, []) :-
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, be, Roles).
+cat_annotate(X\Y, Sem, be, Roles0) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, np),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, be, []).
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, be, Roles).
 % adposition copulas
 cat_annotate(X/Y, Sem, be, []) :-
   cat_match(X, s:_\np:F),
