@@ -79,10 +79,11 @@ cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
   cat_role(D, Role),
   cat_role(B, Role),
   cat_annotate(A\B, Sem, Lemma, []).
-cat_annotate((A/(B\C))/D, Sem, Lemma, []) :- % FIXME D = np??
+cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   member(Lemma, [be, ai]),
   cat_match(A, s:q),
   cat_match(B\C, s:adj\np),
+  cat_match(D, np),
   !,
   cat_dir(D, noninv),
   cat_dir(B\C, flip),
