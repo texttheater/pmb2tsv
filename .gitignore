@@ -11,5 +11,6 @@
 /*.wordnet
 /*.parse.tags
 /*.tsv
+/*.predicted
 /pmb-3.0.0-dx000
 /pmb-3.0.0
