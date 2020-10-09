@@ -191,6 +191,13 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   cat_role(C, Role),
   cat_role(D, Role),
   cat_annotate(A, Sem, Lemma, []).
+% Italian middle voice reflexive pronoun, analyzed like an auxiliary
+cat_annotate(X/Y, 'REF', Lemma, []) :-
+  cat_match(X, s:dcl\np),
+  cat_match(Y, s:pss\np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, 'REF', Lemma, []).
 % "have" with s:pss\np argument ("He had his tooth pulled")
 cat_annotate(((A\B)/(C\D))/E, Sem, Lemma, [SubjRole]) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
