@@ -484,6 +484,11 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % question words
+cat_annotate(X/Y, 'EMP', Lemma, []) :-
+  cat_match(X/Y, s:dcl/np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, 'EMP', Lemma, []).
 cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
   cat_match(X, s:wq),
   cat_match(Y/Z, s:q/(s:adj\np)),
