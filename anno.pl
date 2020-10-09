@@ -79,6 +79,15 @@ cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
   cat_role(D, Role),
   cat_role(B, Role),
   cat_annotate(A\B, Sem, Lemma, []).
+cat_annotate((A/B)\(C\D), Sem, Lemma, []) :-
+  member(Lemma, [be, ai]),
+  cat_match(A/B, s:_/np),
+  cat_match(C\D, s:adj\np),
+  !,
+  cat_dir(C\D, inv),
+  cat_role(D, Role),
+  cat_role(B, Role),
+  cat_annotate(A\B, Sem, Lemma, []).
 cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   member(Lemma, [be, ai]),
   cat_match(A, s:q),
@@ -122,6 +131,16 @@ cat_annotate(X\Y, Sem, be, []) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, be, []).
+cat_annotate((X/Y)/Z, Sem, Lemma, [Role]) :-
+  member(Lemma, [be, ai]),
+  cat_match(X, s:q),
+  cat_match(Y, pp),
+  cat_match(Z, np),
+  !,
+  cat_dir(Z, noninv),
+  cat_role(Z, Role),
+  cat_dir(Y, flip),
+  cat_annotate(X, Sem, Lemma, []).
 % auxiliaries and modals
 cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
@@ -440,6 +459,18 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
 cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
   cat_match(X, s:wq),
   cat_match(Y/Z, s:q/(s:adj\np)),
+  !,
+  cat_dir(Z, Dir),
+  when(nonvar(Dir), % HACK
+      (  Dir = flip
+      -> cat_dir(Y, noninv)
+      ;  cat_dir(Y, inv)
+      ) ),
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
+  cat_match(X, s:wq),
+  cat_match(Y/Z, s:q/pp),
   !,
   cat_dir(Z, Dir),
   when(nonvar(Dir), % HACK
