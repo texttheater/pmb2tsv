@@ -13,7 +13,7 @@
 2	Yakuza	5
 3	sono	5
 4	la	5
-5	mafia	5
+5	mafia	0
 6	giapponese	5
 7	.	5
 
@@ -29,8 +29,8 @@
 3	la	4
 4	Grameen~Bank	2
 5	30	6
-6	anni	4
-7	fa	4
+6	anni	2
+7	fa	6
 8	.	2
 
 1	Maria	2
@@ -90,11 +90,11 @@
 6	momento	3
 7	.	3
 
-1	Lui	4
-2	è	4
-3	fuori	4
-4	adesso	0
-5	.	4
+1	Lui	3
+2	è	3
+3	fuori	0
+4	adesso	3
+5	.	3
 
 1	Tom	4
 2	non	4

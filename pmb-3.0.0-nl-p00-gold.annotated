@@ -36,9 +36,9 @@
 
 1	Yunus	2
 2	richtte	0
-3	30	5
-4	jaar	5
-5	geleden	2
+3	30	4
+4	jaar	2
+5	geleden	4
 6	de	7
 7	Grameen~Bank	2
 8	op	2
@@ -128,7 +128,7 @@
 3	twee	1
 4	is	5
 5	gelijk	0
-6	aan	5
+6	aan	7
 7	drie	5
 8	.	5
 
@@ -142,11 +142,11 @@
 4	groot	0
 5	.	4
 
-1	Dat	3
-2	is	3
-3	de	3
+1	Dat	4
+2	is	4
+3	de	4
 4	vrouw	0
-5	wier	7
+5	wier	6
 6	auto's	7
 7	gestolen	4
 8	zijn	7
@@ -297,7 +297,7 @@
 3	is	4
 4	gemaakt	0
 5	van	8
-6	erg	8
+6	erg	7
 7	ruw	8
 8	materiaal	4
 9	.	4
