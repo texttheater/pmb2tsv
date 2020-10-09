@@ -267,13 +267,13 @@ cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   cat_annotate(X, Sem, Lemma, Roles).
 % role-assigning adpositions
 cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
-  cat_match(X/Y, pp/np),
+  cat_match(X, pp),
   !,
   cat_dir(Y, inv),
   cat_role(Y, Role),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
-  cat_match(X\Y, pp\np),
+  cat_match(X, pp),
   !,
   cat_dir(Y, inv),
   cat_role(Y, Role),
@@ -304,13 +304,13 @@ cat_annotate((X/Y)\Z, Sem, Lemma, [Role|Roles]) :-
   cat_annotate(X/Y, Sem, Lemma, Roles).
 % non-role-assigning adpositions (TODO do we need these?)
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
-  cat_match(X/Y, pp/np),
+  cat_match(X, pp),
   !,
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X\Y, Sem, Lemma, Roles0) :-
-  cat_match(X\Y, pp\np),
+  cat_match(X, pp),
   !,
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
