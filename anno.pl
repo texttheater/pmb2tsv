@@ -90,6 +90,17 @@ cat_annotate((A/B)\(C\D), Sem, Lemma, []) :-
   cat_annotate(A\B, Sem, Lemma, []).
 cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   member(Lemma, [be, ai]),
+  cat_match(A, s:_),
+  cat_match(B\C, s:adj\np),
+  cat_match(D, np),
+  !,
+  cat_dir(D, noninv),
+  cat_dir(B\C, flip),
+  cat_role(C, Role),
+  cat_role(D, Role),
+  cat_annotate(A, Sem, Lemma, []).
+cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
+  member(Lemma, [be, ai]),
   cat_match(A, s:q),
   cat_match(B\C, s:adj\np),
   cat_match(D, np),
@@ -116,6 +127,16 @@ cat_annotate(X\Y, Sem, be, Roles0) :-
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, be, Roles).
+cat_annotate((X/Y)/Z, Sem, Lemma, Roles0) :-
+  member(Lemma, [be, ai]),
+  cat_match(X, s:q),
+  cat_match(Y, np),
+  cat_match(Z, np),
+  !,
+  cat_dir(Z, noninv),
+  cat_dir(Y, flip),
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles).
 % adposition copulas
 cat_annotate(X/Y, Sem, be, []) :-
   cat_match(X, s:_\np:F),
@@ -459,6 +480,18 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
 cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
   cat_match(X, s:wq),
   cat_match(Y/Z, s:q/(s:adj\np)),
+  !,
+  cat_dir(Z, Dir),
+  when(nonvar(Dir), % HACK
+      (  Dir = flip
+      -> cat_dir(Y, noninv)
+      ;  cat_dir(Y, inv)
+      ) ),
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
+  cat_match(X, s:wq),
+  cat_match(Y/Z, s:q/np),
   !,
   cat_dir(Z, Dir),
   when(nonvar(Dir), % HACK
