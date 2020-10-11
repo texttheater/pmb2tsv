@@ -12,5 +12,6 @@
 /*.parse.tags
 /*.tsv
 /*.predicted
+/*.eval
 /pmb-3.0.0-dx000
 /pmb-3.0.0
