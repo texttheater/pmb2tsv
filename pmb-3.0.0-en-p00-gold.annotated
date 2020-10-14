@@ -175,7 +175,7 @@
 7	.	3
 
 1	Think	0
-2	about	1
+2	about	3
 3	it	1
 4	.	1
 
@@ -317,7 +317,7 @@
 2	suit	0
 3	.	2
 
-1	The	4
+1	The	2
 2	book	4
 3	is	4
 4	big	0
@@ -447,7 +447,7 @@
 6	complete	0
 7	.	6
 
-1	The	4
+1	The	2
 2	shooting	4
 3	had	4
 4	ceased	0
@@ -473,7 +473,7 @@
 
 1	In	2
 2	1922	7
-3	,	7
+3	,	2
 4	the	5
 5	site	7
 6	was	7
@@ -659,15 +659,15 @@
 3	Tom	2
 4	.	2
 
-1	I	4
-2	have	4
-3	n't	4
-4	been	0
+1	I	6
+2	have	6
+3	n't	6
+4	been	6
 5	to	6
-6	Boston	4
+6	Boston	0
 7	since	8
-8	2013	4
-9	.	4
+8	2013	6
+9	.	6
 
 1	The	2
 2	college	4
@@ -817,7 +817,7 @@
 3	left	0
 4	.	3
 
-1	I	$
+1	I	4
 2	will	4
 3	not	4
 4	lie	0
@@ -1217,7 +1217,7 @@
 3	Mary	2
 4	.	2
 
-1	Ten	3
+1	Ten	2
 2	prisoners	3
 3	broke	0
 4	out	3
@@ -1792,7 +1792,7 @@
 1	I	3
 2	'm	3
 3	17	0
-4	,	5
+4	,	3
 5	too	3
 6	.	3
 
@@ -2065,10 +2065,10 @@
 6	station	3
 7	.	3
 
-1	She	3
-2	found	3
-3	one	0
-4	.	3
+1	She	2
+2	found	0
+3	one	2
+4	.	2
 
 1	My	2
 2	son	4
@@ -2128,7 +2128,7 @@
 3	been	4
 4	writing	0
 5	for	8
-6	about	8
+6	about	7
 7	6000	8
 8	years	4
 9	.	4
@@ -2456,9 +2456,9 @@
 2	suit	4
 3	's	4
 4	made	0
-5	of	4
+5	of	8
 6	very	7
-7	rough	4
+7	rough	8
 8	material	4
 9	.	4
 
@@ -2620,7 +2620,7 @@
 2	love	0
 3	thick	7
 4	,	5
-5	creamy	7
+5	creamy	3
 6	mushroom	7
 7	soup	2
 8	.	2
