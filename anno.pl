@@ -144,20 +144,20 @@ cat_annotate((X/Y)/Z, Sem, Lemma, Roles0) :-
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % adposition copulas
-cat_annotate(X/Y, Sem, be, []) :-
+cat_annotate(X/Y, Sem, be, Roles) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, pp),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, be, []).
-cat_annotate(X\Y, Sem, be, []) :-
+  cat_annotate(X, Sem, be, Roles).
+cat_annotate(X\Y, Sem, be, Roles) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, pp),
   !,
   cat_dir(Y, inv),
-  cat_annotate(X, Sem, be, []).
+  cat_annotate(X, Sem, be, Roles).
 cat_annotate((X/Y)/Z, Sem, Lemma, [Role]) :-
   member(Lemma, [be, ai]),
   cat_match(X, s:q),
