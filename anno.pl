@@ -114,7 +114,9 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
 cat_annotate(X/Y, Sem, be, Roles0) :-
   cat_match(X, s:_\np:F),
   F \== thr,
-  cat_match(Y, np),
+  ( cat_match(Y, np)
+  ; cat_match(Y, np/pp)
+  ),
   !,
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
@@ -122,7 +124,9 @@ cat_annotate(X/Y, Sem, be, Roles0) :-
 cat_annotate(X\Y, Sem, be, Roles0) :-
   cat_match(X, s:_\np:F),
   F \== thr,
-  cat_match(Y, np),
+  ( cat_match(Y, np)
+  ; cat_match(Y, np/pp)
+  ),
   !,
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
@@ -131,7 +135,9 @@ cat_annotate((X/Y)/Z, Sem, Lemma, Roles0) :-
   member(Lemma, [be, ai]),
   cat_match(X, s:q),
   cat_match(Y, np),
-  cat_match(Z, np),
+  ( cat_match(Z, np)
+  ; cat_match(Z, np/pp)
+  ),
   !,
   cat_dir(Z, noninv),
   cat_dir(Y, flip),
