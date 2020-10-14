@@ -207,6 +207,13 @@ cat_annotate(X/Y, 'REF', Lemma, []) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, 'REF', Lemma, []).
+% reflexive pronouns
+cat_annotate(X\Y, 'REF', Lemma, []) :-
+  cat_match(X, s:_\np),
+  cat_match(Y, (s:_\np)/np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, 'REF', Lemma, []).
 % "have" with s:pss\np argument ("He had his tooth pulled")
 cat_annotate(((A\B)/(C\D))/E, Sem, Lemma, [SubjRole]) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT']),
