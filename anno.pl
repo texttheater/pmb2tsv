@@ -390,6 +390,12 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate(X\Y, Sem, Lemma, Roles0) :-
+  cat_match(X\Y, np\n), % "Many a man"
+  !,
+  cat_dir(Y, inv),
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
   cat_match(X/Y, np/(n/pp)),
   !,
