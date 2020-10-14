@@ -170,7 +170,7 @@ cat_annotate((X/Y)/Z, Sem, Lemma, [Role]) :-
   cat_annotate(X, Sem, Lemma, []).
 % auxiliaries and modals
 cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
-  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
   !,
@@ -179,7 +179,7 @@ cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
   cat_role(B, Role),
   cat_annotate(A\B, Sem, Lemma, []).
 cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
-  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
+  member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
   !,
