@@ -9,14 +9,13 @@ semantic roles.
 The primary target audience is people wanting to do semantic role labeling
 (SRL) experiments on the PMB.
 
-**Note**: `pmb2tsv` is currently in beta and has not been comprehensively
-tested yet.
+**Note**: `pmb2tsv` is experimental and some of its output may be erroneous.
 
 Input Data
 ----------
 
-Please download the PMB 3.0.0 and extract the directory `pmb-3.0.0` into the
-root directory of this repository.
+Please download the [PMB](https://pmb.let.rug.nl) 3.0.0 and extract the
+directory `pmb-3.0.0` into the root directory of this repository.
 
 Software Dependencies
 ---------------------
@@ -40,10 +39,9 @@ If everything is in place, run the following command:
 
     produce
 
-This creates files named
-`pmb-3.0.0-{en-{train-{gold,silver,bronze},{dev,test}-gold},{de,it,nl}-{dev,test}-gold}.tsv`.
-They contain the converted sentences, separated by empty lines, one token per
-line with the following tab-separated columns:
+This creates files named `pmb-3.0.0-{en,de,it,nl}-{p00,p01}-gold.tsv`.  They
+contain the converted sentences, separated by empty lines, one token per line
+with the following tab-separated columns:
 
 1. Token number within sentence
 2. Token form
@@ -60,8 +58,7 @@ being part of the role filler (in which case it contains a VerbNet Role such as
 `Agent` or `Patient`), or as neither (in which case it is `O`).
 
 The conversion of CCG derivations to dependency trees tries to follow the
-[UD](https://universaldependencies.org) guidelines: CCG arguments are treated
-as dependents of their functors, except for modifiers, determiners,
-adpositions, subordinating conjunctions, complementizers, relative pronouns,
-and auxiliary and modal verbs, for which the dependency is inverted.
-Coordinating conjunctions depend on the second conjunct, which depends on the
+[UD](https://universaldependencies.org) guidelines. For details, see
+
+    Kilian Evang (2020): Configurable Dependency Tree Extraction from CCG
+    Derivations. Proceedings of the Universal Dependencies Workshop 2020.
