@@ -61,35 +61,31 @@ cat_annotate((A\B)/C, Sem, _, _) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 % adjective copulas
-cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
-  member(Lemma, [be, ai]),
+cat_annotate((A\B)/(C\D), Sem, be, []) :-
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:adj\np),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
   cat_role(B, Role),
-  cat_annotate(A\B, Sem, Lemma, []).
-cat_annotate((A\B)\(C\D), Sem, Lemma, []) :-
-  member(Lemma, [be, ai]),
+  cat_annotate(A\B, Sem, be, []).
+cat_annotate((A\B)\(C\D), Sem, be, []) :-
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:adj\np),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
   cat_role(B, Role),
-  cat_annotate(A\B, Sem, Lemma, []).
-cat_annotate((A/B)\(C\D), Sem, Lemma, []) :-
-  member(Lemma, [be, ai]),
+  cat_annotate(A\B, Sem, be, []).
+cat_annotate((A/B)\(C\D), Sem, be, []) :-
   cat_match(A/B, s:_/np),
   cat_match(C\D, s:adj\np),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
   cat_role(B, Role),
-  cat_annotate(A\B, Sem, Lemma, []).
-cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
-  member(Lemma, [be, ai]),
+  cat_annotate(A\B, Sem, be, []).
+cat_annotate((A/(B\C))/D, Sem, be, []) :-
   cat_match(A, s:_),
   cat_match(B\C, s:adj\np),
   cat_match(D, np),
@@ -98,9 +94,8 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   cat_dir(B\C, flip),
   cat_role(C, Role),
   cat_role(D, Role),
-  cat_annotate(A, Sem, Lemma, []).
-cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
-  member(Lemma, [be, ai]),
+  cat_annotate(A, Sem, be, []).
+cat_annotate((A/(B\C))/D, Sem, be, []) :-
   cat_match(A, s:q),
   cat_match(B\C, s:adj\np),
   cat_match(D, np),
@@ -109,7 +104,7 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, []) :-
   cat_dir(B\C, flip),
   cat_role(C, Role),
   cat_role(D, Role),
-  cat_annotate(A, Sem, Lemma, []).
+  cat_annotate(A, Sem, be, []).
 % noun copulas
 cat_annotate(X/Y, Sem, be, Roles0) :-
   cat_match(X, s:_\np:F),
@@ -131,8 +126,7 @@ cat_annotate(X\Y, Sem, be, Roles0) :-
   cat_dir(Y, inv),
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, be, Roles).
-cat_annotate((X/Y)/Z, Sem, Lemma, Roles0) :-
-  member(Lemma, [be, ai]),
+cat_annotate((X/Y)/Z, Sem, be, Roles0) :-
   cat_match(X, s:q),
   cat_match(Y, np),
   ( cat_match(Z, np)
@@ -142,7 +136,7 @@ cat_annotate((X/Y)/Z, Sem, Lemma, Roles0) :-
   cat_dir(Z, noninv),
   cat_dir(Y, flip),
   handle_roles(Roles0, Roles),
-  cat_annotate(X, Sem, Lemma, Roles).
+  cat_annotate(X, Sem, be, Roles).
 % adposition copulas
 cat_annotate(X/Y, Sem, be, Roles) :-
   cat_match(X, s:_\np:F),
@@ -158,8 +152,7 @@ cat_annotate(X\Y, Sem, be, Roles) :-
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, be, Roles).
-cat_annotate((X/Y)/Z, Sem, Lemma, [Role]) :-
-  member(Lemma, [be, ai]),
+cat_annotate((X/Y)/Z, Sem, be, [Role]) :-
   cat_match(X, s:q),
   cat_match(Y, pp),
   cat_match(Z, np),
@@ -167,7 +160,7 @@ cat_annotate((X/Y)/Z, Sem, Lemma, [Role]) :-
   cat_dir(Z, noninv),
   cat_role(Z, Role),
   cat_dir(Y, flip),
-  cat_annotate(X, Sem, Lemma, []).
+  cat_annotate(X, Sem, be, []).
 % auxiliaries and modals
 cat_annotate((A\B)/(C\D), Sem, Lemma, []) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
