@@ -499,6 +499,47 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % question words
+cat_annotate(X/Y, 'EMP', Lemma, []) :-
+  cat_match(X/Y, s:dcl/np),
+  !,
+  cat_dir(Y, inv),
+  cat_annotate(X, 'EMP', Lemma, []).
+cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
+  cat_match(X, s:wq),
+  cat_match(Y/Z, s:q/(s:adj\np)),
+  !,
+  cat_dir(Z, Dir),
+  when(nonvar(Dir), % HACK
+      (  Dir = flip
+      -> cat_dir(Y, noninv)
+      ;  cat_dir(Y, inv)
+      ) ),
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
+  cat_match(X, s:wq),
+  cat_match(Y/Z, s:q/np),
+  !,
+  cat_dir(Z, Dir),
+  when(nonvar(Dir), % HACK
+      (  Dir = flip
+      -> cat_dir(Y, noninv)
+      ;  cat_dir(Y, inv)
+      ) ),
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles).
+cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
+  cat_match(X, s:wq),
+  cat_match(Y/Z, s:q/pp),
+  !,
+  cat_dir(Z, Dir),
+  when(nonvar(Dir), % HACK
+      (  Dir = flip
+      -> cat_dir(Y, noninv)
+      ;  cat_dir(Y, inv)
+      ) ),
+  handle_roles(Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   ( cat_match(X, s:wq)
   ; cat_match(X, s:wq/_)
