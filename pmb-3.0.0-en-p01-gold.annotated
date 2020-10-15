@@ -115,7 +115,7 @@
 4	happy	0
 5	.	4
 
-1	The	4
+1	The	2
 2	baby	4
 3	is	4
 4	crawling	0
@@ -153,7 +153,7 @@
 
 1	She	2
 2	showers	0
-3	every	3
+3	every	4
 4	morning	2
 5	.	2
 
@@ -326,7 +326,7 @@
 3	me	2
 4	.	2
 
-1	Only	3
+1	Only	2
 2	six	3
 3	people	4
 4	came	0
@@ -400,7 +400,7 @@
 6	coffee	4
 7	.	4
 
-1	The	4
+1	The	2
 2	festival	4
 3	is	4
 4	free	0
@@ -750,7 +750,7 @@
 
 1	Mrs.	2
 2	Baker	6
-3	had	7
+3	had	6
 4	her	5
 5	purse	6
 6	stolen	0
@@ -788,7 +788,7 @@
 6	city	4
 7	.	4
 
-1	My	4
+1	My	2
 2	name	4
 3	is	4
 4	Paola	0
@@ -880,11 +880,11 @@
 5	present	0
 6	.	5
 
-1	He	4
-2	comes	4
+1	He	2
+2	comes	0
 3	from	4
-4	France	0
-5	.	4
+4	France	2
+5	.	2
 
 1	I	2
 2	cooked	0
@@ -1068,9 +1068,9 @@
 4	dollars	2
 5	an	6
 6	hour	4
-7	for	9
-8	mowing	9
-9	lawns	2
+7	for	8
+8	mowing	2
+9	lawns	8
 10	.	2
 
 1	I	3
@@ -1233,7 +1233,7 @@
 4	driving~licence	2
 5	.	2
 
-1	The	4
+1	The	2
 2	terrorists	4
 3	have	4
 4	failed	0
@@ -1297,7 +1297,7 @@
 7	street	2
 8	.	2
 
-1	The	4
+1	The	2
 2	restaurant	4
 3	is	4
 4	empty	0
@@ -1500,7 +1500,7 @@
 4	live	0
 5	in	6
 6	Boston	4
-7	anymore	6
+7	anymore	4
 8	.	4
 
 1	This	2
