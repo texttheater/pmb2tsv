@@ -4,6 +4,7 @@
 """Converts dependency-based to span-based semantic role annotations.
 """
 
+
 import collections
 import sys
 import util
