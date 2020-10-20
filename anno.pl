@@ -302,79 +302,42 @@ cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   cat_dir(Y, noninv),
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
-% role-assigning adpositions
-cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
-  cat_match(X, pp),
-  !,
-  cat_dir(Y, inv),
-  cat_role(Y, Role),
-  cat_annotate(X, Sem, Lemma, Roles).
-cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
-  cat_match(X, pp),
-  !,
-  cat_dir(Y, inv),
-  cat_role(Y, Role),
-  cat_annotate(X, Sem, Lemma, Roles).
-cat_annotate((X\Y)/Z, Sem, Lemma, [Role|Roles]) :-
-  cat_match(X\Y, A\A),
-  !,
-  cat_dir(Z, inv),
-  cat_role(Y, Role),
-  cat_annotate(X\Y, Sem, Lemma, Roles).
-cat_annotate((X/Y)/Z, Sem, Lemma, [Role|Roles]) :-
-  cat_match(X/Y, A/A),
-  !,
-  cat_dir(Z, inv),
-  cat_role(Y, Role),
-  cat_annotate(X/Y, Sem, Lemma, Roles).
-cat_annotate((X\Y)\Z, Sem, Lemma, [Role|Roles]) :-
-  cat_match(X\Y, A\A),
-  !,
-  cat_dir(Z, inv),
-  cat_role(Y, Role),
-  cat_annotate(X\Y, Sem, Lemma, Roles).
-cat_annotate((X/Y)\Z, Sem, Lemma, [Role|Roles]) :-
-  cat_match(X/Y, A/A),
-  !,
-  cat_dir(Z, inv),
-  cat_role(Y, Role),
-  cat_annotate(X/Y, Sem, Lemma, Roles).
-% non-role-assigning adpositions (TODO do we need these?)
+% adpositions
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_match(X, pp),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   cat_match(X, pp),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate((X\Y)/Z, Sem, Lemma, Roles0) :-
   cat_match(X\Y, A\A),
   !,
   cat_dir(Z, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X\Y, Sem, Lemma, Roles).
 cat_annotate((X/Y)/Z, Sem, Lemma, Roles0) :-
   cat_match(X/Y, A/A),
   !,
   cat_dir(Z, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X/Y, Sem, Lemma, Roles).
 cat_annotate((X\Y)\Z, Sem, Lemma, Roles0) :-
   cat_match(X\Y, A\A),
   !,
   cat_dir(Z, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X\Y, Sem, Lemma, Roles).
 cat_annotate((X/Y)\Z, Sem, Lemma, Roles0) :-
   cat_match(X/Y, A/A),
   !,
   cat_dir(Z, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X/Y, Sem, Lemma, Roles).
 % determiners
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
@@ -549,17 +512,19 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   handle_roles(Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % modifiers
-cat_annotate(X\Y, _, _, _) :-
+cat_annotate(X\Y, _, _, Roles0) :-
   cat_match(X, Cat),
   cat_match(Y, Cat),
   !,
   cat_dir(Y, inv),
+  handle_roles(Y, Roles0, _),
   cat_annotate_mod(X, Y).
-cat_annotate(X/Y, _, _, _) :-
+cat_annotate(X/Y, _, _, Roles0) :-
   cat_match(X, Cat),
   cat_match(Y, Cat),
   !,
   cat_dir(Y, inv),
+  handle_roles(Y, Roles0, _),
   cat_annotate_mod(X, Y).
 % "modifiers" of relational nouns
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
@@ -567,14 +532,14 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_match(Y, n/pp),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   cat_match(X, n),
   cat_match(Y, n/pp),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % role-assigning verbs with PP argument
 cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
