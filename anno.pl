@@ -633,6 +633,10 @@ cat_annotate_mod(co(_, _, _, _, _), co(_, _, _, _, _)).
 handle_roles([_|Roles], Roles).
 handle_roles([], []).
 
+handle_roles(Y, [Role|Roles], Roles) :-
+  cat_role(Y, Role).
+handle_roles(_, Roles, Roles).
+
 :- begin_tests(dir).
 
 :- use_module(cat, [
