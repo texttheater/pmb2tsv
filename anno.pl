@@ -344,25 +344,20 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_match(X/Y, np/n),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   cat_match(X\Y, np\n), % "Many a man"
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
-cat_annotate(X/Y, Sem, Lemma, [Role|Roles]) :-
+cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_match(X/Y, np/(n/pp)),
   !,
   cat_dir(Y, inv),
-  cat_role(Y, Role),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
-cat_annotate(X/Y, Sem, Lemma, []) :-
-  cat_match(X/Y, np/(n/pp)),
-  !,
-  cat_dir(Y, inv),
-  cat_annotate(X, Sem, Lemma, []).
 % possessive suffix
 cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
   cat_match(X\Y, (np/(n/pp))\np),
@@ -388,7 +383,7 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   ),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % complementizers
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
