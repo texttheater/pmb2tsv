@@ -114,7 +114,7 @@ cat_annotate(X/Y, Sem, be, Roles0) :-
   ),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, be, Roles).
 cat_annotate(X\Y, Sem, be, Roles0) :-
   cat_match(X, s:_\np:F),
@@ -124,7 +124,7 @@ cat_annotate(X\Y, Sem, be, Roles0) :-
   ),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, be, Roles).
 cat_annotate((X/Y)/Z, Sem, be, Roles0) :-
   cat_match(X, s:q),
@@ -135,7 +135,7 @@ cat_annotate((X/Y)/Z, Sem, be, Roles0) :-
   !,
   cat_dir(Z, noninv),
   cat_dir(Y, flip),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, be, Roles).
 % adposition copulas
 cat_annotate(X/Y, Sem, be, Roles) :-
@@ -278,14 +278,14 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   member(Sem, ['EXS', 'ENS', 'EPS', 'EXG', 'EXT']),
   !,
   cat_dir(Y, noninv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   cat_match(X\Y, (s:b\np)\(s:b\np)),
   member(Sem, ['EXS', 'ENS', 'EPS', 'EXG', 'EXT']),
   !,
   cat_dir(Y, noninv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % NPs with NP arguments
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
@@ -293,14 +293,14 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   cat_match(X/Y, np/np),
   !,
   cat_dir(Y, noninv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   member(Sem, ['EXG']),
   cat_match(X\Y, np\np),
   !,
   cat_dir(Y, noninv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % adpositions
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
@@ -472,7 +472,7 @@ cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
       -> cat_dir(Y, noninv)
       ;  cat_dir(Y, inv)
       ) ),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
   cat_match(X, s:wq),
@@ -484,7 +484,7 @@ cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
       -> cat_dir(Y, noninv)
       ;  cat_dir(Y, inv)
       ) ),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
   cat_match(X, s:wq),
@@ -496,7 +496,7 @@ cat_annotate(X/(Y/Z), Sem, Lemma, Roles0) :-
       -> cat_dir(Y, noninv)
       ;  cat_dir(Y, inv)
       ) ),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   ( cat_match(X, s:wq)
@@ -504,7 +504,7 @@ cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   ),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % modifiers
 cat_annotate(X\Y, _, _, Roles0) :-
@@ -563,12 +563,12 @@ cat_annotate(X\Y, Sem, Lemma, [Role|Roles]) :-
 cat_annotate(X\Y, Sem, Lemma, Roles0) :-
   !,
   cat_dir(Y, noninv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 cat_annotate(X/Y, Sem, Lemma, Roles0) :-
   !,
   cat_dir(Y, noninv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles).
 % basic categories
 cat_annotate(_, _, _, _).
@@ -589,9 +589,6 @@ cat_annotate_mod(A/B, C/D) :-
   cat_role(B, Role),
   cat_annotate_mod(A, C).
 cat_annotate_mod(co(_, _, _, _, _), co(_, _, _, _, _)).
-
-handle_roles([_|Roles], Roles).
-handle_roles([], []).
 
 handle_roles(Y, [Role|Roles], Roles) :-
   cat_role(Y, Role).
