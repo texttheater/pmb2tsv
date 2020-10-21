@@ -35,13 +35,14 @@ following software needs to be present on the system:
 Conversion
 ----------
 
-If everything is in place, run the following command:
+Now use the `produce` command to convert the desired portions of the PMB to TSV
+files. For example, to get everything from PMB part 00, run:
 
-    produce
+    produce pmb-3.0.0-{en,de,it,nl}-{gold,silver,bronze}-p00.tsv
 
-This creates files named `pmb-3.0.0-{en,de,it,nl}-{train,dev,test}-gold.tsv`.
-They contain the converted sentences, separated by empty lines, one token per
-line with the following tab-separated columns:
+This will generate 12 TSV files, one per language and annotation status. They
+contain the converted sentences, separated by empty lines, one token per line
+with the following tab-separated columns:
 
 1. Token number within sentence
 2. Token form
@@ -57,12 +58,11 @@ sense, e.g. `attack.v.01`, or `pred` if the word sense is not annotated), as
 being part of the role filler (in which case it contains a VerbNet Role such as
 `Agent` or `Patient`), or as neither (in which case it is `O`).
 
-The conversion of CCG derivations to dependency trees tries to follow the Basic
-[UD](https://universaldependencies.org) guidelines. For details, see
+For details on the conversion from CCG derivations to dependency trees, see
 
     Kilian Evang (2020): Configurable Dependency Tree Extraction from CCG
     Derivations. Proceedings of the Universal Dependencies Workshop.
 
 To reproduce the experiments from that paper, run:
 
-    produce pmb-3.0.0-{en,de,it,nl}-{p00,p01}-gold.eval
+    produce pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.eval
