@@ -107,6 +107,7 @@ cat_annotate((A/(B\C))/D, Sem, be, [], Opts) :-
   cat_annotate(A, Sem, be, [], Opts).
 % noun copulas
 cat_annotate(X/Y, Sem, be, Roles0, Opts) :-
+  member(copula(true), Opts),
   cat_match(X, s:_\np:F),
   F \== thr,
   ( cat_match(Y, np)
@@ -117,6 +118,7 @@ cat_annotate(X/Y, Sem, be, Roles0, Opts) :-
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, be, Roles, Opts).
 cat_annotate(X\Y, Sem, be, Roles0, Opts) :-
+  member(copula(true), Opts),
   cat_match(X, s:_\np:F),
   F \== thr,
   ( cat_match(Y, np)
@@ -127,6 +129,7 @@ cat_annotate(X\Y, Sem, be, Roles0, Opts) :-
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, be, Roles, Opts).
 cat_annotate((X/Y)/Z, Sem, be, Roles0, Opts) :-
+  member(copula(true), Opts),
   cat_match(X, s:q),
   cat_match(Y, np),
   ( cat_match(Z, np)
