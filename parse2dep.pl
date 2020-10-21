@@ -21,10 +21,9 @@
     cat_role/2,
     res_in/2]).
 :- use_module(anno, [
-    cac_annotate/1]).
+    cac_annotate/2]).
 :- use_module(slashes).
 :- use_module(util, [
-    argv/1,
     funsort/3,
     must/1,
     subsumed_sub_term/2,
@@ -40,20 +39,34 @@
 %:- debug(top).
 %:- debug(dep).
 %:- debug(flip).
+%:- debug(opts).
+
+opts_spec([
+    [opt(copula), type(boolean), default(true), longflags([copula]),
+     help('attach noun copula to noun')],
+    [opt(adjective), type(boolean), default(true), longflags([adjective]),
+     help('attach attributive adjective to noun')] ]).
 
 main :-
-  argv([CacFile]),
+  opts_spec(OptsSpec),
+  opt_arguments(OptsSpec, Opts, PosArgs),
+  debug(opts, '~w', [Opts]),
+  PosArgs = [CacFile],
   forall(
       ( term_in_file(ccg(N, Const), CacFile, [module(slashes)])
       ),
-      ( cac2dep(N, Const)
+      ( cac2dep(N, Const, Opts)
       ) ),
   halt.
 main :-
   format(user_error, 'USAGE: swipl -l parse2dep -g main CACFILE~n', []),
+  format(user_error, 'Options:~n', []),
+  opts_spec(OptsSpec),
+  opt_help(OptsSpec, Help),
+  format(user_error, '~w', [Help]),
   halt(1).
 
-cac2dep(N, Const0) :-
+cac2dep(N, Const0, Opts) :-
   debug(snum, '~w', [N]),
   debug(original_const, 'original: ~@', [cac_pp(Const0)]),
   cac_add_toknums(Const0, Const1),
@@ -64,7 +77,7 @@ cac2dep(N, Const0) :-
   -> debug(bound_const, 'bound: ~@', [cac_pp(Const)]),
      cac_number(Const),
      debug(numbered_const, 'numbered: ~@', [cac_pp(Const)]),
-     cac_annotate(Const),
+     cac_annotate(Const, Opts),
      debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
      %( N = 1 -> gtrace ; true ),
      cac2dep(Const)
