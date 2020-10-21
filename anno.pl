@@ -509,8 +509,24 @@ cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
-% modifiers
+% attributive adjectives
+cat_annotate(X\Y, _, _, Roles0, Opts) :-
+  cat_match(X\Y, n\n),
+  member(adjective(true), Opts),
+  !,
+  cat_dir(Y, inv),
+  handle_roles(Y, Roles0, _),
+  cat_annotate_mod(X, Y).
+cat_annotate(X/Y, _, _, Roles0, Opts) :-
+  cat_match(X/Y, n/n),
+  member(adjective(true), Opts),
+  !,
+  cat_dir(Y, inv),
+  handle_roles(Y, Roles0, _),
+  cat_annotate_mod(X, Y).
+% other modifiers
 cat_annotate(X\Y, _, _, Roles0, _Opts) :-
+  \+ cat_match(X\Y, n\n),
   cat_match(X, Cat),
   cat_match(Y, Cat),
   !,
@@ -518,6 +534,7 @@ cat_annotate(X\Y, _, _, Roles0, _Opts) :-
   handle_roles(Y, Roles0, _),
   cat_annotate_mod(X, Y).
 cat_annotate(X/Y, _, _, Roles0, _Opts) :-
+  \+ cat_match(X/Y, n/n),
   cat_match(X, Cat),
   cat_match(Y, Cat),
   !,
