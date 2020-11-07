@@ -36,9 +36,9 @@ Conversion
 ----------
 
 Now use the `produce` command to convert the desired portions of the PMB to TSV
-files. For example, to get everything from PMB part 00, run:
+files. For example, to get all gold sentences from PMB parts 00 and 01, run:
 
-    produce pmb-3.0.0-{en,de,it,nl}-{gold,silver,bronze}-p00.tsv
+    produce pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.tsv
 
 This will generate 12 TSV files, one per language and annotation status. They
 contain the converted sentences, separated by empty lines, one token per line
