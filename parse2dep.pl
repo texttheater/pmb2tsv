@@ -45,7 +45,10 @@ opts_spec([
     [opt(copula), type(boolean), default(true), longflags([copula]),
      help('attach noun copula to noun')],
     [opt(adjective), type(boolean), default(true), longflags([adjective]),
-     help('attach attributive adjective to noun')] ]).
+     help('attach attributive adjective to noun')],
+    [opt(quasi_auxiliary), type(boolean), default(false),
+     longflags(['quasi-auxiliary']),
+     help('attach quasi-auxiliaries (used to, going to) to verb')]]).
 
 main :-
   opts_spec(OptsSpec),

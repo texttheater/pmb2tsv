@@ -169,7 +169,9 @@ cat_annotate((A\B)/(C\D), Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
-  \+ member(Lemma, [use, get, go]),
+  ( member(quasi_auxiliary(true), Opts)
+  ; \+ member(Lemma, [use, get, go])
+  ),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
@@ -179,7 +181,9 @@ cat_annotate((A\B)\(C\D), Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
-  \+ member(Lemma, [use, get, go]),
+  ( member(quasi_auxiliary(true), Opts)
+  ; \+ member(Lemma, [use, get, go])
+  ),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
@@ -189,7 +193,9 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
   cat_match(A, s:q),
   cat_match(B\C, s:_\np),
-  \+ member(Lemma, [use, get, go]),
+  ( member(quasi_auxiliary(true), Opts)
+  ; \+ member(Lemma, [use, get, go])
+  ),
   !,
   cat_dir(D, noninv),
   cat_dir(B\C, flip),
