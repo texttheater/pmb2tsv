@@ -562,18 +562,28 @@ cat_annotate(X\Y, Sem, Lemma, Roles0, Opts) :-
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
-% role-assigning verbs with PP argument
-cat_annotate(X/Y, Sem, Lemma, [Role|Roles], Opts) :-
+% verbs with PR argument
+cat_annotate(X\Y, Sem, Lemma, Roles, Opts) :-
+  cat_match(Y, pr), % particles don't have roles
+  !,
+  cat_dir(Y, noninv),
+  cat_annotate(X, Sem, Lemma, Roles, Opts).
+cat_annotate(X/Y, Sem, Lemma, Roles, Opts) :-
+  cat_match(Y, pr), % particles don't have roles
+  !,
+  cat_dir(Y, noninv),
+  cat_annotate(X, Sem, Lemma, Roles, Opts).
+% verbs with PP argument
+cat_annotate(X/Y, Sem, Lemma, Roles, Opts) :-
   cat_match(Y, pp), % PP roles are assigned by adpositions
   !,
   cat_dir(Y, noninv),
-  cat_annotate(X, Sem, Lemma, [Role|Roles], Opts).
-cat_annotate(X\Y, Sem, Lemma, [Role|Roles], Opts) :-
+  cat_annotate(X, Sem, Lemma, Roles, Opts).
+cat_annotate(X\Y, Sem, Lemma, Roles, Opts) :-
   cat_match(Y, pp), % PP roles are assigned by adpositions
   !,
   cat_dir(Y, noninv),
-  cat_role(Y, Role),
-  cat_annotate(X, Sem, Lemma, [Role|Roles], Opts).
+  cat_annotate(X, Sem, Lemma, Roles, Opts).
 % role-assigning verbs with other argument
 cat_annotate(X/Y, Sem, Lemma, [Role|Roles], Opts) :-
   !,
