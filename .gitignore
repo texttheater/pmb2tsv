@@ -11,6 +11,7 @@
 /*.verbnet
 /*.wordnet
 /*.parse.tags
+/*.drs.clf
 /*.tsv
 /*.predicted
 /*.eval
