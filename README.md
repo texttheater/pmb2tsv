@@ -52,11 +52,11 @@ with the following tab-separated columns:
 6. CCG supertag
 7. CCG constituent structure
 
-For every frame in the sentence, there is an additional column that marks each
-token as being the head of the predicate (in which case it contains its WordNet
-sense, e.g. `attack.v.01`, or `pred` if the word sense is not annotated), as
-being part of the role filler (in which case it contains a VerbNet Role such as
-`Agent` or `Patient`), or as neither (in which case it is `O`).
+For every (verbal) frame in the sentence, there is an additional column that
+marks each token as being the head of the predicate (in which case it contains
+the string `V`), as being the head of the role filler (in which case it
+contains a VerbNet Role such as `Agent` or `Patient`), or as neither (in which
+case it is `O`).
 
 For details on the conversion from CCG derivations to dependency trees, see
 
