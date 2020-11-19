@@ -11,6 +11,9 @@ from enum import Enum
 from typing import TextIO, Sequence, List, Dict
 
 
+_zip = zip # so we can define our own zip method and still use the builtin
+
+
 def read(f: TextIO) -> Sequence[List[str]]:
     """Splits a text stream by empty lines.
 
@@ -48,7 +51,7 @@ class LengthMismatch(Exception):
         self.blocks = blocks
 
 
-def paste(*files: TextIO, empty=HandleEmpty.MISMATCH) -> Sequence[Tuple[List[str]]]:
+def zip(*files: TextIO, empty=HandleEmpty.MISMATCH) -> Sequence[Tuple[List[str]]]:
     """Read blocks from multiple files in parallel.
 
     All files must have the same number of blocks, otherwise CountMismatch is
@@ -67,7 +70,7 @@ def paste(*files: TextIO, empty=HandleEmpty.MISMATCH) -> Sequence[Tuple[List[str
     blockss = (read(f) for f in files)
     for blocks in itertools.zip_longest(*blockss, fillvalue=None):
         if None in blocks:
-            raise CountMismatch({f.name: b for f, b in zip(files, blocks)})
+            raise CountMismatch({f.name: b for f, b in _zip(files, blocks)})
         lengths = set(len(b) for b in blocks)
         if empty == HandleEmpty.DROP and len(lengths) <= 2 and 0 in lengths:
             continue
@@ -79,7 +82,7 @@ def paste(*files: TextIO, empty=HandleEmpty.MISMATCH) -> Sequence[Tuple[List[str
                 blocks = tuple(b for b in blocks if len(b) > 0)
             lengths -= set((0,))
         if len(lengths) > 1:
-            raise LengthMismatch({f.name: b for f, b in zip(files, blocks)})
+            raise LengthMismatch({f.name: b for f, b in _zip(files, blocks)})
         yield blocks
 
 
@@ -113,8 +116,8 @@ if __name__ == '__main__':
         else:
             files = args.files
         try:
-            for blocks in paste(*files, empty=args.empty):
-                for fields in zip(*blocks):
+            for blocks in sys.modules[__name__].zip(*files, empty=args.empty):
+                for fields in _zip(*blocks):
                     print('\t'.join(fields))
                 print()
         except CountMismatch as e:
