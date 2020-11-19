@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 
+import blocks
 import sys
-import util
 
 
 def fix_punct(lines):
@@ -16,10 +16,7 @@ def fix_punct(lines):
 
 
 if __name__ == '__main__':
-    for block in util.blocks(sys.stdin):
-        lines = block.splitlines()
-        assert lines[-1] == ''
-        lines = lines[:-1]
+    for block in blocks.read(sys.stdin):
         fix_punct(lines)
         print('\n'.join(lines))
         print()

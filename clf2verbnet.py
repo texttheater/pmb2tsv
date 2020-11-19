@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 
+import blocks
 import clf
 import collections
 import drs
 import constants
 import sys
-import util
 
 
 if __name__ == '__main__':
@@ -17,7 +17,7 @@ if __name__ == '__main__':
         sys.exit(1)
     with open(clf_path) as clf_file, open(lemma_path) as lemma_file:
         clf_data = clf.read(clf_file)
-        lemma_data = (tuple(l.strip() for l in b[:-1]) for b in util.blocks(lemma_file))
+        lemma_data = (tuple(l.strip() for l in b) for b in blocks.read(lemma_file))
         for words, fragments, symbols in clf.read_sentences(clf_file, lemma_data):
             # change representation of constant arguments
             fragments = constants.add_constant_clauses(symbols, fragments)
@@ -35,7 +35,8 @@ if __name__ == '__main__':
                     pred_toknum = ref_toknum_map[c[2]]
                     arg_toknum = ref_toknum_map[c[3]]
                     role = c[1]
-                    pred_arg_role_map[pred_toknum][arg_toknum] = role
+                    if role != 'Time': # never (?) a verb argument role 
+                        pred_arg_role_map[pred_toknum][arg_toknum] = role
             pred_toknums = tuple(pred_arg_role_map.keys())
             # output (one column per predicate)
             for toknum, word in enumerate(words, start=1):

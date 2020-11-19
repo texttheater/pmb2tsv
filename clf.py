@@ -4,9 +4,10 @@ As in the PMB CLF format.
 """
 
 
+import blocks
 import collections
 import re
-import util
+import sys
 
 
 from typing import List, NewType, Sequence, TextIO, Tuple
@@ -25,30 +26,11 @@ def token_sortkey(token):
     return int(match.group('fr'))
 
 
-def blocks(stream):
-    """Splits a text stream by empty lines.
-
-    Reads a file-like object and returns its contents chopped into a sequence
-    of blocks terminated by empty lines.
-    """
-    block = []
-    for line in stream:
-        block.append(line)
-        (chomped,) = line.splitlines()
-        if chomped == '':
-            yield block
-            block = []
-    if block: # in case the last block is not terminated
-        yield block
-
-
 def read(flo: TextIO) -> Sequence[Tuple[Tuple[str], Tuple[DRS]]]:
-    for block in util.blocks(flo):
+    for block in blocks.read(flo):
         assert block[0].startswith('%%% ')
         assert block[1].startswith('%%% ')
         assert block[2].startswith('%%% ')
-        if block[-1].rstrip() == '':
-            block = block[:-1]
         sentence = tuple(t for t in block[2].rstrip()[4:].split(' ') if t != 'ø')
         token_fragment_map = collections.defaultdict(list)
         for line in block[3:]:
@@ -86,7 +68,7 @@ def read_sentences(flo: TextIO, taglists: Sequence[Sequence[str]]) -> Sequence[T
             except StopIteration:
                 raise ValueError('Length mismatch. More words in DRSs than in taglists.')
             if len(current_taglist) > len(words) - offset:
-                raise ValueError('Length mismatch. More words in tagslists than in DRSs.')
+                raise ValueError('Length mismatch. More words in taglists than in DRSs.')
             current_words = words[offset:][:len(current_taglist)]
             current_fragments = fragments[offset:][:len(current_taglist)]
             yield current_words, current_fragments, current_taglist
