@@ -1,41 +1,21 @@
-from __future__ import print_function
-
-
 import sys
 
 
-def blocks(f):
-    """Reads a file into a sequence of blocks.
-
-    Takes a file-like object and returns its contents as a sequence of blocks
-    terminated by empty lines."""
-    block = ''
-    for line in f:
-        block += line
-        if line == '\n':
-            yield block
-            block = ''
-    if block:
-        yield block
+from typing import TextIO, Sequence, List
 
 
-def chunk(length, seq):
-    """Splits a sequence into fixed-length tuples.
+def blocks(f: TextIO) -> Sequence[List[str]]:
+    """Splits a text stream by empty lines.
+
+    Reads a file-like object and returns its contents chopped into a sequence
+    of blocks terminated by empty lines.
     """
-    it = iter(seq)
-    while True:
-        chunk = []
-        for i in range(length):
-            try:
-                chunk.append(next(it))
-            except StopIteration:
-                if chunk:
-                    yield tuple(chunk)
-                return
-        yield tuple(chunk)
-
-
-def monitor_sequence(seq):
-    for element in seq:
-        print(element, file=sys.stderr)
-        yield element
+    block = []
+    for line in f:
+        block.append(line)
+        (chomped,) = line.splitlines()
+        if chomped == '':
+            yield block
+            block = []
+    if block: # in case the last block is not terminated
+        yield block
