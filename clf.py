@@ -50,29 +50,40 @@ def read(flo: TextIO) -> Sequence[Tuple[Tuple[str], Tuple[DRS]]]:
         yield (sentence, tuple(fragment_list))
 
 
-def read_sentences(flo: TextIO, taglists: Sequence[Sequence[str]]) -> Sequence[Tuple[Tuple[str], Tuple[DRS], Tuple[str]]]:
-    clf_data = read(flo)
+def read_sentences(clf_file: TextIO, *tag_files: TextIO) -> Sequence[Tuple[tuple]]:
+    """Read DRSs in parallel with token-level annotations.
+
+    Reads DRSs from clf_file and token-level annotations from 1 or more block
+    files. For each sentence, yields a tuple of tuples, where the first tuple
+    contains the words, the second contains the DRS fragments for each word,
+    and the rest contain the token-level annotations.
+    """
+    if len(tag_files) < 1:
+        raise ValueError('must provide at least one tag file')
+    clf_data = iter(read(clf_file))
+    tag_data = iter(blocks.zip(*tag_files))
     while True:
         try:
             words, fragments = next(clf_data)
         except StopIteration:
             try:
-                next(taglists)
-                raise ValueError(f'Length mismatch. More words in taglists than in DRSs.')
+                next(tag_data)
+                raise ValueError('Length mismatch. More tags than words.')
             except StopIteration:
                 return
         offset = 0
         while offset < len(words):
             try:
-                current_taglist = next(taglists)
+                current_tag_data = next(tag_data)
             except StopIteration:
-                raise ValueError('Length mismatch. More words in DRSs than in taglists.')
-            if len(current_taglist) > len(words) - offset:
-                raise ValueError('Length mismatch. More words in taglists than in DRSs.')
-            current_words = words[offset:][:len(current_taglist)]
-            current_fragments = fragments[offset:][:len(current_taglist)]
-            yield current_words, current_fragments, current_taglist
-            offset += len(current_taglist)
+                raise ValueError('Length mismatch. More words than tags.')
+            length = len(current_tag_data[0])
+            if length > len(words) - offset:
+                raise ValueError('Length mismatch. More tags than words.')
+            current_words = words[offset:][:length]
+            current_fragments = fragments[offset:][:length]
+            yield (current_words, current_fragments) + current_tag_data
+            offset += length
 
 
 def write(drs, flo):
