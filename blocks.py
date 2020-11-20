@@ -87,9 +87,10 @@ def zip(*files: TextIO, empty: HandleEmpty=HandleEmpty.MISMATCH) -> Sequence[Tup
 
 
 def report(block: List[Str], name: str):
-    print(f'==> {name} ({len(block)}) lines <==', file=sys.stderr)
+    print(f'==> {name} ({len(block)} lines) <==', file=sys.stderr)
     for line in block:
         print(line, file=sys.stderr)
+    print(file=sys.stderr)
 
 
 if __name__ == '__main__':
@@ -121,16 +122,16 @@ if __name__ == '__main__':
                     print('\t'.join(fields))
                 print()
         except CountMismatch as e:
-            print('''ERROR: mismatching number of blocks. First set of excess
-                    blocks follows.''', file=sys.stderr)
+            print('ERROR: mismatching number of blocks. First set of excess '
+                    'blocks follows.', file=sys.stderr)
             print(file=sys.stderr)
             for name, block in e.blocks.items():
                 if block is not None:
                     report(block, name)
             sys.exit(1)
         except LengthMismatch as e:
-            print('''ERROR: block length mismatch. Mismatching blocks
-                    follow.''', file=sys.stderr)
+            print('ERROR: block length mismatch. Mismatching blocks follow.',
+                    file=sys.stderr)
             print(file=sys.stderr)
             for name, block in e.blocks.items():
                 report(block, name)
