@@ -35,8 +35,7 @@ if __name__ == '__main__':
                     pred_toknum = ref_toknum_map[c[2]]
                     arg_toknum = ref_toknum_map[c[3]]
                     role = c[1]
-                    if role != 'Time': # never (?) a verb argument role 
-                        pred_arg_role_map[pred_toknum][arg_toknum] = role
+                    pred_arg_role_map[pred_toknum][arg_toknum] = role
             pred_toknums = tuple(pred_arg_role_map.keys())
             # output (one column per predicate)
             for toknum, word in enumerate(words, start=1):
