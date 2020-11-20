@@ -13,7 +13,7 @@ if __name__ == '__main__':
     try:
         _, clf_path, lemma_path = sys.argv
     except ValueError:
-        print('USAGE: python3 clf2verbnet.py myfile.drs.clf myfile.lemma', file=sys.stderr)
+        print('USAGE: python3 clf2roles.py myfile.drs.clf myfile.lemma', file=sys.stderr)
         sys.exit(1)
     with open(clf_path) as clf_file, open(lemma_path) as lemma_file:
         clf_data = clf.read(clf_file)

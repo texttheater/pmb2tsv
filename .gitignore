@@ -4,11 +4,11 @@
 /*.uddep
 /*.lemma
 /*.pmbdep
+/*.roles
 /*.sem
 /*.super
 /*.token
 /*.toknum
-/*.verbnet
 /*.wordnet
 /*.parse.tags
 /*.drs.clf
