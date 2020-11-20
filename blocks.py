@@ -51,7 +51,7 @@ class LengthMismatch(Exception):
         self.blocks = blocks
 
 
-def zip(*files: TextIO, empty=HandleEmpty.MISMATCH) -> Sequence[Tuple[List[str]]]:
+def zip(*files: TextIO, empty: HandleEmpty=HandleEmpty.MISMATCH) -> Sequence[Tuple[List[str]]]:
     """Read blocks from multiple files in parallel.
 
     All files must have the same number of blocks, otherwise CountMismatch is
