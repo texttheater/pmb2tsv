@@ -321,4 +321,4 @@ dep_pp(dep(_, Role, t(_, _, HeadAtts))) :-
   -> RoleAtom = 'O'
   ;  RoleAtom = Role
   ),
-  format('~w\t~n', [HeadToknum, RoleAtom]). % not outputting roles for now
+  format('~w~n', [HeadToknum, RoleAtom]). % not outputting roles for now
