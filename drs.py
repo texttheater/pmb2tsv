@@ -24,5 +24,9 @@ def is_ref(arg):
     return REF_PATTERN.match(arg) != None
 
 
+def is_concept(arg):
+    return (not is_ref(arg)) and arg[0].islower()
+
+
 def is_constant(arg):
     return arg.startswith('"') and arg.endswith('"') # FIXME could be a sense
