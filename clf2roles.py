@@ -15,36 +15,49 @@ if __name__ == '__main__':
     except ValueError:
         print('USAGE: python3 clf2roles.py myfile.drs.clf myfile.lemma myfile.sem', file=sys.stderr)
         sys.exit(1)
-    with open(clf_path) as clf_file, open(lemma_path) as lemma_file, open(semtag_path) as semtag_file:
+    with open(clf_path) as clf_file, open(lemma_path) as lemma_file, \
+            open(semtag_path) as semtag_file:
         for words, fragments, symbols, semtags in clf.read_sentences(clf_file, lemma_file, semtag_file):
             # change representation of constant arguments
             fragments = constants.add_constant_clauses(symbols, fragments)
             fragments = constants.replace_constants(fragments)
-            # map referents to the number of the token that introduces them
-            ref_toknum_map = {c[2]: i for i, f in enumerate(fragments, start=1) for c in f if c[1] in ('REF', 'Name') or drs.is_constant(c[1])}
-            # extract (verbal) events
-            events = set(c[3] for f in fragments for c in f if c[2].startswith('"v.'))
-            # find predicate and argument token numbers for each event
-            pred_arg_role_map = collections.defaultdict(dict)
-            for word, semtag, fragment in zip(words, semtags, fragments):
+            # map referents to the numbers of the tokens that introduce concepts or constants for them
+            ref_toknums_map = collections.defaultdict(set)
+            # map events to sets of participant-role pairs
+            pas = collections.defaultdict(set)
+            # set of all events
+            events = set()
+            # fill data structures
+            for i, (fragment, semtag) in enumerate(zip(fragments, semtags), start=1):
                 if semtag in ('NOW', 'PST', 'FUT', 'PRG', 'PFT'):
                     continue
                 for c in fragment:
-                    if len(c) == 4 and c[2] in events and not drs.is_constant(c[3]):
-                        pred_toknum = ref_toknum_map[c[2]]
-                        arg_toknum = ref_toknum_map[c[3]]
-                        role = c[1]
-                        pred_arg_role_map[pred_toknum][arg_toknum] = role
-            pred_toknums = tuple(pred_arg_role_map.keys())
-            # output (one column per predicate)
+                    if len(c) == 4:
+                        if drs.is_concept(c[1]):
+                            ref_toknums_map[c[3]].add(i)
+                            if c[2].startswith('"v.'):
+                                events.add(c[3])
+                        else:
+                            pas[c[2]].add((c[3], c[1]))
+                    elif len(c) == 3 and (drs.is_constant(c[1]) or c[1] == 'REF'):
+                        ref_toknums_map[c[2]].add(i)
+            events = tuple(events)
+            # output (one column per event)
+            if len(events) == 0:
+                print()
+                continue
             for toknum, word in enumerate(words, start=1):
-                for i, pred_toknum in enumerate(pred_toknums, start=1):
-                    if toknum == pred_toknum:
+                for e in events:
+                    if toknum in ref_toknums_map[e]:
                         print('V', end='')
                     else:
-                        print(pred_arg_role_map[pred_toknum].get(toknum, 'O'), end='')
-                    if i < len(pred_toknums):
+                        token_role = 'O'
+                        for x, role in pas[e]:
+                            if toknum in ref_toknums_map[x]:
+                                token_role = role
+                                break
+                        print(token_role, end='')
+                    if toknum < len(words):
                         print('\t', end='')
-                    else:
-                        print()
+                print()
             print()

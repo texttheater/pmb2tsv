@@ -26,3 +26,7 @@ def is_ref(arg):
 
 def is_constant(arg):
     return arg.startswith('"') and arg.endswith('"') # FIXME could be a sense
+
+
+def is_concept(symbol):
+    return (not is_ref(symbol)) and symbol[0].islower()
