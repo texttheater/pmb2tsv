@@ -23,8 +23,8 @@ if __name__ == '__main__':
             fragments = constants.replace_constants(fragments)
             # map referents to the numbers of the tokens that introduce concepts or constants for them
             ref_toknums_map = collections.defaultdict(set)
-            # map events to sets of participant-role pairs
-            pas = collections.defaultdict(set)
+            # map event-participant pairs to roles
+            pas = collections.defaultdict(dict)
             # set of all events
             events = set()
             # fill data structures
@@ -38,7 +38,7 @@ if __name__ == '__main__':
                             if c[2].startswith('"v.'):
                                 events.add(c[3])
                         else:
-                            pas[c[2]].add((c[3], c[1]))
+                            pas[c[2]][c[3]] = c[1]
                     elif len(c) == 3 and (drs.is_constant(c[1]) or c[1] == 'REF'):
                         ref_toknums_map[c[2]].add(i)
             events = tuple(events)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
                         print('V', end='')
                     else:
                         token_role = 'O'
-                        for x, role in pas[e]:
+                        for x, role in pas[e].items():
                             if toknum in ref_toknums_map[x]:
                                 token_role = role
                                 break
