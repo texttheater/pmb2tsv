@@ -11,13 +11,13 @@ import sys
 
 if __name__ == '__main__':
     try:
-        _, clf_path, lemma_path, semtag_path = sys.argv
+        _, clf_path, lemma_path, semtag_path, dep_path = sys.argv
     except ValueError:
-        print('USAGE: python3 clf2roles.py myfile.drs.clf myfile.lemma myfile.sem', file=sys.stderr)
+        print('USAGE: python3 clf2roles.py myfile.drs.clf myfile.lemma myfile.sem myfile.pmbdep', file=sys.stderr)
         sys.exit(1)
     with open(clf_path) as clf_file, open(lemma_path) as lemma_file, \
-            open(semtag_path) as semtag_file:
-        for words, fragments, symbols, semtags in clf.read_sentences(clf_file, lemma_file, semtag_file):
+            open(semtag_path) as semtag_file, open(dep_path) as dep_file:
+        for words, fragments, symbols, semtags, deps in clf.read_sentences(clf_file, lemma_file, semtag_file, dep_file):
             # change representation of constant arguments
             fragments = constants.add_constant_clauses(symbols, fragments)
             fragments = constants.replace_constants(fragments)
