@@ -68,7 +68,7 @@ def zip(*files: TextIO, empty: HandleEmpty=HandleEmpty.MISMATCH) -> Sequence[Tup
     removed from the output tuples, making such tuples shorter.
     """
     blockss = (read(f) for f in files)
-    for blocks in itertools.zip_longest(*blockss, fillvalue=None):
+    for i, blocks in enumerate(itertools.zip_longest(*blockss, fillvalue=None), start=1):
         if None in blocks:
             raise CountMismatch({f.name: b for f, b in _zip(files, blocks)})
         lengths = set(len(b) for b in blocks)
@@ -82,7 +82,7 @@ def zip(*files: TextIO, empty: HandleEmpty=HandleEmpty.MISMATCH) -> Sequence[Tup
                 blocks = tuple(b for b in blocks if len(b) > 0)
             lengths -= set((0,))
         if len(lengths) > 1:
-            raise LengthMismatch({f.name: b for f, b in _zip(files, blocks)})
+            raise LengthMismatch({f'block #{i} in {f.name}': b for f, b in _zip(files, blocks)})
         yield blocks
 
 
