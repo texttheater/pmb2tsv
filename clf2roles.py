@@ -21,43 +21,54 @@ if __name__ == '__main__':
             # change representation of constant arguments
             fragments = constants.add_constant_clauses(symbols, fragments)
             fragments = constants.replace_constants(fragments)
-            # map referents to the numbers of the tokens that introduce concepts or constants for them
-            ref_toknums_map = collections.defaultdict(set)
-            # map event-participant pairs to roles
+            # for each token, collect the set of referents that it either
+            # introduces or introduces a concept or constant for
+            refss = [
+                set(
+                    c[2]
+                    for c in f
+                    if (
+                        c[1] == 'REF'
+                        or drs.is_constant(c[1])
+                    )
+                ) | set(
+                    c[3]
+                    for c in f
+                    if len(c) == 4
+                    and drs.is_concept(c[1])
+                )
+                for f in fragments
+            ]
+            # create a list of all verbal events
+            events = tuple(
+                c[3]
+                for f in fragments
+                for c in f
+                if c[2].startswith('"v.')
+            )
+            # map events to participants to roles
             pas = collections.defaultdict(dict)
-            # set of all events
-            events = set()
-            # fill data structures
-            for i, (fragment, semtag) in enumerate(zip(fragments, semtags), start=1):
-                if semtag in ('NOW', 'PST', 'FUT', 'PRG', 'PFT'):
-                    continue
-                for c in fragment:
-                    if len(c) == 4:
-                        if drs.is_concept(c[1]):
-                            ref_toknums_map[c[3]].add(i)
-                            if c[2].startswith('"v.'):
-                                events.add(c[3])
-                        else:
-                            pas[c[2]][c[3]] = c[1]
-                    elif len(c) == 3 and (drs.is_constant(c[1]) or c[1] == 'REF'):
-                        ref_toknums_map[c[2]].add(i)
-            events = tuple(events)
+            for f in fragments:
+                for c in f:
+                    if len(c) == 4 and c[2] in events:
+                        pas[c[2]][c[3]] = c[1]
+            # create role taglists for each event
+            def roletag(e, refs):
+                if e in refs:
+                    return 'V'
+                for x in refs:
+                    if x in pas[e]:
+                        return pas[e][x]
+                return 'O'
+            roletagss = tuple(
+                tuple(
+                    roletag(e, refs)
+                    for refs in refss
+                )
+                for e in events
+            )
             # output (one column per event)
-            if len(events) == 0:
-                print()
-                continue
-            for toknum, word in enumerate(words, start=1):
-                for e in events:
-                    if toknum in ref_toknums_map[e]:
-                        print('V', end='')
-                    else:
-                        token_role = 'O'
-                        for x, role in pas[e].items():
-                            if toknum in ref_toknums_map[x]:
-                                token_role = role
-                                break
-                        print(token_role, end='')
-                    if toknum < len(words):
-                        print('\t', end='')
-                print()
+            if len(roletagss) > 0:
+                for i in range(len(words)):
+                    print('\t'.join(roletags[i] for roletags in roletagss))
             print()
