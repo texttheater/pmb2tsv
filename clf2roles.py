@@ -9,6 +9,20 @@ import constants
 import sys
 
 
+def spread(roletags, deps):
+    """Spreads the role tag of a word to all of its dependents"""
+    roletags = list(roletags)
+    def sprd(i):
+        for j in range(len(roletags)):
+            if int(deps[j]) - 1 == i and roletags[j] == 'O':
+                roletags[j] = roletags[i]
+                sprd(j)
+    for i, roletag in enumerate(roletags):
+        if roletag not in ('V', 'O'):
+            sprd(i)
+    return roletags
+
+
 if __name__ == '__main__':
     try:
         _, clf_path, lemma_path, semtag_path, dep_path = sys.argv
@@ -63,10 +77,10 @@ if __name__ == '__main__':
                         return pas[e][x]
                 return 'O'
             roletagss = tuple(
-                tuple(
+                spread(tuple(
                     roletag(e, refs)
                     for refs in refss
-                )
+                ), deps)
                 for e in events
             )
             # output (one column per event)
