@@ -24,7 +24,9 @@ if __name__ == '__main__':
             # for each token, collect the set of referents that it either
             # introduces or introduces a concept or constant for
             refss = [
-                set(
+                # filter out auxiliary verbs
+                () if s in ('NOW', 'PST', 'FUT', 'PRG', 'PFT') and len(f) < 5
+                else set(
                     c[2]
                     for c in f
                     if (
@@ -37,7 +39,7 @@ if __name__ == '__main__':
                     if len(c) == 4
                     and drs.is_concept(c[1])
                 )
-                for f in fragments
+                for f, s in zip(fragments, semtags)
             ]
             # create a list of all verbal events
             events = tuple(
