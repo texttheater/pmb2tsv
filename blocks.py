@@ -14,7 +14,7 @@ from typing import TextIO, Sequence, List, Dict
 _zip = zip # so we can define our own zip method and still use the builtin
 
 
-def read(f: TextIO) -> Sequence[List[str]]:
+def read(f: TextIO=sys.stdin) -> Sequence[List[str]]:
     """Splits a text stream by empty lines.
 
     Reads a file-like object and returns its contents chopped into a sequence
