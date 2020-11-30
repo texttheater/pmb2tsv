@@ -20,7 +20,23 @@ def spread(roletags, deps):
     for i, roletag in enumerate(roletags):
         if roletag not in ('V', 'O'):
             sprd(i)
-    return roletags
+    return tuple(roletags)
+
+
+def remove_punctuation(roletags, words):
+    roletags = list(roletags)
+    def is_punctuation(word):
+        return word == '.' # TODO more
+    def get(lst, i):
+        if i < 0 or i >= len(lst):
+            return None
+        return lst[i]
+    for i in range(len(roletags)):
+        if is_punctuation(words[i]) and (
+                (get(roletags, i - 1) != roletags[i]) !=
+                (roletags[i] != get(roletags, i + 1))):
+            roletags[i] = 'O'
+    return tuple(roletags)
 
 
 if __name__ == '__main__':
@@ -77,12 +93,16 @@ if __name__ == '__main__':
                         return pas[e][x]
                 return 'O'
             roletagss = tuple(
-                spread(tuple(
+                tuple(
                     roletag(e, refs)
                     for refs in refss
-                ), deps)
+                )
                 for e in events
             )
+            # spread roletags along dependency edges
+            roletagss = tuple(spread(r, deps) for r in roletagss)
+            # remove peripheral punctuation
+            roletagss = tuple(remove_punctuation(r, words) for r in roletagss)
             # output (one column per event)
             if len(roletagss) > 0:
                 for i in range(len(words)):
