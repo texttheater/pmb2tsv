@@ -318,7 +318,7 @@ dep_pp(dep(_, Role, t(_, _, HeadAtts))) :-
   ;  member(toknum:HeadToknum, HeadAtts)
   ),
   (  var(Role)
-  -> RoleAtom = 'O'
-  ;  RoleAtom = Role
+  -> _RoleAtom = 'O'
+  ;  _RoleAtom = Role
   ),
   format('~w~n', [HeadToknum]). % not outputting roles for now
