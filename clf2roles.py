@@ -9,6 +9,10 @@ import constants
 import sys
 
 
+def is_verb(fragment):
+    return any(c[2].startswith('"v.') for c in fragment)
+
+
 def spread(roletags, deps):
     """Spreads the role tag of a word to all of its dependents"""
     roletags = list(roletags)
@@ -63,11 +67,13 @@ if __name__ == '__main__':
                         c[1] == 'REF'
                         or drs.is_constant(c[1])
                     )
+                    and not (c[2].startswith('t') and is_verb(f))
                 ) | set(
                     c[3]
                     for c in f
                     if len(c) == 4
                     and drs.is_concept(c[1])
+                    and not (c[3].startswith('t') and is_verb(f))
                 )
                 for f, s in zip(fragments, semtags)
             ]
