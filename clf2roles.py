@@ -59,7 +59,7 @@ if __name__ == '__main__':
             # introduces or introduces a concept or constant for
             refss = [
                 # filter out auxiliary verbs
-                () if s in ('NOW', 'PST', 'FUT', 'PRG', 'PFT') and len(f) < 5
+                set() if s in ('NOW', 'PST', 'FUT', 'PRG', 'PFT') and len(f) < 5
                 else set(
                     c[2]
                     for c in f
