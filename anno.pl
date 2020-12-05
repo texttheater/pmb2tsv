@@ -133,7 +133,7 @@ cat_annotate((A/(B\C))/D, Sem, be, [], Opts) :-
   cat_annotate(A, Sem, be, [], Opts).
 % noun copulas
 cat_annotate(X/Y, Sem, be, Roles0, Opts) :-
-  member(copula(true), Opts),
+  member(cop(true), Opts),
   cat_match(X, s:_\np:F),
   F \== thr,
   ( cat_match(Y, np)
@@ -144,7 +144,7 @@ cat_annotate(X/Y, Sem, be, Roles0, Opts) :-
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, be, Roles, Opts).
 cat_annotate(X\Y, Sem, be, Roles0, Opts) :-
-  member(copula(true), Opts),
+  member(cop(true), Opts),
   cat_match(X, s:_\np:F),
   F \== thr,
   ( cat_match(Y, np)
@@ -155,7 +155,7 @@ cat_annotate(X\Y, Sem, be, Roles0, Opts) :-
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, be, Roles, Opts).
 cat_annotate((X/Y)/Z, Sem, be, Roles0, Opts) :-
-  member(copula(true), Opts),
+  member(cop(true), Opts),
   cat_match(X, s:q),
   cat_match(Y, np),
   ( cat_match(Z, np)
@@ -195,7 +195,7 @@ cat_annotate((A\B)/(C\D), Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
-  ( member(quasi_auxiliary(true), Opts)
+  ( member(quasiaux(true), Opts)
   ; \+ member(Lemma, [use, get, go])
   ),
   !,
@@ -207,7 +207,7 @@ cat_annotate((A\B)\(C\D), Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
-  ( member(quasi_auxiliary(true), Opts)
+  ( member(quasiaux(true), Opts)
   ; \+ member(Lemma, [use, get, go])
   ),
   !,
@@ -219,7 +219,7 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
   cat_match(A, s:q),
   cat_match(B\C, s:_\np),
-  ( member(quasi_auxiliary(true), Opts)
+  ( member(quasiaux(true), Opts)
   ; \+ member(Lemma, [use, get, go])
   ),
   !,
@@ -544,14 +544,14 @@ cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
 % attributive adjectives
 cat_annotate(X\Y, _, _, Roles0, Opts) :-
   cat_match(X\Y, n\n),
-  member(adjective(true), Opts),
+  member(adj(true), Opts),
   !,
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, _),
   cat_annotate_mod(X, Y).
 cat_annotate(X/Y, _, _, Roles0, Opts) :-
   cat_match(X/Y, n/n),
-  member(adjective(true), Opts),
+  member(adj(true), Opts),
   !,
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, _),

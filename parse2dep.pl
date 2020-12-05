@@ -42,12 +42,12 @@
 %:- debug(opts).
 
 opts_spec([
-    [opt(copula), type(boolean), default(true), longflags([copula]),
+    [opt(cop), type(boolean), default(true), longflags([cop]),
      help('attach noun copula to noun')],
-    [opt(adjective), type(boolean), default(true), longflags([adjective]),
+    [opt(adj), type(boolean), default(true), longflags([adj]),
      help('attach attributive adjective to noun')],
-    [opt(quasi_auxiliary), type(boolean), default(false),
-     longflags(['quasi-auxiliary']),
+    [opt(quasiaux), type(boolean), default(false),
+     longflags([quasiaux]),
      help('attach quasi-auxiliaries (used to, going to) to verb')]]).
 
 main :-
