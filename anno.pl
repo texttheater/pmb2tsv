@@ -34,9 +34,9 @@ cat_annotate((X/(X\Y))/Y, _, _, _, _) :-
   !.
 cat_annotate((X\(X/Y))/Y, _, _, _, _) :-
   !.
-% conjunctions and punctuation
+% coordinating conjunctions
 cat_annotate(((A\B)/C)\D, Sem, _, _, _) :-
-  member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
+  member(Sem, ['GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
   !,
@@ -45,7 +45,7 @@ cat_annotate(((A\B)/C)\D, Sem, _, _, _) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 cat_annotate((A\B)\C, Sem, _, _, _) :-
-  member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
+  member(Sem, ['GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
   !,
@@ -53,7 +53,33 @@ cat_annotate((A\B)\C, Sem, _, _, _) :-
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
 cat_annotate((A\B)/C, Sem, _, _, _) :-
-  member(Sem, ['NIL', 'QUE', 'GRP', 'COO']),
+  member(Sem, ['GRP', 'COO']),
+  cat_match(A, Cat),
+  cat_match(B, Cat),
+  !,
+  cat_dir(C, inv),
+  cat_dir(B, inv),
+  cat_annotate_mod(A, B).
+% punctuation
+cat_annotate(((A\B)/C)\D, Sem, _, _, _) :-
+  member(Sem, ['NIL', 'QUE']),
+  cat_match(A, Cat),
+  cat_match(B, Cat),
+  !,
+  cat_dir(D, inv),
+  cat_dir(C, inv),
+  cat_dir(B, inv),
+  cat_annotate_mod(A, B).
+cat_annotate((A\B)\C, Sem, _, _, _) :-
+  member(Sem, ['NIL', 'QUE']),
+  cat_match(A, Cat),
+  cat_match(B, Cat),
+  !,
+  cat_dir(C, inv),
+  cat_dir(B, inv),
+  cat_annotate_mod(A, B).
+cat_annotate((A\B)/C, Sem, _, _, _) :-
+  member(Sem, ['NIL', 'QUE']),
   cat_match(A, Cat),
   cat_match(B, Cat),
   !,
