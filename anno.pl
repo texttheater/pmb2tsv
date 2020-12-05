@@ -35,8 +35,21 @@ cat_annotate((X/(X\Y))/Y, _, _, _, _) :-
 cat_annotate((X\(X/Y))/Y, _, _, _, _) :-
   !.
 % coordinating conjunctions
-cat_annotate(((A\B)/C)\D, Sem, _, _, _) :-
+cat_annotate(A\B, Sem, Word, [], Opts) :-
   member(Sem, ['GRP', 'COO']),
+  member(coord(false), Opts),
+  !,
+  cat_dir(B, noninv),
+  cat_annotate(A, Sem, Word, [], Opts).
+cat_annotate(A/B, Sem, Word, [], Opts) :-
+  member(Sem, ['GRP', 'COO']),
+  member(coord(false), Opts),
+  !,
+  cat_dir(B, noninv),
+  cat_annotate(A, Sem, Word, [], Opts).
+cat_annotate(((A\B)/C)\D, Sem, _, _, Opts) :-
+  member(Sem, ['GRP', 'COO']),
+  member(coord(true), Opts),
   cat_match(A, Cat),
   cat_match(B, Cat),
   !,
@@ -44,18 +57,20 @@ cat_annotate(((A\B)/C)\D, Sem, _, _, _) :-
   cat_dir(C, inv),
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
-cat_annotate((A\B)\C, Sem, _, _, _) :-
+cat_annotate((A\B)\C, Sem, _, _, Opts) :-
   member(Sem, ['GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
+  member(coord(true), Opts),
   !,
   cat_dir(C, inv),
   cat_dir(B, inv),
   cat_annotate_mod(A, B).
-cat_annotate((A\B)/C, Sem, _, _, _) :-
+cat_annotate((A\B)/C, Sem, _, _, Opts) :-
   member(Sem, ['GRP', 'COO']),
   cat_match(A, Cat),
   cat_match(B, Cat),
+  member(coord(true), Opts),
   !,
   cat_dir(C, inv),
   cat_dir(B, inv),

@@ -48,7 +48,9 @@ opts_spec([
      help('attach attributive adjective to noun')],
     [opt(quasiaux), type(boolean), default(false),
      longflags([quasiaux]),
-     help('attach quasi-auxiliaries (used to, going to) to verb')]]).
+     help('attach quasi-auxiliaries (used to, going to) to verb')],
+    [opt(coord), type(boolean), default(true), longflags([coord]),
+     help('attach coordinating conjunctions to the second conjunct')]]).
 
 main :-
   opts_spec(OptsSpec),
