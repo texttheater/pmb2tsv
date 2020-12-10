@@ -7,6 +7,7 @@ import collections
 import drs
 import constants
 import sys
+import util
 
 
 def spread(roletags, deps):
@@ -36,6 +37,23 @@ def remove_punctuation(roletags, words):
                 (get(roletags, i - 1) != roletags[i]) !=
                 (roletags[i] != get(roletags, i + 1))):
             roletags[i] = 'O'
+    return tuple(roletags)
+
+
+def dedup(roletags):
+    """Keep only one span per role, the one closest to the predicate."""
+    role_spans_map = collections.defaultdict(list)
+    for role, span in util.groupby_ranges(roletags):
+        role_spans_map[role].append(span)
+    roletags=list(roletags)
+    for role, spans in role_spans_map.items():
+        pred_span = role_spans_map['V'][0]
+        keep_span_index, _ = util.minindex(spans,
+                key=lambda s: abs(util.rangedist(s, pred_span)))
+        for i, span in enumerate(spans):
+            if i != keep_span_index:
+                for j in span:
+                    roletags[j] = 'O'
     return tuple(roletags)
 
 
@@ -103,6 +121,8 @@ if __name__ == '__main__':
             )
             # spread roletags along dependency edges
             roletagss = tuple(spread(r, deps) for r in roletagss)
+            # remove duplicate tags
+            roletagss = tuple(dedup(r) for r in roletagss)
             # remove peripheral punctuation
             roletagss = tuple(remove_punctuation(r, words) for r in roletagss)
             # output (one column per event)
