@@ -27,7 +27,7 @@ def spread(roletags, deps):
 def remove_punctuation(roletags, words):
     roletags = list(roletags)
     def is_punctuation(word):
-        return word == '.' # TODO more
+        return word in ('.', ',') # TODO more
     def get(lst, i):
         if i < 0 or i >= len(lst):
             return None
