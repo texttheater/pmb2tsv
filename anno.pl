@@ -158,6 +158,7 @@ cat_annotate(X/Y, Sem, be, Roles, Opts) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, pp),
+  member(cop(true), Opts),
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, be, Roles, Opts).
@@ -165,6 +166,7 @@ cat_annotate(X\Y, Sem, be, Roles, Opts) :-
   cat_match(X, s:_\np:F),
   F \== thr,
   cat_match(Y, pp),
+  member(cop(true), Opts),
   !,
   cat_dir(Y, inv),
   cat_annotate(X, Sem, be, Roles, Opts).
@@ -172,6 +174,7 @@ cat_annotate((X/Y)/Z, Sem, be, [Role], Opts) :-
   cat_match(X, s:q),
   cat_match(Y, pp),
   cat_match(Z, np),
+  member(cop(true), Opts),
   !,
   cat_dir(Z, noninv),
   cat_role(Z, Role),

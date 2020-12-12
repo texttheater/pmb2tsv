@@ -43,7 +43,7 @@
 
 opts_spec([
     [opt(cop), type(boolean), default(true), longflags([cop]),
-     help('attach noun copula to noun')],
+     help('attach noun/adposition copula to noun/adposition')],
     [opt(adj), type(boolean), default(true), longflags([adj]),
      help('attach attributive adjective to noun')],
     [opt(quasiaux), type(boolean), default(false),
