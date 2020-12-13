@@ -73,7 +73,7 @@ if __name__ == '__main__':
             # introduces or introduces a concept or constant for
             refss = [
                 # filter out auxiliary verbs
-                set() if s in ('NOW', 'PST', 'FUT', 'PRG', 'PFT') and len(f) < 5
+                set() if s in ('NOW', 'PST', 'FUT', 'PRG', 'PFT') and l in ('be', 'have', 'do', 'will', 'use', 'let')
                 else set(
                     c[2]
                     for c in f
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                     and drs.is_concept(c[1])
                     and not (c[3].startswith('t') and s.startswith('E'))
                 )
-                for f, s in zip(fragments, semtags)
+                for f, l, s in zip(fragments, symbols, semtags)
             ]
             # create a list of all verbal events
             events = tuple(
