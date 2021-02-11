@@ -98,12 +98,6 @@ if __name__ == '__main__':
                 for c in f
                 if c[2].startswith('"v.')
             )
-            # map events to participants to roles
-            pas = collections.defaultdict(dict)
-            for f in fragments:
-                for c in f:
-                    if len(c) == 4 and c[2] in events:
-                        pas[c[2]][c[3]] = c[1]
             # map boxes to propositions they introduce
             box_prop_map = {
                 c[0]: c[3]
@@ -124,16 +118,15 @@ if __name__ == '__main__':
                 for c in f:
                     if len(c) == 3 and c[1] == 'ATTRIBUTION' and c[0] in box_prop_map and c[2] in box_event_map:
                         prop_event_map[box_prop_map[c[0]]] = box_event_map[c[2]]
-            # replace proposition participants by the mapped events
-            pas = {
-                event: {
-                    (prop_event_map[part] if part in prop_event_map else part): role
-                    for part, role
-                    in part_role_map.items()
-                }
-                for event, part_role_map
-                in pas.items()
-            }
+            # map events to participants to roles
+            pas = collections.defaultdict(dict)
+            for f in fragments:
+                for c in f:
+                    if len(c) == 4 and c[2] in events:
+                        participant = c[3]
+                        if participant in prop_event_map:
+                            participant = prop_event_map[participant]
+                        pas[c[2]][participant] = c[1]
             # create role taglists for each event
             def roletag(e, refs):
                 if e in refs:
