@@ -104,6 +104,36 @@ if __name__ == '__main__':
                 for c in f:
                     if len(c) == 4 and c[2] in events:
                         pas[c[2]][c[3]] = c[1]
+            # map boxes to propositions they introduce
+            box_prop_map = {
+                c[0]: c[3]
+                for f in fragments
+                for c in f
+                if len(c) == 4
+                and c[1:3] == ('proposition', '"n.01"')
+            }
+            # map boxes to the first event they introduce
+            box_event_map = {}
+            for f in fragments:
+                for c in f:
+                    if len(c) == 3 and c[1] == 'REF' and c[2].startswith('e') and c[0] not in box_event_map:
+                        box_event_map[c[0]] = c[2]
+            # map propositions to events
+            prop_event_map = {}
+            for f in fragments:
+                for c in f:
+                    if len(c) == 3 and c[1] == 'ATTRIBUTION' and c[0] in box_prop_map and c[2] in box_event_map:
+                        prop_event_map[box_prop_map[c[0]]] = box_event_map[c[2]]
+            # replace proposition participants by the mapped events
+            pas = {
+                event: {
+                    (prop_event_map[part] if part in prop_event_map else part): role
+                    for part, role
+                    in part_role_map.items()
+                }
+                for event, part_role_map
+                in pas.items()
+            }
             # create role taglists for each event
             def roletag(e, refs):
                 if e in refs:
