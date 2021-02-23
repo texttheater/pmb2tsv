@@ -143,6 +143,12 @@ if __name__ == '__main__':
                 for e in events
             )
             # spread roletags along dependency edges
+            if '' in deps:
+                print(
+                    'WARNING: missing dependencies, skipping',
+                    file=sys.stderr
+                )
+                continue
             roletagss = tuple(spread(r, deps) for r in roletagss)
             # remove duplicate tags
             roletagss = tuple(dedup(r) for r in roletagss)

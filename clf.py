@@ -61,7 +61,7 @@ def read_sentences(clf_file: TextIO, *tag_files: TextIO) -> Sequence[Tuple[tuple
     if len(tag_files) < 1:
         raise ValueError('must provide at least one tag file')
     clf_data = iter(read(clf_file))
-    tag_data = iter(blocks.zip(*tag_files))
+    tag_data = iter(blocks.zip(*tag_files, empty=blocks.HandleEmpty.EMPTY))
     while True:
         try:
             words, fragments = next(clf_data)
