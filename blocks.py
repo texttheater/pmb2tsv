@@ -76,11 +76,12 @@ def zip(*files: TextIO, empty: HandleEmpty=HandleEmpty.MISMATCH) -> Sequence[Tup
             continue
         if len(lengths) == 2 and 0 in lengths:
             if empty == HandleEmpty.EMPTY:
-                (length,) = lengths - (0,)
+                lengths -= set((0,))
+                (length,) = lengths
                 blocks = tuple([''] * length if len(b) == 0 else b for b in blocks)
             elif empty == HandleEmpty.IGNORE:
+                lengths -= set((0,))
                 blocks = tuple(b for b in blocks if len(b) > 0)
-            lengths -= set((0,))
         if len(lengths) > 1:
             raise LengthMismatch({f'block #{i} in {f.name}': b for f, b in _zip(files, blocks)})
         yield blocks
