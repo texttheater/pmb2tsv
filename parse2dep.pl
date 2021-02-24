@@ -85,23 +85,31 @@ cac2dep(N, Const0, Opts) :-
      cac_annotate(Const, Opts),
      debug(annotated_const, 'annotated: ~@', [cac_pp(Const)]),
      %( N = 1 -> gtrace ; true ),
-     cac2dep(Const)
+     (  cac2dep(Const)
+     -> true
+     ;  format(user_error, 'WARNING: failed to convert derivation ~w, skipping~n', [N]),
+        nl
+     )
   ;  format(user_error, 'WARNING: failed to preprocess derivation ~w, skipping~n', [N]),
      nl
   ).
 
 cac2dep(Const) :-
+  % find top token
   findall(t(Cat, Form, Atts),
       ( subsumed_sub_term(t(Cat, Form, Atts), Const)
       ), Tokens),
   find_top(Const, Tokens, Top),
   debug(top, 'top: ~w', [Top]),
+  % convert to dependencies
   t2dep(Top, Tokens, _, Deps, []),
+  % output for debugging
   forall(
       ( member(dep(D, Role, H), Deps)
       ),
       ( debug(dep, '~@ <-~w- ~@', [cac_pp(D), Role, cac_pp(H)])
       ) ),
+  % postprocess
   (  Deps = []
   -> Tokens = [Token],
      RootedDeps = [dep(Token, _, _)]
@@ -111,6 +119,15 @@ cac2dep(Const) :-
   flip_deps(RealDeps, FlippedDeps),
   rerole_deps(FlippedDeps, ReroledDeps),
   funsort(depfrom, ReroledDeps, SortedDeps),
+  % sanity check (HACK)
+  exclude(pseudo_tok, Tokens, RealTokens),
+  length(RealTokens, NumTokens),
+  length(SortedDeps, NumDeps),
+  (  NumTokens == NumDeps
+  -> true
+  ;  fail
+  ),
+  % output
   maplist(dep_pp, SortedDeps),
   nl.
 
@@ -310,6 +327,8 @@ args2deps_inv(Role, [Arg|Args], Tokens, Head0, ArgHead, [dep(Head0, Role, ArgHea
   args2deps_inv(Role, Args, Tokens, Head0, _, Deps1, Deps).
 
 pseudo_dep(dep(t(_, ø, _), _, _)).
+
+pseudo_tok(t(_, ø, _)).
 
 depfrom(dep(t(_, _, Atts), _, _), From) :-
   member(from:From, Atts).
