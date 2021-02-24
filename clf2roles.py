@@ -142,6 +142,14 @@ if __name__ == '__main__':
                 )
                 for e in events
             )
+            # remove role taglists without predicates
+            for roletags in roletagss:
+                if 'V' not in roletags:
+                    print(
+                        'WARNING: predicate not marked, skipping',
+                        file=sys.stderr,
+                    )
+            roletagss = tuple(t for t in roletagss if 'V' in t)
             # spread roletags along dependency edges
             if '' in deps:
                 print(
