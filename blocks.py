@@ -40,15 +40,32 @@ class HandleEmpty(Enum):
 
 
 class CountMismatch(Exception):
+
     def __init__(self, blocks: Dict[str, Tuple[str]]):
         Exception.__init__(self, 'different number of blocks')
         self.blocks = blocks
 
+    def report(self):
+        print('ERROR: mismatching number of blocks. First set of excess '
+                'blocks follows.', file=sys.stderr)
+        print(file=sys.stderr)
+        for name, block in self.blocks.items():
+            if block is not None:
+                report(block, name)
+
 
 class LengthMismatch(Exception):
+
     def __init__(self, blocks: Dict[str, Tuple[str]]):
         Exception.__init__(self, 'blocks have different lengths')
         self.blocks = blocks
+
+    def report(self):
+        print('ERROR: block length mismatch. Mismatching blocks follow.',
+                file=sys.stderr)
+        print(file=sys.stderr)
+        for name, block in self.blocks.items():
+            report(block, name)
 
 
 def zip(*files: TextIO, empty: HandleEmpty=HandleEmpty.MISMATCH) -> Sequence[Tuple[List[str]]]:
@@ -123,19 +140,10 @@ if __name__ == '__main__':
                     print('\t'.join(fields))
                 print()
         except CountMismatch as e:
-            print('ERROR: mismatching number of blocks. First set of excess '
-                    'blocks follows.', file=sys.stderr)
-            print(file=sys.stderr)
-            for name, block in e.blocks.items():
-                if block is not None:
-                    report(block, name)
+            e.report()
             sys.exit(1)
         except LengthMismatch as e:
-            print('ERROR: block length mismatch. Mismatching blocks follow.',
-                    file=sys.stderr)
-            print(file=sys.stderr)
-            for name, block in e.blocks.items():
-                report(block, name)
+            e.report()
             sys.exit(1)
     else:
         parser.print_help()
