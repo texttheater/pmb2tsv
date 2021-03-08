@@ -424,6 +424,18 @@ cat_annotate(X\Y, Sem, Lemma, Roles0, Opts) :-
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
 cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
+  cat_match(X/Y, s:qem/s:dcl),
+  !,
+  cat_dir(Y, inv),
+  handle_roles(Y, Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles, Opts).
+cat_annotate(X\Y, Sem, Lemma, Roles0, Opts) :-
+  cat_match(X\Y, s:qem\s:dcl),
+  !,
+  cat_dir(Y, inv),
+  handle_roles(Y, Roles0, Roles),
+  cat_annotate(X, Sem, Lemma, Roles, Opts).
+cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
   cat_match(X/Y, (s:to\np)/(s:b\np)),
   !,
   cat_dir(Y, inv),
