@@ -9,18 +9,49 @@ import constants
 import sys
 import util
 
-
-def spread(roletags, deps):
-    """Spreads the role tag of a word to all of its dependents"""
+def heads2spans(roletags, deps, words):
+    """Converts role annotations from mere heads to whole spans."""
+    # Step 0: define helpers
+    deps = tuple(int(d) for d in deps)
+    def head2span(head):
+        span = set()
+        children = (head,)
+        while children:
+            span.update(children)
+            children = tuple(
+                i
+                for c in children
+                for i, d in enumerate(deps, start=1)
+                if d == c
+            )
+        return span
+    def span2roletags(span, role):
+        return tuple(
+            'V' if roletags[i] == 'V' else role if i + 1 in span else 'O'
+            for i in range(len(roletags))
+        )
+    # Step 1: one list with heads -> multiple lists with spans
+    roletagss = tuple(
+        span2roletags(head2span(i), role)
+        for i, role in enumerate(roletags, start=1)
+        if  role not in ('O', 'V')
+    )
+    # Step 2: remove peripheral punctuation
+    roletagss = tuple(
+        remove_punctuation(r, words)
+        for r in roletagss
+    )
+    # Step 3: merge lists with spans, shortest to longest
+    def length_of_span(roletags):
+        return sum(1 for r in roletags if r not in ('O', 'V'))
     roletags = list(roletags)
-    def sprd(i):
-        for j in range(len(roletags)):
-            if int(deps[j]) - 1 == i and roletags[j] == 'O':
-                roletags[j] = roletags[i]
-                sprd(j)
-    for i, roletag in enumerate(roletags):
-        if roletag not in ('V', 'O'):
-            sprd(i)
+    for r in sorted(roletagss, key=length_of_span):
+        for i, roletag in enumerate(r):
+            if roletag != 'O' and roletags[i] != 'V':
+                roletags[i] = roletag
+    # Step 4: remove duplicate tags
+    roletags = dedup(roletags)
+    # Return
     return tuple(roletags)
 
 
@@ -161,11 +192,7 @@ if __name__ == '__main__':
                         file=sys.stderr
                     )
                     continue
-                roletagss = tuple(spread(r, deps) for r in roletagss)
-                # remove duplicate tags
-                roletagss = tuple(dedup(r) for r in roletagss)
-                # remove peripheral punctuation
-                roletagss = tuple(remove_punctuation(r, words) for r in roletagss)
+                roletagss = tuple(heads2spans(r, deps, words) for r in roletagss)
                 # output (one column per event)
                 if len(roletagss) > 0:
                     for i in range(len(words)):
