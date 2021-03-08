@@ -122,7 +122,9 @@ if __name__ == '__main__':
                             prop_event_map[box_prop_map[c[0]]] = box_event_map[c[2]]
                 # map events to participants to roles
                 pas = collections.defaultdict(dict)
-                for f in fragments:
+                for f, s in zip(fragments, semtags):
+                    if s == 'IST':
+                        continue
                     for c in f:
                         if len(c) == 4 and c[2] in events:
                             participant = c[3]
