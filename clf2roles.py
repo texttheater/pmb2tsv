@@ -137,7 +137,7 @@ if __name__ == '__main__':
                     for f in fragments
                     for c in f
                     if len(c) == 4
-                    and c[1:3] == ('proposition', '"n.01"')
+                    and c[3].startswith('p')
                 }
                 # map boxes to the first event they introduce
                 box_event_map = {}
