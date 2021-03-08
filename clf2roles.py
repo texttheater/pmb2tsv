@@ -95,7 +95,8 @@ if __name__ == '__main__':
                 # create a list of all verbal events
                 events = tuple(
                     c[3]
-                    for f in fragments
+                    for f, s in zip(fragments, semtags)
+                    if s.startswith('E')
                     for c in f
                     if c[2].startswith('"v.')
                 )
