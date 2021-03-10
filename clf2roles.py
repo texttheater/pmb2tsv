@@ -157,29 +157,38 @@ if __name__ == '__main__':
                     for c in f:
                         if len(c) == 3 and c[1] == 'ATTRIBUTION' and c[0] in box_prop_map and c[2] in box_event_map:
                             prop_event_map[box_prop_map[c[0]]] = box_event_map[c[2]]
-                # map events to participants to roles
-                pas = collections.defaultdict(dict)
-                for f, s in zip(fragments, semtags):
-                    if s == 'IST':
-                        continue
-                    for c in f:
-                        if len(c) == 4 and c[2] in events:
-                            participant = c[3]
-                            if participant in prop_event_map:
-                                participant = prop_event_map[participant]
-                            pas[c[2]][participant] = c[1]
+                # for each token, list the event-role-participant triples it
+                # introduces
+                roless = tuple(
+                    tuple(
+                        (c[2], c[1], prop_event_map.get(c[3], c[3]))
+                        for c in f
+                        if len(c) == 4
+                        and c[2] in events
+                    )
+                    for f in fragments
+                )
                 # create role taglists for each event
-                def roletag(e, refs):
+                def roletag(e, i):
+                    refs = refss[i]
                     if e in refs:
                         return 'V'
-                    for x in refs:
-                        if x in pas[e]:
-                            return pas[e][x]
-                    return 'O'
+                    candidates = tuple(
+                        (j, event, role, participant)
+                        for x in refs
+                        for j, roles in enumerate(roless)
+                        for event, role, participant in roles
+                        if event == e
+                        and participant == x
+                    )
+                    if not candidates:
+                        return 'O'
+                    # assign role with minimum distance to role introducing token
+                    return min(candidates, key=lambda j: abs(i - j[0]))[2]
                 roletagss = tuple(
                     tuple(
-                        roletag(e, refs)
-                        for refs in refss
+                        roletag(e, i)
+                        for i in range(len(words))
                     )
                     for e in events
                 )
