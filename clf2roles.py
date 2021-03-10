@@ -10,6 +10,31 @@ import sys
 import util
 
 
+def add_refl(roletags, event, roless, semtags):
+    """Adds role for reflexives/reciprocals."""
+    roletags = list(roletags)
+    missing_roles = set(
+        (i, role)
+        for i, roles in enumerate(roless)
+        for e, role, participant in roles
+        if e == event
+        and role not in roletags
+        and participant.startswith('x')
+    )
+    for i, missing_role in missing_roles:
+        candidates = tuple(
+            j
+            for j, semtag in enumerate(semtags)
+            if roletags[j] == 'O'
+            and semtag == 'REF'
+        )
+        if not candidates:
+            continue
+        filler = min(candidates, key=lambda j: abs(i - j))
+        roletags[filler] = missing_role
+    return tuple(roletags)
+
+
 def heads2spans(roletags, deps, words):
     """Converts role annotations from mere heads to whole spans."""
     # Step 0: define helpers
@@ -200,6 +225,11 @@ if __name__ == '__main__':
                             file=sys.stderr,
                         )
                 roletagss = tuple(t for t in roletagss if 'V' in t)
+                # add roletags for reflexives/reciprocals
+                roletagss = tuple(
+                    add_refl(roletags, event, roless, semtags)
+                    for roletags, event in zip(roletagss, events)
+                )
                 # spread roletags along dependency edges
                 if '' in deps:
                     print(
