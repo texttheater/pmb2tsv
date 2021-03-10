@@ -9,6 +9,7 @@ import constants
 import sys
 import util
 
+
 def heads2spans(roletags, deps, words):
     """Converts role annotations from mere heads to whole spans."""
     # Step 0: define helpers
@@ -145,6 +146,11 @@ if __name__ == '__main__':
                     for c in f:
                         if len(c) == 3 and c[1] == 'REF' and c[2].startswith('e') and c[0] not in box_event_map:
                             box_event_map[c[0]] = c[2]
+                # enrich box_event_map with modal relations
+                for f in fragments:
+                    for c in f:
+                        if len(c) == 3 and c[1] in ('NECESSITY', 'POSSIBILITY') and c[2] in box_event_map:
+                            box_event_map[c[0]] = box_event_map[c[2]]
                 # map propositions to events
                 prop_event_map = {}
                 for f in fragments:
