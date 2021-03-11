@@ -146,6 +146,11 @@ if __name__ == '__main__':
                         if len(c) == 4
                         and drs.is_concept(c[1])
                         and not (c[3].startswith('t') and s.startswith('E'))
+                    ) | set(
+                        c[2]
+                        for c in f
+                        if len(c) == 4
+                        and c[1] == 'Quantity'
                     )
                     for f, l, s in zip(fragments, symbols, semtags)
                 ]
