@@ -154,6 +154,11 @@ if __name__ == '__main__':
                     )
                     for f, l, s in zip(fragments, symbols, semtags)
                 ]
+                # pass referents introduced by adpositions on to the head
+                for refs, semtag, dep in zip(refss, semtags, deps):
+                    if semtag == 'REL' and dep != '0':
+                        head_refs = refss[int(dep) - 1]
+                        head_refs.update(refs)
                 # create a list of all verbal events
                 events = tuple(
                     c[3]
