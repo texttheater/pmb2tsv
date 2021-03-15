@@ -155,6 +155,12 @@ if __name__ == '__main__':
                     for f, l, s in zip(fragments, symbols, semtags)
                 ]
                 # pass referents introduced by adpositions on to the head
+                if '' in deps:
+                    print(
+                        'WARNING: missing dependencies, skipping',
+                        file=sys.stderr
+                    )
+                    continue
                 for refs, semtag, dep in zip(refss, semtags, deps):
                     if semtag == 'REL' and dep != '0':
                         head_refs = refss[int(dep) - 1]
@@ -241,12 +247,6 @@ if __name__ == '__main__':
                     for roletags, event in zip(roletagss, events)
                 )
                 # spread roletags along dependency edges
-                if '' in deps:
-                    print(
-                        'WARNING: missing dependencies, skipping',
-                        file=sys.stderr
-                    )
-                    continue
                 roletagss = tuple(heads2spans(r, deps, words) for r in roletagss)
                 # output (one column per event)
                 if len(roletagss) > 0:
