@@ -41,10 +41,10 @@ def heads2spans(roletags, deps, words):
     deps = tuple(int(d) for d in deps)
     def head2span(head):
         span = set()
-        children = (head,)
-        while children:
+        children = set((head,))
+        while not children <= span:
             span.update(children)
-            children = tuple(
+            children = set(
                 i
                 for c in children
                 for i, d in enumerate(deps, start=1)
