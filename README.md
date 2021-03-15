@@ -40,9 +40,9 @@ files. For example, to get all gold sentences from PMB parts 00 and 01, run:
 
     produce pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.tsv
 
-This will generate 12 TSV files, one per language and annotation status. They
-contain the converted sentences, separated by empty lines, one token per line
-with the following tab-separated columns:
+This example will generate 8 TSV files, one per language and part. They contain
+the converted sentences, separated by empty lines, one token per line with the
+following tab-separated columns:
 
 1. Token number within sentence
 2. Token form
@@ -57,6 +57,11 @@ marks each token as being the head of the predicate (in which case it contains
 the string `V`), as being the head of the role filler (in which case it
 contains a VerbNet Role such as `Agent` or `Patient`), or as neither (in which
 case it is `O`).
+
+Warning: for a small number of CCG derivations, especially some that are not
+fully corrected, dependency and role extraction will fail. The corresponding
+columns will be empty/missing. In extremely rare cases a dependency non-tree (a
+cyclic graph) may be extracted.
 
 For details on the conversion from CCG derivations to dependency trees, see
 
