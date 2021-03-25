@@ -248,6 +248,11 @@ if __name__ == '__main__':
                 )
                 # spread roletags along dependency edges
                 roletagss = tuple(heads2spans(r, deps, words) for r in roletagss)
+                # exclude noun copulas (inconsistently annotated in PMB 3.0.0)
+                roletagss = tuple(
+                    r for r in roletagss
+                    if set(r) - set(('O', 'V')) != set(('Theme', 'Co-Theme'))
+                )
                 # output (one column per event)
                 if len(roletagss) > 0:
                     for i in range(len(words)):
