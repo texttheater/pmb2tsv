@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 import argparse
 import contextlib
 import itertools
@@ -8,7 +5,7 @@ import sys
 
 
 from enum import Enum
-from typing import TextIO, Sequence, List, Dict
+from typing import TextIO, Sequence, List, Dict, Tuple
 
 
 _zip = zip # so we can define our own zip method and still use the builtin
@@ -104,7 +101,7 @@ def zip(*files: TextIO, empty: HandleEmpty=HandleEmpty.MISMATCH) -> Sequence[Tup
         yield blocks
 
 
-def report(block: List[Str], name: str):
+def report(block: List[str], name: str):
     print(f'==> {name} ({len(block)} lines) <==', file=sys.stderr)
     for line in block:
         print(line, file=sys.stderr)
