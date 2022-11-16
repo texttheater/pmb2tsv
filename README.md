@@ -8,8 +8,8 @@ Input Data
 ----------
 
 Please download the [PMB](https://pmb.let.rug.nl) 3.0.0 and extract the
-directory `pmb-3.0.0` into the root directory of this repository (or symlink
-it).
+directory `pmb-3.0.0` into a `data` directory in the root directory of this
+repository (or symlink it).
 
 Software Dependencies
 ---------------------
@@ -32,7 +32,7 @@ Conversion
 Now use the `produce` command to convert the desired portions of the PMB to TSV
 files. For example, to get all gold sentences from PMB parts 00 and 01, run:
 
-    produce pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.tsv
+    produce out/pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.tsv
 
 This example will generate 8 TSV files, one per language and part. They contain
 the converted sentences, separated by empty lines, one token per line with the
