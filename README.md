@@ -2,20 +2,14 @@ pmb2tsv
 =======
 
 pmb2tsv is a collection of scripts to convert data from the [Parallel Meaning
-Bank](https://pmb.let.rug.nl) (PMB) into column-based files including CCG
-supertags, dependency structure, constituent structure, semantic tags, and
-semantic roles.
-
-The primary target audience is people wanting to do semantic role labeling
-(SRL) experiments on the PMB.
-
-**Note**: `pmb2tsv` is experimental and some of its output may be erroneous.
+Bank](https://pmb.let.rug.nl) (PMB) into column-based files.
 
 Input Data
 ----------
 
 Please download the [PMB](https://pmb.let.rug.nl) 3.0.0 and extract the
-directory `pmb-3.0.0` into the root directory of this repository.
+directory `pmb-3.0.0` into the root directory of this repository (or symlink
+it).
 
 Software Dependencies
 ---------------------
@@ -46,17 +40,9 @@ following tab-separated columns:
 
 1. Token number within sentence
 2. Token form
-3. PMB semantic tag
-4. Symbol (English lemma)
-5. Dependency head token number or 0 if root
-6. CCG supertag
-7. CCG constituent structure
-
-For every (verbal) frame in the sentence, there is an additional column that
-marks each token as being the head of the predicate (in which case it contains
-the string `V`), as being the head of the role filler (in which case it
-contains a VerbNet Role such as `Agent` or `Patient`), or as neither (in which
-case it is `O`).
+3. WordNet sense
+4. CCG dependency head
+5. DRS fragment
 
 Warning: for a small number of CCG derivations, especially some that are not
 fully corrected, dependency and role extraction will fail. The corresponding
@@ -68,6 +54,7 @@ For details on the conversion from CCG derivations to dependency trees, see
     Kilian Evang (2020): Configurable Dependency Tree Extraction from CCG
     Derivations. Proceedings of the Universal Dependencies Workshop.
 
-To reproduce the experiments from that paper, run:
+To reproduce the experiments from that paper, checkout out the
+`evang-2020-configurable` tag and run:
 
     produce pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.eval
