@@ -330,36 +330,42 @@ cat_annotate(X\Y, Sem, Lemma, Roles0, Opts) :-
 % adpositions
 cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
   cat_match(X, pp),
+  member(adp(true), Opts),
   !,
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
 cat_annotate(X\Y, Sem, Lemma, Roles0, Opts) :-
   cat_match(X, pp),
+  member(adp(true), Opts),
   !,
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
 cat_annotate((X\Y)/Z, Sem, Lemma, Roles0, Opts) :-
   cat_match(X\Y, A\A),
+  member(adp(true), Opts),
   !,
   cat_dir(Z, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X\Y, Sem, Lemma, Roles, Opts).
 cat_annotate((X/Y)/Z, Sem, Lemma, Roles0, Opts) :-
   cat_match(X/Y, A/A),
+  member(adp(true), Opts),
   !,
   cat_dir(Z, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X/Y, Sem, Lemma, Roles, Opts).
 cat_annotate((X\Y)\Z, Sem, Lemma, Roles0, Opts) :-
   cat_match(X\Y, A\A),
+  member(adp(true), Opts),
   !,
   cat_dir(Z, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X\Y, Sem, Lemma, Roles, Opts).
 cat_annotate((X/Y)\Z, Sem, Lemma, Roles0, Opts) :-
   cat_match(X/Y, A/A),
+  member(adp(true), Opts),
   !,
   cat_dir(Z, inv),
   handle_roles(Y, Roles0, Roles),
@@ -481,7 +487,7 @@ cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
   ),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
 % other pseudo tokens
 cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
@@ -491,7 +497,7 @@ cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
   ),
   !,
   cat_dir(Y, inv),
-  handle_roles(Roles0, Roles),
+  handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
 % question words
 cat_annotate(X/Y, 'EMP', Lemma, [], Opts) :-

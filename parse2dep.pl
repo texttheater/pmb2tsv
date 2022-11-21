@@ -42,6 +42,8 @@
 %:- debug(opts).
 
 opts_spec([
+    [opt(adp), type(boolean), default(true), longflags([adp]),
+     help('attach prepositions to their objects')],
     [opt(cop), type(boolean), default(true), longflags([cop]),
      help('attach noun/adposition copula to noun/adposition')],
     [opt(adj), type(boolean), default(true), longflags([adj]),
