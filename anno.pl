@@ -373,18 +373,21 @@ cat_annotate((X/Y)\Z, Sem, Lemma, Roles0, Opts) :-
 % determiners
 cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
   cat_match(X/Y, np/n),
+  member(det(true), Opts),
   !,
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
 cat_annotate(X\Y, Sem, Lemma, Roles0, Opts) :-
   cat_match(X\Y, np\n), % "Many a man"
+  member(det(true), Opts),
   !,
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
 cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
   cat_match(X/Y, np/(n/pp)),
+  member(det(true), Opts),
   !,
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, Roles),
@@ -392,6 +395,7 @@ cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
 % possessive suffix
 cat_annotate(X\Y, Sem, Lemma, [Role|Roles], Opts) :-
   cat_match(X\Y, (np/(n/pp))\np),
+  member(det(true), Opts),
   !,
   cat_dir(Y, inv),
   cat_role(Y, Role),
@@ -490,15 +494,11 @@ cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
   handle_roles(Y, Roles0, Roles),
   cat_annotate(X, Sem, Lemma, Roles, Opts).
 % other pseudo tokens
-cat_annotate(X/Y, Sem, Lemma, Roles0, Opts) :-
-  ( cat_match(X/Y, (n/n)/(s:adj\np))
-  ; cat_match(X/Y, (s/s)/(s:to\np))
-  ; cat_match(X/Y, (s/s)/(s:pss\np))
-  ),
+cat_annotate(X/Y, 'NIL', 'ø', Roles0, Opts) :-
   !,
   cat_dir(Y, inv),
   handle_roles(Y, Roles0, Roles),
-  cat_annotate(X, Sem, Lemma, Roles, Opts).
+  cat_annotate(X, 'NIL', 'ø', Roles, Opts).
 % question words
 cat_annotate(X/Y, 'EMP', Lemma, [], Opts) :-
   cat_match(X/Y, s:dcl/np),

@@ -42,6 +42,8 @@
 %:- debug(opts).
 
 opts_spec([
+    [opt(det), type(boolean), default(true), longflags([det]),
+     help('attach determiners to their nouns')],
     [opt(adp), type(boolean), default(true), longflags([adp]),
      help('attach prepositions to their objects')],
     [opt(cop), type(boolean), default(true), longflags([cop]),
