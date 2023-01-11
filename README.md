@@ -30,9 +30,14 @@ Conversion
 ----------
 
 Now use the `produce` command to convert the desired portions of the PMB to TSV
-files. For example, to get all gold sentences from PMB parts 00 and 01, run:
+files. For example, to get all training data, run:
 
-    produce out/pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.tsv
+    produce out/pmb-3.0.0-{en,de}-{bronze,silver,gold}-train.tsv
+    produce out/pmb-3.0.0-{it,nl}-{bronze,silver}-train.tsv
+
+And to get all gold development data, run:
+
+    produce out/pmb-3.0.0-{en,de,it,nl}-gold-dev.tsv
 
 This example will generate 8 TSV files, one per language and part. They contain
 the converted sentences, separated by empty lines, one token per line with the
@@ -40,6 +45,8 @@ following tab-separated columns:
 
 1. Token number within sentence
 2. Token form
+3. Lemma
+4. Semantic tag
 3. WordNet sense
 4. CCG dependency head
 5. DRS fragment
