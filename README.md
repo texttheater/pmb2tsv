@@ -2,7 +2,9 @@ pmb2tsv
 =======
 
 pmb2tsv is a collection of scripts to convert data from the [Parallel Meaning
-Bank](https://pmb.let.rug.nl) (PMB) into column-based files.
+Bank](https://pmb.let.rug.nl) (PMB) into column-based (`.tsv`) files. It also
+extracts the raw and tokenized data in the form of `.tok.iob` files and the
+DRSs in the form of `.drs.clf` files.
 
 Input Data
 ----------
@@ -32,16 +34,15 @@ Conversion
 Now use the `produce` command to convert the desired portions of the PMB to TSV
 files. For example, to get all training data, run:
 
-    produce out/pmb-3.0.0-{en,de}-{bronze,silver,gold}-train.tsv
-    produce out/pmb-3.0.0-{it,nl}-{bronze,silver}-train.tsv
+    produce out/pmb-3.0.0-{en,de}-{bronze,silver,gold}-train.{tok.iob,tsv}
+    produce out/pmb-3.0.0-{it,nl}-{bronze,silver}-train.{tok.iob,tsv}
 
-And to get all gold development data, run:
+For development and test data:
 
-    produce out/pmb-3.0.0-{en,de,it,nl}-gold-dev.tsv
+    produce out/pmb-3.0.0-{en,de,it,nl}-gold-{dev,test}.{tok.iob,tsv,drs.clf}
 
-This example will generate 8 TSV files, one per language and part. They contain
-the converted sentences, separated by empty lines, one token per line with the
-following tab-separated columns:
+The generated TSV files contain the converted sentences, separated by empty
+lines, one token per line with the following tab-separated columns:
 
 1. Token number within sentence
 2. Token form
