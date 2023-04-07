@@ -24,7 +24,7 @@ following software needs to be present on the system:
 * [Produce](https://github.com/texttheater/produce) – the `produce` executable
   should be on your `$PATH`.
 * [SWI-Prolog](https://www.swi-prolog.org) 7 or higher – the `swipl` executable
-  should be on your `$PATH`.
+  should be on your `$PATH`. Tested with version 8.4.2.
 * [GNU Parallel](https://www.gnu.org/software/parallel/) – the `parallel`
   executable should be on your `$PATH`.
 
@@ -53,9 +53,9 @@ lines, one token per line with the following tab-separated columns:
 5. DRS fragment
 
 Warning: for a small number of CCG derivations, especially some that are not
-fully corrected, dependency and role extraction will fail. The corresponding
-columns will be empty/missing. In extremely rare cases a dependency non-tree (a
-cyclic graph) may be extracted.
+fully corrected, dependency extraction will fail. The corresponding columns
+will be empty/missing. In extremely rare cases a dependency non-tree (a cyclic
+graph) may be extracted.
 
 For details on the conversion from CCG derivations to dependency trees, see
 
@@ -66,3 +66,8 @@ To reproduce the experiments from that paper, checkout out the
 `evang-2020-configurable` tag and run:
 
     produce pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.eval
+
+Planned Features
+----------------
+
+* PMB 4.0.0 support
