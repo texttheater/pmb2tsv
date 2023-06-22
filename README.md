@@ -9,9 +9,9 @@ DRSs in the form of `.drs.clf` files.
 Input Data
 ----------
 
-Please download the [PMB](https://pmb.let.rug.nl) 3.0.0 and extract the
-directory `pmb-3.0.0` into a `data` directory in the root directory of this
-repository (or symlink it).
+Please download the [PMB](https://pmb.let.rug.nl) 3.0.0/4.0.0 and extract the
+directory `pmb-3.0.0`/`pmb-4.0.0` into a `data` directory in the root directory
+of this repository (or symlink it).
 
 Software Dependencies
 ---------------------
@@ -28,34 +28,71 @@ following software needs to be present on the system:
 * [GNU Parallel](https://www.gnu.org/software/parallel/) – the `parallel`
   executable should be on your `$PATH`.
 
-Conversion
-----------
+Outputs
+-------
 
-Now use the `produce` command to convert the desired portions of the PMB to TSV
-files. For example, to get all training data, run:
+The data is extracted in four different formats:
 
-    produce out/pmb-3.0.0-{en,de}-{bronze,silver,gold}-train.{tok.iob,tsv}
-    produce out/pmb-3.0.0-{it,nl}-{bronze,silver}-train.{tok.iob,tsv}
+* `.tok.iob`: Tokenization information in character-level BIO format
+* `.parse.tags`: CCG derivations with tags in Prolog syntax
+* `.drs.clf`: DRSs in clause format
 
-For development and test data:
+Individual per-token annotation layers are extracted to files with these
+extensions:
 
-    produce out/pmb-3.0.0-{en,de,it,nl}-gold-{dev,test}.{tok.iob,tsv,drs.clf}
+* `.toknum` (token number)
+* `.tok` (token form)
+* `.lemma` (lemma)
+* `.sem` (semantic tag)
+* `.wordnet` (WordNet sense)
+* `.dep` (dependency head)
+* `.frag` (DRS fragment)
 
-The generated TSV files contain the converted sentences, separated by empty
-lines, one token per line with the following tab-separated columns:
+All of these are integrated into TSV files (the columns are in the above
+order):
 
-1. Token number within sentence
-2. Token form
-3. Lemma
-4. Semantic tag
-3. WordNet sense
-4. CCG dependency head
-5. DRS fragment
+* `.tsv`
 
-Warning: for a small number of CCG derivations, especially some that are not
-fully corrected, dependency extraction will fail. The corresponding columns
-will be empty/missing. In extremely rare cases a dependency non-tree (a cyclic
-graph) may be extracted.
+The output file names before the extension contain the following information,
+indicating which data is in each file:
+
+* PMB version (`3.0.0` or `4.0.0`)
+* language (`en`, `de`, `it`, or `nl`)
+* status (`gold`, `silver`, or `bronze`)
+* part (`p00`, `p01`, ..., or `p99`) or portion (`train`, `dev`, `test`, or
+  `eval`). The latter are concatenated together from the former according to
+  the division in the PMB README (different for 3.0.0 and 4.0.0).
+
+Usage
+-----
+
+Use the `produce` command to produce the file(s) with the information you need.
+For example, to extract the `.drs.clf` file for the PMB 4.0.0 English gold part
+00:
+
+    produce out/pmb-4.0.0-en-gold-p00.drs.clf
+
+To produce train, dev, and test data in TSV format for all languages:
+
+    produce out/pmb-4.0.0-{en,de,it,nl}-gold-{train,dev,test}.tsv
+
+There are also shorthands to extract all data for a given version and status.
+For example:
+
+    produce gold-4.0.0
+    produce silver-4.0.0
+    produce bronze-4.0.0
+
+Limitations
+-----------
+
+For a small number of CCG derivations, especially some that are not fully
+corrected, dependency extraction will fail. The corresponding columns will be
+empty/missing. In extremely rare cases a dependency non-tree (a cyclic graph)
+may be extracted.
+
+Publications and Experiments
+----------------------------
 
 For details on the conversion from CCG derivations to dependency trees, see
 
@@ -66,8 +103,3 @@ To reproduce the experiments from that paper, checkout out the
 `evang-2020-configurable` tag and run:
 
     produce pmb-3.0.0-{en,de,it,nl}-gold-{p00,p01}.eval
-
-Planned Features
-----------------
-
-* PMB 4.0.0 support
