@@ -50,9 +50,11 @@ opts_spec([
      help('attach noun/adposition copula to noun/adposition')],
     [opt(adj), type(boolean), default(true), longflags([adj]),
      help('attach attributive adjective to noun')],
+    [opt(aux), type(boolean), default(true), longflags([aux]),
+     help('attach auxiliaries and adjective copulas to their complement')],
     [opt(quasiaux), type(boolean), default(false),
      longflags([quasiaux]),
-     help('attach quasi-auxiliaries (used to, going to) to verb')],
+     help('attach quasi-auxiliaries (used to, going to) to verb (only with aux option)')],
     [opt(coord), type(boolean), default(true), longflags([coord]),
      help('attach coordinating conjunctions to the second conjunct')]]).
 

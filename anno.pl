@@ -77,6 +77,7 @@ cat_annotate((A\B)/C, Sem, _, _, _) :-
 cat_annotate((A\B)/(C\D), Sem, be, [], Opts) :-
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:adj\np),
+  member(aux(true), Opts),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
@@ -85,6 +86,7 @@ cat_annotate((A\B)/(C\D), Sem, be, [], Opts) :-
 cat_annotate((A\B)\(C\D), Sem, be, [], Opts) :-
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:adj\np),
+  member(aux(true), Opts),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
@@ -93,6 +95,7 @@ cat_annotate((A\B)\(C\D), Sem, be, [], Opts) :-
 cat_annotate((A/B)\(C\D), Sem, be, [], Opts) :-
   cat_match(A/B, s:_/np),
   cat_match(C\D, s:adj\np),
+  member(aux(true), Opts),
   !,
   cat_dir(C\D, inv),
   cat_role(D, Role),
@@ -102,6 +105,7 @@ cat_annotate((A/(B\C))/D, Sem, be, [], Opts) :-
   cat_match(A, s:_),
   cat_match(B\C, s:adj\np),
   cat_match(D, np),
+  member(aux(true), Opts),
   !,
   cat_dir(D, noninv),
   cat_dir(B\C, flip),
@@ -112,6 +116,7 @@ cat_annotate((A/(B\C))/D, Sem, be, [], Opts) :-
   cat_match(A, s:q),
   cat_match(B\C, s:adj\np),
   cat_match(D, np),
+  member(aux(true), Opts),
   !,
   cat_dir(D, noninv),
   cat_dir(B\C, flip),
@@ -185,6 +190,7 @@ cat_annotate((A\B)/(C\D), Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
+  member(aux(true), Opts),
   ( member(quasiaux(true), Opts)
   ; \+ member(Lemma, [use, get, go])
   ),
@@ -197,6 +203,7 @@ cat_annotate((A\B)\(C\D), Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS', 'NIL']),
   cat_match(A\B, s:_\np),
   cat_match(C\D, s:_\np),
+  member(aux(true), Opts),
   ( member(quasiaux(true), Opts)
   ; \+ member(Lemma, [use, get, go])
   ),
@@ -209,6 +216,7 @@ cat_annotate((A/(B\C))/D, Sem, Lemma, [], Opts) :-
   member(Sem, ['NOW', 'PST', 'FUT', 'PRG', 'PFT', 'NEC', 'POS']),
   cat_match(A, s:q),
   cat_match(B\C, s:_\np),
+  member(aux(true), Opts),
   ( member(quasiaux(true), Opts)
   ; \+ member(Lemma, [use, get, go])
   ),
